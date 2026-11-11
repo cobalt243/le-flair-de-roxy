@@ -95,10 +95,10 @@
     ok(){tone(523,.18,'sine',.08);tone(784,.25,'sine',.08,.1);},
     no(){tone(220,.25,'triangle',.07);tone(175,.3,'triangle',.06,.12);},
     /* Grand final : fanfare originale (balafon + kora + percussions), environ 6 s */
-    fanfare(){const N=[523,659,784,1047,880,1047,1175,1319,1568];N.forEach((f,i)=>{tone(f,.35,'sine',.07,i*.13);tone(f*4.02,.06,'triangle',.02,i*.13);});
-      [[262,330,392],[294,370,440],[330,415,494],[349,440,523]].forEach((ch,j)=>ch.forEach((f,k)=>tone(f,2.2,'sine',.045,1.3+j*.9+k*.04)));
-      for(let i=0;i<8;i++){noise(.12,180,.22,1.3+i*.45);if(i%2)noise(.06,1600,.08,1.52+i*.45);}
-      [1047,1319,1568,2093].forEach((f,i)=>tone(f,1.4,'sine',.05,4.9+i*.12));},
+    fanfare(lv=3){const N=[523,659,784,1047,880,1047,1175,1319,1568].slice(0,lv>=2?9:lv===1?6:4);N.forEach((f,i)=>{tone(f,.35,'sine',.07,i*.13);tone(f*4.02,.06,'triangle',.02,i*.13);});
+      if(lv<1)return;[[262,330,392],[294,370,440],[330,415,494],[349,440,523]].slice(0,lv+1).forEach((ch,j)=>ch.forEach((f,k)=>tone(f,2.2,'sine',.045,1.3+j*.9+k*.04)));
+      for(let i=0;i<lv*2+2;i++){noise(.12,180,.22,1.3+i*.45);if(i%2)noise(.06,1600,.08,1.52+i*.45);}
+      if(lv>=3)[1047,1319,1568,2093].forEach((f,i)=>tone(f,1.4,'sine',.05,4.9+i*.12));},
     whoosh(){tone(300,.7,'sine',.025,0,900);noise(.5,2200,.03);},
     boom(){noise(.5,300,.22);noise(.25,3000,.06,.05);for(let i=0;i<5;i++)noise(.04,5000,.03,.15+i*.07);},
     tick(n){tone(660+n*40,.06,'square',.025);},
