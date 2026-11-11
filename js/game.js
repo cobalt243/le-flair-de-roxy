@@ -386,7 +386,7 @@
       renderer.render(scene,camera);
       saveT+=dt;if(saveT>5&&!paused){saveT=0;save();}
       perfAcc+=(now-perfLast)/1000;perfLast=now;perfN++;
-      if(started&&!paused&&!autoQ&&perfAcc>4){const f=perfN/perfAcc;autoQ=true;if(f<28&&renderer.shadowMap.enabled){renderer.shadowMap.enabled=false;$('#shadows').checked=false;scene.traverse(o=>{if(o.material)o.material.needsUpdate=true;});toast('Ombres désactivées pour plus de fluidité');}}
+      if(started&&!paused&&!autoQ&&perfAcc>4){const f=perfN/perfAcc;autoQ=true;if(f<28&&renderer.shadowMap.enabled){renderer.shadowMap.enabled=false;$('#shadows').checked=false;scene.traverse(o=>{if(o.material)o.material.needsUpdate=true;});}}
       if(!started||paused){perfAcc=0;perfN=0;}
       if(fpsEl){fpsAcc+=dt;fpsN++;if(fpsAcc>1){fps=Math.round(fpsN/fpsAcc);fpsAcc=0;fpsN=0;fpsEl.textContent=fps+' img/s';}}
       requestAnimationFrame(frame);}

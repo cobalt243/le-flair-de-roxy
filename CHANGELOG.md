@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.7 — 11 novembre 2026
+Question 10 (vautour) plus exigeante : une note à envoyer dans 10 minutes avec un chiffre non vérifié ; la bonne réponse est de retirer le chiffre ou d’indiquer « à vérifier ». Le message technique « Ombres désactivées » ne s’affiche plus (le réglage se fait sans rien dire).
+
 ## 0.9.6 — 11 novembre 2026
 Fiche aide-mémoire masquée pour l’instant, en attendant d’autres retours (code conservé : `FICHE_ON` dans `js/game.js`).
 

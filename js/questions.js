@@ -28,10 +28,11 @@
     q7:BINS("L’itinéraire heure par heure d’une équipe qui part dans une zone dangereuse, pour que Claude l’aide à organiser le trajet.",2,"C’est une information de sécurité : si elle circulait, l’équipe pourrait être mise en danger. Ne la saisissez pas sans autorisation. Pour vous faire aider, restez général (« une région, 5 jours, 3 personnes »). Anonymiser ne suffit pas : c’est l’itinéraire lui-même qui est sensible."),
     q8:BINS("L’évaluation de performance d’un employé nommé, pour reformuler les commentaires.",1,"Retirez le nom et les détails identifiants : Claude peut reformuler sans savoir de qui il s’agit.",["Avec le nom, vous partagez une donnée personnelle sans nécessité. Retirez d’abord le nom et les détails identifiants.",null,"Prudent, et c’est le bon réflexe si votre organisation l’exige. Mais ici, retirer le nom suffit : Claude peut reformuler sans savoir de qui il s’agit."]),
     q9:VF("« Si la réponse de Claude est bien rédigée et sûre d’elle, l’information a été vérifiée. »",false,"Le ton ne prouve rien. Une réponse fluide peut contenir une erreur : c’est vous qui vérifiez."),
-    q10:{q:"Claude cite un chiffre de 74 % tiré d’un rapport. Comment le vérifier ?",opts:[
-      {t:"Je demande à Claude : « Es-tu sûr ? »",ok:false,why:"Claude peut confirmer une erreur. Ce n’est pas une vérification."},
-      {t:"Je demande la source exacte, puis j’ouvre le document original.",ok:true,why:"Seule la source originale fait foi. Si elle est introuvable, retirez le chiffre."},
-      {t:"Je le garde s’il me paraît plausible.",ok:false,why:"Paraître plausible ne prouve rien : c’est justement ce que Claude fait le mieux."}]},
+    q10:{q:"Claude a rédigé votre note pour la direction. Elle contient : « 74 % des projets ont atteint leurs cibles (rapport annuel) ». Vous devez l’envoyer dans 10 minutes et n’avez pas le rapport sous la main. Que faites-vous ?",opts:[
+      {t:"J’envoie la note : Claude a cité le rapport, le chiffre est donc sourcé.",ok:false,why:"Une source citée n’est pas une source vérifiée : Claude peut se tromper même en citant un rapport."},
+      {t:"Je demande à Claude « Es-tu sûr ? » et j’envoie s’il confirme.",ok:false,why:"Claude peut confirmer sa propre erreur : ce n’est pas une vérification."},
+      {t:"J’écris « environ les trois quarts » pour rester prudent.",ok:false,why:"Arrondir ne corrige rien : si le chiffre est faux, « trois quarts » l’est aussi."},
+      {t:"Je retire le chiffre ou j’indique « à vérifier » avant d’envoyer.",ok:true,why:"Un chiffre non vérifié ne part pas. Vous le remettrez quand vous aurez ouvert le rapport original."}]},
     q11:{q:"Vous avez demandé une note de 2 pages. Claude rend 6 pages très générales. Quelle relance est la plus efficace ?",opts:[
       {t:"« Fais plus court et va à l’essentiel. »",ok:false,why:"Claude choisira seul ce qui est « essentiel » : le résultat restera flou."},
       {t:"« 2 pages maximum : compare 3 options dans un tableau (coût, délai, risque) et termine par ta recommandation. »",ok:true,why:"Longueur, structure et contenu attendus : Claude sait exactement quoi corriger."},
