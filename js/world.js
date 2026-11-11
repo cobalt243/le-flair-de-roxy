@@ -37,7 +37,7 @@
       h=5+Math.round((vn(x*.08,z*.08)-.5)*2.4);
       const dd=Math.hypot(x-12,z-50);if(dd<9)h+=Math.round(3*(1-dd/9));
       const mare=((x-50)/7)**2+((z-42)/6)**2;
-      let water=false;if(mare<1){h=3;water=true;}else if(mare<1.6)h=Math.min(h,5);
+      let water=false;if(mare<1){h=4;water=true;}else if(mare<1.6)h=Math.min(h,5);
       for(let y=0;y<h;y++){let v=y<h-3?B.LATERITE:B.SAND;
         if(y===h-1){v=dd<9?B.SAND:(mare<1.6?B.MUD:(vn(x*.3+9,z*.3)>.45?B.GRASS:B.SAND));}
         set(x,y,z,v);}

@@ -1,5 +1,19 @@
 # Historique
 
+## 0.7 — 11 novembre 2026
+Corrections issues de la révision finale :
+- La mare n’est plus un piège : fond relevé, saut normal dans l’eau, et Roxy est ramenée sur la berge après quelques secondes dans l’eau.
+- « Tout recommencer » ne laisse plus `?neuf` dans l’adresse (un rechargement n’efface plus la partie).
+- Bouton « Voir mon résultat » (accueil et pause) une fois le parcours terminé ; record enregistré dès le début de la finale.
+- Une mauvaise réponse affiche maintenant sa propre explication, puis la bonne réponse.
+- Questions 2, 6, 7, 8 et 12 précisées (sujets fournis dans le bon prompt, nuances sur les données, formulations moins catégoriques) ; « prompt » expliqué par l’éléphant.
+- Dialogue plein écran sur téléphone avec indicateur « Faites défiler », messages et astuces plus larges.
+- Finale : la caméra démarre côté mare pour ne plus être masquée par un arbre.
+- Son suspendu quand on quitte l’onglet ; choix « Son : non » mémorisé.
+- Clavier : touches 1 à 4 en AZERTY, Entrée sur une réponse sélectionnée.
+- Double toucher après la fermeture d’un dialogue ignoré ; réponse reposée après rechargement correctement comptée.
+- Contrastes renforcés, zones tactiles d’au moins 44 px, « animations réduites » mieux respectées, README à jour.
+
 ## 0.6 — 11 novembre 2026
 Pour donner envie de rejouer : bouton « Rejouer mes erreurs » (seuls les animaux concernés reposent les questions ratées, la médaille peut monter), objectif vers la médaille suivante avec barre de progression, bouton « Défier mes amis » (WhatsApp ou partage du téléphone, message prêt avec le score et le lien) et record conservé, affiché sur l’écran d’accueil.
 

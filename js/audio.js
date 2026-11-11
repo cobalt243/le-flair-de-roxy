@@ -25,7 +25,7 @@
     if(ctx){ctx.resume();try{const b=ctx.createBuffer(1,1,22050),src=ctx.createBufferSource();src.buffer=b;src.connect(ctx.destination);src.start(0);}catch(e){}}
   }
   ['touchend','pointerup','click'].forEach(ev=>window.addEventListener(ev,()=>{if(enabled&&ctx&&ctx.state!=='running')unlock();},{passive:true}));
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&enabled&&ctx)ctx.resume();});
+  document.addEventListener('visibilitychange',()=>{if(!ctx)return;if(document.hidden){ctx.suspend();if(silent)silent.pause();}else if(enabled){ctx.resume();if(silent){const pr=silent.play();if(pr&&pr.catch)pr.catch(()=>{});}}});
 
   /* ===== Musique originale, générée par le code =====
      Timbres : kora (harpe-luth), balafon (xylophone) et nappe douce, pour un univers imaginaire.

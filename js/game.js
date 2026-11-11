@@ -35,7 +35,7 @@
       {id:'agame',kind:'agama',make:RX.createAgama,name:'L’agame',theme:'Connaître Claude',q:['q1','q2'],pos:V3(26.5,top(26.5,48.5),48.5),
         intro:'Salut Roxy ! Moi, je fais des pompes sur les rochers. Et toi, sais-tu ce que Claude sait faire… ou pas ?'},
       {id:'elephant',kind:'elephant',make:RX.createElephant,name:'L’éléphant',theme:'Le bon prompt',q:['q3','q4'],pos:V3(43.5,world.surface(43,41),41.5),
-        intro:'Bonjour Roxy ! Demander de l’aide à Claude, c’est tout un art. Voyons ta façon de demander.'},
+        intro:'Bonjour Roxy ! Demander de l’aide à Claude, c’est tout un art. Ta demande écrite s’appelle un « prompt ». Voyons ta façon de demander.'},
       {id:'patas',kind:'patas',make:RX.createPatas,name:'Le singe patas',theme:'Les outils',q:['q5','q6'],pos:V3(32.5,world.surface(32,50),50.5),
         intro:'Hé, Roxy ! Claude a plusieurs outils. Sauras-tu choisir le bon ?'},
       {id:'calao',kind:'hornbill',make:RX.createHornbill,name:'Le calao',theme:'Les données',q:['q7','q8'],pos:V3(31.5,world.surface(31,gEdge+11),gEdge+11.5),
@@ -119,7 +119,7 @@
     window.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;keys[e.code]=true;if(!started)return;
       if(e.code==='Escape'||e.code==='KeyP'){togglePause();e.preventDefault();return;}
       if(paused)return;
-      if(inDialog){if(e.code==='KeyE'||e.code==='Enter'||e.code==='Space'){e.preventDefault();dialogAdvance();}const n=parseInt(e.key,10);if(n>=1&&n<=4){e.preventDefault();answerKey(n-1);}return;}
+      if(inDialog){const onOpt=document.activeElement&&document.activeElement.classList.contains('opt');if((e.code==='KeyE'||e.code==='Enter'||e.code==='Space')&&!onOpt){e.preventDefault();dialogAdvance();}const m=/^(?:Digit|Numpad)([1-4])$/.exec(e.code);if(m){e.preventDefault();answerKey(+m[1]-1);}return;}
       if(e.code==='Space')e.preventDefault();if(e.code==='KeyE'||e.code==='Enter')action();});
     window.addEventListener('keyup',e=>{keys[e.code]=false;});
     window.addEventListener('blur',()=>{for(const k in keys)keys[k]=false;});
@@ -146,7 +146,7 @@
     refreshHUD();
 
     /* ===== Dialogues et questions ===== */
-    let dq=[],dqDone=null,curQ=null,qAnswered=false,lineAt=0,talker=null;
+    let dlgClosedAt=0,dq=[],dqDone=null,curQ=null,qAnswered=false,lineAt=0,talker=null;
     let dlgYaw=0;
     function clearShot(t,yw,pt,dd){const dir=V3(Math.sin(yw)*Math.cos(pt),Math.sin(pt),Math.cos(yw)*Math.cos(pt));for(let s=.5;s<=dd;s+=.3){const q=t.clone().addScaledVector(dir,s);if(world.solid(q.x,q.y,q.z))return false;}return true;}
     function dlgTarget(a){return V3((P.x+a.pos.x)/2,(P.y+a.pos.y)/2+.3,(P.z+a.pos.z)/2);}
@@ -160,16 +160,18 @@
         hud.dlg.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answerKey(+b.dataset.i));}
       else{curQ=null;hud.dlg.innerHTML=`<div class="who">${who}</div><p class="say">${l.t}</p><button class="next" id="dnext">${l.btn||'Continuer'} <kbd>E</kbd></button>`;
         $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});}
-      hud.dlg.scrollTop=0;}
+      hud.dlg.scrollTop=0;requestAnimationFrame(moreHint);}
+    function moreHint(){const d=hud.dlg;d.classList.toggle('more',d.scrollHeight-d.clientHeight-d.scrollTop>8);}
+    hud.dlg.addEventListener('scroll',moreHint,{passive:true});
     function answerKey(i){if(!curQ||qAnswered||performance.now()-lineAt<400)return;const o=curQ.opts[i];if(!o)return;qAnswered=true;
-      const key=dq[0].q;if(S.ans[key]===undefined||(S.retry&&S.retry.includes(key)))S.ans[key]=o.ok;save();
+      const key=dq[0].q;if(S.ans[key]===undefined||(S.retry&&S.retry.includes(key))||(talker&&!S.met.includes(talker.id)&&!S.qDone?.[key]))S.ans[key]=o.ok;(S.qDone||(S.qDone={}))[key]=1;save();
       hud.dlg.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;b.classList.add(curQ.opts[k].ok?'right':k===i?'wrong':'dim');});
       const right=curQ.opts.find(x=>x.ok);lineAt=performance.now();
-      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:right.why}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
+      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">Bonne réponse :</span> ${right.t} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
       if(o.ok){RX.audio.ok();sparkle(V3(P.x,P.y+1.2,P.z),['#F2B93B','#FFE08A'],12,2.5);}else RX.audio.no();
       $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});$('#fb').scrollIntoView({block:'nearest'});}
     function dialogAdvance(){if(curQ&&!qAnswered)return;if(performance.now()-lineAt<400)return;lineAt=performance.now();dq.shift();
-      if(dq.length)showLine();else{hud.dlg.hidden=true;inDialog=false;document.body.classList.remove('indialog');curQ=null;const d=dqDone;dqDone=null;talker=null;d&&d();}}
+      if(dq.length)showLine();else{dlgClosedAt=performance.now();hud.dlg.hidden=true;inDialog=false;document.body.classList.remove('indialog');curQ=null;const d=dqDone;dqDone=null;talker=null;d&&d();}}
 
     const GAME_URL='https://cobalt243.github.io/le-flair-de-roxy/';
     const REC_KEY='flair-roxy-record';
@@ -192,9 +194,10 @@
       {h:'Bien joué !',p:'Le baobab du savoir a poussé',gap:[1.6,2.2],dbl:0,sky:.25},
       {h:'Bravo !',p:'Le baobab du savoir a poussé',gap:[.65,.9],dbl:.2,sky:.55},
       {h:'Parfait !',p:'Un sans-faute : le baobab se couvre d’or !',gap:[.32,.5],dbl:.55,sky:.8}];
-    function startFete(){const okN=Object.values(S.ans).filter(Boolean).length;tier=okN>=12?3:okN>=10?2:okN>=7?1:0;const T=TIERS[tier];
+    function startFete(){S.prevRecord=getRecord();const okN=Object.values(S.ans).filter(Boolean).length;tier=okN>=12?3:okN>=10?2:okN>=7?1:0;const T=TIERS[tier];
+      setRecord(okN);S.recordSet=true;
       $('#finale h2').textContent=T.h;$('#finale p').textContent=T.p;document.body.dataset.tier=tier;S.finished=true;S.endTime=S.time;save();refreshHUD();placeFete(false);P.set(FETE.x+.4,FETE.y,FETE.z+4.2);heading=Math.PI;V.set(0,0,0);
-      feteT=FETE_DUR;growT=0;fwT=1.2;yaw=-.35;document.body.classList.add('finale');RX.audio.fanfare(tier);
+      feteT=FETE_DUR;growT=0;fwT=1.2;yaw=1.75;document.body.classList.add('finale');RX.audio.fanfare(tier);
       const f=$('#finale');f.hidden=false;f.classList.remove('go');void f.offsetWidth;f.classList.add('go');
       $('#flash').classList.remove('go');void $('#flash').offsetWidth;$('#flash').classList.add('go');}
     function launch(){const a=Math.random()*Math.PI*2,r=4+Math.random()*7;rockets.push({x:FETE.x+Math.cos(a)*r,y:FETE.y+1,z:FETE.z+Math.sin(a)*r,vy:13+Math.random()*4,fuse:.75+Math.random()*.45,t:0,c:FW[Math.floor(Math.random()*FW.length)],c2:FW[Math.floor(Math.random()*FW.length)]});RX.audio.whoosh();}
@@ -203,7 +206,7 @@
         if(r.t>=r.fuse){rockets.splice(i,1);RX.audio.boom();for(let k=0;k<75;k++){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,q=Math.sqrt(1-u*u),sp=6+Math.random()*2.5;
           emit({x:r.x,y:r.y,z:r.z,v:{x:q*Math.cos(th)*sp,y:u*sp,z:q*Math.sin(th)*sp},g:3.2,life:1.5+Math.random()*.9,age:0,c:k%3?r.c:r.c2,s:1.7});}}}}
     const RANKS=[[12,'Flair d’or','Un sans-faute ! Vous avez tous les bons réflexes.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']];
-    function showEnd(){document.body.classList.remove('finale');$('#finale').hidden=true;
+    function showEnd(){document.body.classList.remove('finale');$('#finale').hidden=true;{const k=Object.values(S.ans).filter(Boolean).length;tier=k>=12?3:k>=10?2:k>=7?1:0;}
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];
       const st=ok>=12?3:ok>=10?2:ok>=7?1:0;$('#endStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.9+i*.25}s">★</span>`).join('');
@@ -216,7 +219,7 @@
       const missed=Object.keys(RX.QUESTIONS).filter(q=>S.ans[q]===false);
       $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=`Rejouer mes ${missed.length} erreur${missed.length>1?'s':''}`;
       $('#endRetry').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
-      const prevR=getRecord(),newRec=setRecord(ok)&&!!prevR;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';
+      const prevR=S.prevRecord,newRec=!!prevR&&ok>prevR.ok;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';setRecord(ok);
       const medal=ok>=12?'🥇':ok>=10?'🥈':ok>=7?'🥉':'🐶';
       const msg=`${medal} J’ai obtenu le « ${rk[1]} » (${ok}/12) dans Le Flair de Roxy, un petit jeu pour apprendre à bien utiliser Claude. À ton tour de faire mieux ! ${GAME_URL}`;
       $('#share').href='https://wa.me/?text='+encodeURIComponent(msg);
@@ -224,11 +227,13 @@
       $('#copyMsg').onclick=()=>{const done=()=>toast('Message copié : collez-le dans WhatsApp');(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(done).catch(()=>{const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){}t.remove();});};$('#end').hidden=false;paused=true;$('#endContinue').focus({preventScroll:true});$('.endcard').scrollTop=0;}
     $('#endContinue').onclick=()=>{$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;};
     $('#endRestart').onclick=()=>restart();
+    const openResult=()=>{$('#start').hidden=true;$('#pause').hidden=true;started=true;showEnd();};
+    $('#seeResult').onclick=openResult;$('#pauseResult').onclick=openResult;
 
     /* ===== Action ===== */
     let near=null;
-    function action(){if(inDialog||cineT>0||feteT>0)return;if(near){talkTo(near);if(S.tuto<3){S.tuto=3;save();}}else toast('Approchez-vous d’un animal pour lui parler. Suivez la flèche dorée.');}
-    function restart(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.search='?neuf';}
+    function action(){if(inDialog||cineT>0||feteT>0||performance.now()-dlgClosedAt<500)return;if(near){talkTo(near);if(S.tuto<3){S.tuto=3;save();}}else toast('Approchez-vous d’un animal pour lui parler. Suivez la flèche dorée.');}
+    function restart(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.replace(location.pathname);}
 
     /* ===== Pause ===== */
     function togglePause(force){if(!$('#end').hidden||!started)return;paused=force!==undefined?force:!paused;$('#pause').hidden=!paused;$('#restartConfirm').hidden=true;if(paused)$('#resume').focus();}
@@ -236,13 +241,13 @@
     $('#music').checked=RX.audio.music;$('#music').onchange=e=>RX.audio.setMusic(e.target.checked);
     $('#shadows').onchange=e=>{renderer.shadowMap.enabled=e.target.checked;scene.traverse(o=>{if(o.material)o.material.needsUpdate=true;});};
     $('#restartAsk').onclick=()=>{$('#restartConfirm').hidden=false;};$('#restartNo').onclick=()=>{$('#restartConfirm').hidden=true;};$('#restartYes').onclick=restart;
-    const soundBtn=$('#btnSound');soundBtn.onclick=()=>{const on=RX.audio.toggle();soundBtn.textContent=on?'Son : oui':'Son : non';soundBtn.setAttribute('aria-pressed',on);};
-    $('#play').onclick=()=>{started=true;paused=false;$('#start').hidden=true;if(!RX.audio.on){const on=RX.audio.toggle();soundBtn.textContent=on?'Son : oui':'Son : non';}
+    const soundBtn=$('#btnSound');soundBtn.onclick=()=>{const on=RX.audio.toggle();try{localStorage.setItem('flair-roxy-son',on?'oui':'non');}catch(e){}soundBtn.textContent=on?'Son : oui':'Son : non';soundBtn.setAttribute('aria-pressed',on);};
+    $('#play').onclick=()=>{started=true;paused=false;$('#start').hidden=true;let sOff=false;try{sOff=localStorage.getItem('flair-roxy-son')==='non';}catch(e){}if(!RX.audio.on&&!sOff){const on=RX.audio.toggle();soundBtn.textContent=on?'Son : oui':'Son : non';}
       if(!S.cineDone&&!S.met.length){cineT=CINE;S.cineDone=true;save();$('#cine').hidden=false;}};
     $('#cine').onclick=()=>{cineT=Math.min(cineT,.6);};
 
     /* ===== Physique ===== */
-    const HW=.3,HH=.95,V=V3(0,0,0);let grounded=false,heading=Math.PI,idleT=0,stepAcc=0,wasWater=false;
+    const HW=.3,HH=.95,V=V3(0,0,0);let waterT=0,grounded=false,heading=Math.PI,idleT=0,stepAcc=0,wasWater=false;
     function collides(x,y,z){for(let xi=Math.floor(x-HW);xi<=Math.floor(x+HW-1e-4);xi++)for(let yi=Math.floor(y);yi<=Math.floor(y+HH-1e-4);yi++)for(let zi=Math.floor(z-HW);zi<=Math.floor(z+HW-1e-4);zi++)if(world.solid(xi,yi,zi))return true;return false;}
     function moveAxis(a,d){if(!d)return;const o=P[a];P[a]+=d;if(!collides(P.x,P.y,P.z))return;
       if(a==='y'){if(d<0){P.y=Math.floor(P.y)+1;grounded=true;}else P.y=Math.floor(P.y+HH)-HH-1e-3;V.y=0;}
@@ -255,13 +260,15 @@
       const m=Math.hypot(ix,iz);if(m>1){ix/=m;iz/=m;}
       const fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);const dx=fx*(-iz)+rx*ix,dz=fz*(-iz)+rz*ix;
       const water=world.water(P.x,P.y+.2,P.z);if(water&&!wasWater)RX.audio.splash();wasWater=water;
+      waterT=water?waterT+dt:0;if(waterT>3.5){waterT=0;let best=null,bd=1e9;for(let r=1;r<10&&!best;r++)for(let k=0;k<16;k++){const a=k/16*Math.PI*2,x=P.x+Math.cos(a)*r,z=P.z+Math.sin(a)*r;const gy=world.groundY(x,z);if(!world.water(x,gy+.2,z)&&gy>=5&&gy-P.y<4){const d=r;if(d<bd){bd=d;best=[x,z];}}}
+        if(best){P.set(best[0],world.groundY(best[0],best[1]),best[1]);V.set(0,0,0);toast('Roxy s’ébroue et remonte sur la berge.');}}
       const run=(keys.ShiftLeft||keys.ShiftRight||joy.run)&&!water;const sp=(run?6.2:3.6)*(water?.55:1);
       const acc=grounded?14:5;V.x+=(dx*sp-V.x)*Math.min(1,acc*dt);V.z+=(dz*sp-V.z)*Math.min(1,acc*dt);
       if(Math.hypot(dx,dz)>.05){let d=Math.atan2(dx,dz)-heading;d=Math.atan2(Math.sin(d),Math.cos(d));heading+=d*Math.min(1,dt*10);}
       if(grounded&&!inDialog){let jump=keys.Space;
         if(!jump&&Math.hypot(dx,dz)>.3){const ax=P.x+Math.sign(dx)*(HW+.15)*(Math.abs(dx)>.3?1:0),az=P.z+Math.sign(dz)*(HW+.15)*(Math.abs(dz)>.3?1:0),yb=Math.floor(P.y+.01);
           if(world.solid(Math.floor(ax),yb,Math.floor(az))&&!world.solid(Math.floor(ax),yb+1,Math.floor(az))&&!world.solid(Math.floor(P.x),yb+1,Math.floor(P.z)))jump=true;}
-        if(jump){V.y=water?6.5:8.4;grounded=false;RX.audio.jump();}}
+        if(jump){V.y=8.4;grounded=false;RX.audio.jump();}}
       V.y-=24*dt;if(V.y<-30)V.y=-30;
       grounded=false;moveAxis('y',V.y*dt);moveAxis('x',V.x*dt);moveAxis('z',V.z*dt);animalBlocks();
       if(!grounded&&V.y<=0&&collides(P.x,P.y-.02,P.z))grounded=true;
@@ -364,6 +371,7 @@
     requestAnimationFrame(frame);
     $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.finished?'Explorer à nouveau':S.met.length?'Reprendre':'Jouer';
     {const r=getRecord();if(r){$('#record').hidden=false;$('#record').textContent=`Votre record : ${r.ok>=12?'🥇 Flair d’or':r.ok>=10?'🥈 Flair d’argent':r.ok>=7?'🥉 Flair de bronze':'Chiot curieux'} (${r.ok}/12)`;}}
+    if(S.finished){$('#seeResult').hidden=false;$('#pauseResult').hidden=false;}
     if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Animaux rencontrés : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
     $('#newGame').onclick=()=>{const b=$('#newGame');if(b.dataset.ok){restart();return;}b.dataset.ok=1;b.textContent='Confirmer : effacer ma progression';};
     if(params.has('test')){started=true;paused=false;$('#start').hidden=true;}
