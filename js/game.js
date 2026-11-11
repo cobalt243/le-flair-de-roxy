@@ -154,9 +154,10 @@
     function chooseShot(a){const base=Math.atan2(P.x-a.pos.x,P.z-a.pos.z),t=dlgTarget(a),dd=a.kind==='elephant'?8.5:6.5;
       for(const o of [1.0,-1.0,.55,-.55,1.5,-1.5,0,2.2,-2.2]){if(clearShot(t,base+o,.42,dd)){dlgYaw=base+o;return;}}dlgYaw=base+1.0;}
     function openDialog(a,lines,done){inDialog=true;talker=a;chooseShot(a);document.body.classList.add('indialog');dq=lines.slice();dqDone=done;RX.audio.talk();showLine();}
-    function showLine(){const l=dq[0];hud.dlg.hidden=false;lineAt=performance.now();const who=talker?`${talker.name} · ${talker.theme}`:'';
-      if(l.q){curQ=RX.QUESTIONS[l.q];qAnswered=false;const qi=talker.q.indexOf(l.q)+1;
-        hud.dlg.innerHTML=`<div class="who">${who} · question ${qi}/2</div>${curQ.lead?`<p class="lead">${curQ.lead}</p>`:''}<p class="say">${curQ.q}</p>
+    let express=false,exN=0;
+    function showLine(){const l=dq[0];if(l.who)talker=l.who;hud.dlg.hidden=false;lineAt=performance.now();const who=talker?`${express?'Revanche express · ':''}${talker.name} · ${talker.theme}`:'';
+      if(l.q){curQ=RX.QUESTIONS[l.q];qAnswered=false;const qi=talker.q.indexOf(l.q)+1,ql=express?`question ${exN-dq.length+1}/${exN}`:`question ${qi}/2`;
+        hud.dlg.innerHTML=`<div class="who">${who} · ${ql}</div>${curQ.lead?`<p class="lead">${curQ.lead}</p>`:''}<p class="say">${curQ.q}</p>
           <div class="opts ${curQ.two?'two':''}">${curQ.opts.map((o,i)=>`<button class="opt" data-i="${i}"><b>${i+1}</b><span>${o.t}</span></button>`).join('')}</div><div class="fb" id="fb"></div>`;
         hud.dlg.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answerKey(+b.dataset.i));}
       else{curQ=null;hud.dlg.innerHTML=`<div class="who">${who}</div><p class="say">${l.t}</p><button class="next" id="dnext">${l.btn||'Continuer'} <kbd>E</kbd></button>`;
@@ -181,7 +182,7 @@
     const retryOf=a=>(S.retry||[]).filter(q=>a.q.includes(q));
     function talkTo(a){
       const rq=retryOf(a);
-      if(rq.length){openDialog(a,[{t:`Revanche, Roxy ! Je te repose ${rq.length>1?'mes deux questions':'ma question'}. Prends ton temps.`,btn:'C’est parti'},...rq.map(q=>({q}))],()=>{
+      if(rq.length){openDialog(a,rq.map(q=>({q})),()=>{
         S.retry=S.retry.filter(q=>!rq.includes(q));save();refreshHUD();RX.audio.pick();sparkle(V3(a.pos.x,a.pos.y+1.5,a.pos.z),['#F2B93B','#FFE08A','#E2652C'],40);
         if(S.retry.length)toast(`Plus que ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`,3000);else{S.retry=null;save();startFete();}});return;}
       if(S.met.includes(a.id)){openDialog(a,[{t:S.finished?'Merci encore, Roxy ! Le baobab pousse bien.':'Merci Roxy ! Va voir les autres animaux : suis la flèche dorée.',btn:'À plus tard'}]);return;}
@@ -206,6 +207,17 @@
       for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.t+=dt;r.y+=r.vy*dt;r.vy-=6*dt;emit({x:r.x,y:r.y,z:r.z,life:.45,age:0,c:'#FFE08A',s:.6});
         if(r.t>=r.fuse){rockets.splice(i,1);RX.audio.boom();for(let k=0;k<75;k++){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,q=Math.sqrt(1-u*u),sp=6+Math.random()*2.5;
           emit({x:r.x,y:r.y,z:r.z,v:{x:q*Math.cos(th)*sp,y:u*sp,z:q*Math.sin(th)*sp},g:3.2,life:1.5+Math.random()*.9,age:0,c:k%3?r.c:r.c2,s:1.7});}}}}
+    function ficheText(){return 'Le Flair de Roxy — fiche aide-mémoire\n\n'+Object.keys(RX.QUESTIONS).map((k,i)=>{const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k));
+        return `${i+1}. ${a?a.theme+' — ':''}${(Q.lead?Q.lead+' ':'')+Q.q}\n→ ${r.t}\n${r.why}`;}).join('\n\n')+'\n\n'+GAME_URL;}
+    function openFiche(ok){const gold=ok>=12,f=$('#fiche');f.classList.toggle('gold',gold);
+      $('#ficheTitle').textContent=gold?'La fiche du baobab doré':'Votre fiche aide-mémoire';
+      $('#ficheSub').textContent=gold?'Un sans-faute ! Gardez ces 12 réflexes sous la main.':'Les 12 bons réflexes à garder sous la main. Visez le 12/12 pour la version dorée !';
+      $('#ficheList').innerHTML=Object.keys(RX.QUESTIONS).map((k,i)=>{const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k)),miss=S.ans[k]===false;
+        return `<li class="${miss?'miss':''}"><span class="fn">${i+1}</span><div><small>${a?a.name+' · '+a.theme:''}${miss?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">✓ ${r.t}</p><p class="fw">${r.why}</p></div></li>`;}).join('');
+      f.hidden=false;f.scrollTop=0;$('#ficheClose').focus({preventScroll:true});}
+    $('#ficheClose').onclick=()=>{$('#fiche').hidden=true;};
+    $('#ficheCopy').onclick=()=>{const t=ficheText(),done=()=>toast('Fiche copiée : collez-la dans vos notes');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');done();}catch(e){}x.remove();});};
+    $('#ficheShare').onclick=()=>{const t=ficheText();if(navigator.share)navigator.share({title:'Fiche aide-mémoire — Le Flair de Roxy',text:t}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener');};
     const RANKS=[[12,'Flair d’or','Un sans-faute ! Vous avez tous les bons réflexes.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']];
     function showEnd(){document.body.classList.remove('finale');$('#finale').hidden=true;{const k=Object.values(S.ans).filter(Boolean).length;tier=k>=12?3:k>=10?2:k>=7?1:0;}
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
@@ -219,7 +231,13 @@
       $('#goal').hidden=!next;if(next){const k=next[0]-ok;$('#goal').innerHTML=`<b>Encore ${k} bonne${k>1?'s':''} réponse${k>1?'s':''}</b> pour le ${next[1]} ${next[0]===12?'et le baobab doré':''}<span class="gbar"><i style="width:${ok/12*100}%"></i></span>`;}
       const missed=Object.keys(RX.QUESTIONS).filter(q=>S.ans[q]===false);
       $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=missed.length>1?`Rejouer mes ${missed.length} erreurs`:'Rejouer mon erreur';
-      $('#endRetry').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
+      $('#endRetry').onclick=()=>{S.retry=missed;save();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;express=true;
+        const lines=missed.map(q=>({q,who:ANIMALS.find(a=>a.q.includes(q))}));exN=lines.length;
+        openDialog(lines[0].who,lines,()=>{express=false;S.retry=null;save();refreshHUD();startFete();});};
+      $('#endRetryWalk').hidden=!missed.length;
+      $('#endRetryWalk').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
+      $('#ficheBtn').textContent=ok>=12?'🌳 La fiche du baobab doré':'📜 La fiche aide-mémoire';
+      $('#ficheBtn').onclick=()=>openFiche(ok);
       const prevR=S.prevRecord,newRec=!!prevR&&ok>prevR.ok;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';setRecord(ok);
       const medal=ok>=12?'🥇':ok>=10?'🥈':ok>=7?'🥉':'🐶';
       const msg=`${medal} J’ai obtenu le « ${rk[1]} » (${ok}/12) dans Le Flair de Roxy, un petit jeu pour apprendre à bien utiliser Claude. À ton tour de faire mieux ! ${GAME_URL}`;
@@ -316,7 +334,8 @@
         camera.position.set(P.x+Math.sin(yw)*R,P.y+(port?2.2:1.1),P.z+Math.cos(yw)*R);camera.lookAt(V3(P.x,P.y-(port?1.55:.9),P.z));camInit=false;return;}
       if(moving&&clock-lastCamInput>2.5&&!inDialog){let d=heading+Math.PI-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*.9);}
       let target=V3(P.x,P.y+1.05,P.z),pt=pitch,dd=dist;
-      if(inDialog&&talker){target=dlgTarget(talker);let d=dlgYaw-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*3);pt=.42;dd=talker.kind==='elephant'?8.5:6.5;}
+      if(inDialog&&talker&&!express){target=dlgTarget(talker);let d=dlgYaw-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*3);pt=.42;dd=talker.kind==='elephant'?8.5:6.5;}
+      if(express){yaw+=dt*.12;const port=camera.aspect<.8?1.35:1;const t=V3(FETE.x,FETE.y+4,FETE.z),dir=V3(Math.sin(yaw)*Math.cos(.5),Math.sin(.5),Math.cos(yaw)*Math.cos(.5));camT.lerp(t,Math.min(1,dt*3));camera.position.copy(camT).addScaledVector(dir,24*port);camera.lookAt(camT);return;}
       if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,Math.max(0,(e-1.2)/7)),ek=k*k*(3-2*k);const port=camera.aspect<.8?1.35:1;target=V3(FETE.x,FETE.y+1.6+ek*4.5,FETE.z);yaw+=dt*.3;pt=.42+ek*.08;dd=(16+ek*12)*port;
         camT.lerp(target,Math.min(1,dt*4));const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));camera.position.copy(camT).addScaledVector(dir,dd);camera.lookAt(camT);return;}
       if(!camInit){camT.copy(target);camInit=true;}camT.lerp(target,Math.min(1,dt*(inDialog||feteT>0?3:8)));

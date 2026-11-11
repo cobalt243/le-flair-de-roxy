@@ -1,5 +1,12 @@
 # Historique
 
+## 0.9.5 — 11 novembre 2026
+Suite aux premiers retours :
+- **Revanche express** : « Rejouer mes erreurs » affiche directement les questions ratées, sans marcher, puis rejoue la finale. « Rejouer avec les animaux » reste disponible.
+- La revanche avec les animaux ne répète plus leur présentation.
+- **Fiche aide-mémoire** : les 12 questions, la bonne réponse et l’explication, à partager ou copier ; erreurs signalées « à revoir » ; version dorée « fiche du baobab doré » pour un 12/12.
+- « Défier mes collègues » et « Rejouer mon erreur » (singulier).
+
 ## 0.9.2 — 11 novembre 2026
 Les fichiers du jeu portent un numéro de version dans leur adresse, pour que les téléphones chargent toujours la dernière version ensemble.
 
