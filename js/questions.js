@@ -12,7 +12,11 @@
     q3:{q:"Lequel de ces deux prompts donnera le meilleur résumé pour notre bailleur de fonds ?",opts:[
       {t:"« Résume ce rapport. »",ok:false,why:"Claude ignore qui va lire et pourquoi : le résumé sera générique."},
       {t:"« Résume ce rapport T3 pour notre bailleur de fonds, qui le lira en 5 minutes. »",ok:true,why:"Il précise le lecteur, son temps et l’objet du document : Claude peut cibler l’essentiel."}]},
-    q4:VF("« Vous pouvez demander à Claude de vous poser des questions avant de répondre. »",true,"C’est très utile : « Avant de rédiger, pose-moi jusqu’à 3 questions. » Claude comble alors ce qui manque avec vous."),
+    q4:{q:"Il est 22 h, vous êtes chez vous et vous devez relire un contrat de travail pour demain. Votre ordinateur du bureau est resté au travail. Que faites-vous ?",opts:[
+      {t:"J’utilise mon compte Claude personnel, en retirant d’abord le nom de l’employé.",ok:false,why:"Même sans le nom, c’est un document de travail : il ne va pas dans un compte personnel."},
+      {t:"Je me connecte au compte Claude de mon organisation depuis mon appareil.",ok:true,why:"Un document de travail va dans le compte de l’organisation : seul ce compte est couvert par le contrat et les règles de votre organisation."},
+      {t:"J’utilise mon compte personnel, puis je supprime la conversation juste après.",ok:false,why:"Supprimer ensuite ne change rien : le document est déjà sorti du cadre de votre organisation."},
+      {t:"J’utilise mon compte personnel en activant le mode incognito.",ok:false,why:"Le mode incognito reste un compte personnel : il n’est pas couvert par les règles de votre organisation."}]},
     q5:{q:"Chaque semaine, vous travaillez sur le même dossier, avec les mêmes documents et les mêmes consignes. Que choisissez-vous ?",opts:[
       {t:"Un Projet, qui garde vos documents et vos consignes.",ok:true,why:"Un Projet regroupe les documents de référence et des instructions permanentes : plus besoin de tout réexpliquer."},
       {t:"Une nouvelle conversation, en recollant tout à chaque fois.",ok:false,why:"Possible, mais vous perdez du temps à tout recharger chaque semaine."},
@@ -33,11 +37,10 @@
       {t:"« 2 pages maximum : compare 3 options dans un tableau (coût, délai, risque) et termine par ta recommandation. »",ok:true,why:"Longueur, structure et contenu attendus : Claude sait exactement quoi corriger."},
       {t:"« 2 pages maximum : compare 3 options et annonce la décision finale de la direction. »",ok:false,why:"Claude ne doit pas décider à la place de la direction : il recommande, vous décidez."},
       {t:"« Propose-moi 3 versions différentes, je choisirai. »",ok:false,why:"Trois fois plus à relire, sans avoir dit ce qui n’allait pas."}]},
-    q12:{q:"Vous voulez que Claude prépare l’ordre du jour de la réunion d’équipe de lundi. Quel prompt choisissez-vous ?",opts:[
-      {t:"« Prépare l’ordre du jour de la réunion de lundi, avec tous les sujets importants du moment. »",ok:false,why:"Claude ne connaît pas « les sujets importants du moment » : il devra deviner."},
-      {t:"« Prépare l’ordre du jour de lundi : réunion d’1 h, 6 personnes, 4 points (budget, recrutement, mission de mars, divers), avec durée et responsable. »",ok:true,why:"Durée, participants, sujets et format : tout est précisé. Claude organise, sans rien inventer."},
-      {t:"« Prépare l’ordre du jour de lundi : réunion d’1 h, 4 points ; invente des sujets réalistes si je n’en donne pas. »",ok:false,why:"Bien cadré, mais demander d’inventer donne un ordre du jour sans lien avec la réalité."},
-      {t:"« Prépare un ordre du jour professionnel et bien présenté pour notre prochaine réunion. »",ok:false,why:"« Professionnel » ne dit ni la durée, ni les participants, ni les sujets."}]}
+    q12:{q:"L’équipe de suivi-évaluation veut présenter 5 indicateurs en réunion, avec la cible et le résultat atteint. Quelle fonction de Claude utilisez-vous ?",opts:[
+      {t:"Un artefact : une page que Claude crée (tableau de bord, graphiques) et que vous partagez.",ok:true,why:"Un artefact est une page, un outil ou un document que Claude crée et que vous ouvrez et partagez. Les chiffres, c’est vous qui les fournissez."},
+      {t:"Un Projet, qui garde vos documents et vos consignes.",ok:false,why:"Un Projet organise votre travail, mais il ne produit pas la page à présenter."},
+      {t:"La recherche web, pour trouver des chiffres en ligne.",ok:false,why:"Vos indicateurs sont internes : ils ne sont pas sur le web."}]}
   };
   RX.MEMO=["Claude peut se tromper avec assurance : vérifiez à la source.","Une demande précise (lecteur, format, limites) donne une meilleure réponse.","Pas de données personnelles ou sensibles sans autorisation."];
 })(window.RX);

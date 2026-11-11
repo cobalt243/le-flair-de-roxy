@@ -34,7 +34,7 @@
     const ANIMALS=[
       {id:'agame',kind:'agama',make:RX.createAgama,name:'L’agame',theme:'Connaître Claude',q:['q1','q2'],pos:V3(26.5,top(26.5,48.5),48.5),
         intro:'Salut Roxy ! Moi, je fais des pompes sur les rochers. Et toi, sais-tu ce que Claude sait faire… ou pas ?'},
-      {id:'elephant',kind:'elephant',make:RX.createElephant,name:'L’éléphant',theme:'Le bon prompt',q:['q3','q4'],pos:V3(43.5,world.surface(43,41),41.5),
+      {id:'elephant',kind:'elephant',make:RX.createElephant,name:'L’éléphant',theme:'Le bon prompt',q:['q3','q11'],pos:V3(43.5,world.surface(43,41),41.5),
         intro:'Bonjour Roxy ! Demander de l’aide à Claude, c’est tout un art. Ta demande écrite s’appelle un « prompt ». Voyons ta façon de demander.'},
       {id:'patas',kind:'patas',make:RX.createPatas,name:'Le singe patas',theme:'Les outils',q:['q5','q6'],pos:V3(32.5,world.surface(32,50),50.5),
         intro:'Hé, Roxy ! Claude a plusieurs outils. Sauras-tu choisir le bon ?'},
@@ -42,8 +42,8 @@
         intro:'Roxy ! Avant de confier une information à Claude, on réfléchit. À toi de trier !'},
       {id:'vautour',kind:'vulture',make:RX.createVulture,name:'Le vautour',theme:'Vérifier',q:['q9','q10'],pos:V3(40.5,top(40.5,30.5),30.5),
         intro:'Rien n’échappe à mon œil, Roxy. Et toi, sais-tu vérifier ce que Claude écrit ?'},
-      {id:'tortue',kind:'tortoise',make:RX.createTortoise,name:'La tortue sillonnée',theme:'Le dossier complet',q:['q11','q12'],pos:V3(22.5,world.surface(22,world.CAVE_EZ+2),world.CAVE_EZ+2.5),
-        intro:'Doucement, Roxy… Un bon dossier se mène pas à pas. Voici mes deux questions.'}];
+      {id:'tortue',kind:'tortoise',make:RX.createTortoise,name:'La tortue sillonnée',theme:'Claude au travail',q:['q4','q12'],pos:V3(22.5,world.surface(22,world.CAVE_EZ+2),world.CAVE_EZ+2.5),
+        intro:'Doucement, Roxy… Au travail, on utilise Claude avec méthode. Voici mes deux questions.'}];
     const critMat=new THREE.MeshLambertMaterial({map:RX.edgeTexture(234,246,9)});
     ANIMALS.forEach((a,i)=>{a.model=a.make(critMat,quality);a.model.object.position.copy(a.pos);a.model.object.rotation.y=Math.PI;scene.add(a.model.object);a.phase=i*1.7;});
 

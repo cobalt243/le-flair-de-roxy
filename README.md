@@ -16,7 +16,7 @@ Le joueur promène Roxy, une chienne Shar-Peï en blocs, au pied d’une grande 
 | Singe patas | Les outils |
 | Calao | Les données |
 | Vautour | Vérifier |
-| Tortue sillonnée | Le dossier complet |
+| Tortue sillonnée | Claude au travail (compte de l’organisation, artefacts) |
 
 À la fin : un grand final selon le score, une médaille (Flair d’or, d’argent, de bronze ou Chiot curieux), « Rejouer mes erreurs », « Défier mes amis » et un record conservé.
 

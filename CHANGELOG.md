@@ -1,5 +1,8 @@
 # Historique
 
+## 0.8 — 11 novembre 2026
+Jeu recentré sur Claude en entreprise : deux nouvelles questions posées par la tortue (« Claude au travail ») sur le compte de l’organisation et sur les artefacts (tableau de bord de suivi-évaluation). Elles remplacent deux questions sur la rédaction des demandes. L’éléphant pose désormais les questions 3 et 11. « Bailleur de fonds » dans la question 3.
+
 ## 0.7 — 11 novembre 2026
 Corrections issues de la révision finale :
 - La mare n’est plus un piège : fond relevé, saut normal dans l’eau, et Roxy est ramenée sur la berge après quelques secondes dans l’eau.
