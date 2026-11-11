@@ -396,7 +396,9 @@
     if(S.finished){$('#seeResult').hidden=false;$('#pauseResult').hidden=false;}
     if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Animaux rencontrés : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
     $('#newGame').onclick=()=>{const b=$('#newGame');if(b.dataset.ok){restart();return;}b.dataset.ok=1;b.textContent='Confirmer : effacer ma progression';};
-    if(S.finished){const playGame=$('#play').onclick;$('#play').textContent='Nouvelle partie';$('#play').onclick=()=>restart();
+    if(S.finished&&S.retry&&S.retry.length){const n=S.retry.length;$('#play').textContent='Reprendre ma revanche';$('#progress').textContent=`Revanche en cours : ${n} question${n>1?'s':''} à rejouer`;
+      $('#newGame').textContent='Nouvelle partie';$('#newGame').dataset.ok='';}
+    else if(S.finished){const playGame=$('#play').onclick;$('#play').textContent='Nouvelle partie';$('#play').onclick=()=>restart();
       const b=$('#newGame');b.textContent='Continuer à explorer l’ancienne partie';b.onclick=playGame;}
     if(params.has('test')){started=true;paused=false;$('#start').hidden=true;}
 

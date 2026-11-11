@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.8 — 11 novembre 2026
+Si la page est rechargée pendant une revanche, l’accueil propose « Reprendre ma revanche » en bouton principal (« Nouvelle partie » reste disponible, avec confirmation).
+
 ## 0.9.7 — 11 novembre 2026
 Question 10 (vautour) plus exigeante : une note à envoyer dans 10 minutes avec un chiffre non vérifié ; la bonne réponse est de retirer le chiffre ou d’indiquer « à vérifier ». Le message technique « Ombres désactivées » ne s’affiche plus (le réglage se fait sans rien dire).
 
