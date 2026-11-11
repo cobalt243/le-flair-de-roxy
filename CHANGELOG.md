@@ -1,5 +1,11 @@
 # Historique
 
+## 0.6 — 11 novembre 2026
+Pour donner envie de rejouer : bouton « Rejouer mes erreurs » (seuls les animaux concernés reposent les questions ratées, la médaille peut monter), objectif vers la médaille suivante avec barre de progression, bouton « Défier mes amis » (WhatsApp ou partage du téléphone, message prêt avec le score et le lien) et record conservé, affiché sur l’écran d’accueil.
+
+## 0.5 — 11 novembre 2026
+Grand final selon le score (Parfait, Bravo, Bien joué, Bon début) : baobab qui pousse, feux d’artifice, médailles or, argent, bronze ou Chiot curieux.
+
 ## 0.4 — 11 novembre 2026
 Écran titre : décor visible avec Roxy, phrase de bénéfice, trois pictogrammes (marcher, suivre la flèche, parler), progression et « Nouvelle partie ».
 

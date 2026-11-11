@@ -142,7 +142,7 @@
     function toast(t,ms=2800){hud.toast.textContent=t;hud.toast.classList.add('show');clearTimeout(hud.toast._t);hud.toast._t=setTimeout(()=>hud.toast.classList.remove('show'),ms);}
     function refreshHUD(){const n=S.met.length;
       hud.stars.innerHTML=ANIMALS.map(a=>`<span class="star ${S.met.includes(a.id)?'got':''}" title="${a.name}" aria-label="${a.name} : ${S.met.includes(a.id)?'rencontré':'à rencontrer'}"></span>`).join('');
-      hud.obj.textContent=S.finished?'Bravo ! Explorez librement.':n===0?'Allez à la rencontre des animaux.':n<6?`Animaux rencontrés : ${n} sur 6`:'Tous les animaux sont rencontrés !';}
+      hud.obj.textContent=S.retry&&S.retry.length?`Revanche : ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`:S.finished?'Bravo ! Explorez librement.':n===0?'Allez à la rencontre des animaux.':n<6?`Animaux rencontrés : ${n} sur 6`:'Tous les animaux sont rencontrés !';}
     refreshHUD();
 
     /* ===== Dialogues et questions ===== */
@@ -162,7 +162,7 @@
         $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});}
       hud.dlg.scrollTop=0;}
     function answerKey(i){if(!curQ||qAnswered||performance.now()-lineAt<400)return;const o=curQ.opts[i];if(!o)return;qAnswered=true;
-      const key=dq[0].q;if(S.ans[key]===undefined)S.ans[key]=o.ok;save();
+      const key=dq[0].q;if(S.ans[key]===undefined||(S.retry&&S.retry.includes(key)))S.ans[key]=o.ok;save();
       hud.dlg.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;b.classList.add(curQ.opts[k].ok?'right':k===i?'wrong':'dim');});
       const right=curQ.opts.find(x=>x.ok);lineAt=performance.now();
       $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:right.why}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
@@ -171,7 +171,16 @@
     function dialogAdvance(){if(curQ&&!qAnswered)return;if(performance.now()-lineAt<400)return;lineAt=performance.now();dq.shift();
       if(dq.length)showLine();else{hud.dlg.hidden=true;inDialog=false;document.body.classList.remove('indialog');curQ=null;const d=dqDone;dqDone=null;talker=null;d&&d();}}
 
+    const GAME_URL='https://cobalt243.github.io/le-flair-de-roxy/';
+    const REC_KEY='flair-roxy-record';
+    function getRecord(){try{return JSON.parse(localStorage.getItem(REC_KEY))||null;}catch(e){return null;}}
+    function setRecord(ok){const r=getRecord();if(!r||ok>r.ok){try{localStorage.setItem(REC_KEY,JSON.stringify({ok}));}catch(e){}return true;}return false;}
+    const retryOf=a=>(S.retry||[]).filter(q=>a.q.includes(q));
     function talkTo(a){
+      const rq=retryOf(a);
+      if(rq.length){openDialog(a,[{t:`Revanche, Roxy ! Je te repose ${rq.length>1?'mes deux questions':'ma question'}. Prends ton temps.`,btn:'C’est parti'},...rq.map(q=>({q}))],()=>{
+        S.retry=S.retry.filter(q=>!rq.includes(q));save();refreshHUD();RX.audio.pick();sparkle(V3(a.pos.x,a.pos.y+1.5,a.pos.z),['#F2B93B','#FFE08A','#E2652C'],40);
+        if(S.retry.length)toast(`Plus que ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`,3000);else{S.retry=null;save();startFete();}});return;}
       if(S.met.includes(a.id)){openDialog(a,[{t:S.finished?'Merci encore, Roxy ! Le baobab pousse bien.':'Merci Roxy ! Va voir les autres animaux : suis la flèche dorée.',btn:'À plus tard'}]);return;}
       openDialog(a,[{t:a.intro,btn:'C’est parti'},{q:a.q[0]},{q:a.q[1]}],()=>{
         S.met.push(a.id);save();refreshHUD();RX.audio.pick();sparkle(V3(a.pos.x,a.pos.y+1.5,a.pos.z),['#F2B93B','#FFE08A','#E2652C'],40);
@@ -198,10 +207,21 @@
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];
       const st=ok>=12?3:ok>=10?2:ok>=7?1:0;$('#endStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.9+i*.25}s">★</span>`).join('');
-      $('#endStats').innerHTML=`<li><b id="scoreNum">0/12</b> bonnes réponses du premier coup</li><li><b>${m} min ${String(s).padStart(2,'0')}</b> de jeu</li>`;
+      $('#endStats').innerHTML=`<li><b id="scoreNum">0/12</b> bonnes réponses</li><li><b>${m} min ${String(s).padStart(2,'0')}</b> de jeu</li>`;
       let n=0;const tick=()=>{if(n>ok)return;$('#scoreNum').textContent=n+'/12';if(n>0)RX.audio.tick(n);n++;setTimeout(tick,reduced?0:110);};setTimeout(tick,reduced?0:500);
       $('#confetti').innerHTML=reduced?'':Array.from({length:[8,20,40,70][tier]},(_,i)=>`<i style="left:${Math.random()*100}%;background:${FW[i%FW.length]};animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(3+Math.random()*3).toFixed(2)}s"></i>`).join('');
-      $('#endMemo').innerHTML=RX.MEMO.map(t=>`<li>${t}</li>`).join('');$('#end').hidden=false;paused=true;$('#endContinue').focus({preventScroll:true});$('.endcard').scrollTop=0;}
+      $('#endMemo').innerHTML=RX.MEMO.map(t=>`<li>${t}</li>`).join('');
+      const next=[[7,'Flair de bronze'],[10,'Flair d’argent'],[12,'Flair d’or']].find(r=>ok<r[0]);
+      $('#goal').hidden=!next;if(next){const k=next[0]-ok;$('#goal').innerHTML=`<b>Encore ${k} bonne${k>1?'s':''} réponse${k>1?'s':''}</b> pour le ${next[1]} ${next[0]===12?'et le baobab doré':''}<span class="gbar"><i style="width:${ok/12*100}%"></i></span>`;}
+      const missed=Object.keys(RX.QUESTIONS).filter(q=>S.ans[q]===false);
+      $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=`Rejouer mes ${missed.length} erreur${missed.length>1?'s':''}`;
+      $('#endRetry').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
+      const prevR=getRecord(),newRec=setRecord(ok)&&!!prevR;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';
+      const medal=ok>=12?'🥇':ok>=10?'🥈':ok>=7?'🥉':'🐶';
+      const msg=`${medal} J’ai obtenu le « ${rk[1]} » (${ok}/12) dans Le Flair de Roxy, un petit jeu pour apprendre à bien utiliser Claude. À ton tour de faire mieux ! ${GAME_URL}`;
+      $('#share').href='https://wa.me/?text='+encodeURIComponent(msg);
+      $('#share').onclick=e=>{if(navigator.share){e.preventDefault();navigator.share({text:msg}).catch(()=>{});}};
+      $('#copyMsg').onclick=()=>{const done=()=>toast('Message copié : collez-le dans WhatsApp');(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(done).catch(()=>{const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){}t.remove();});};$('#end').hidden=false;paused=true;$('#endContinue').focus({preventScroll:true});$('.endcard').scrollTop=0;}
     $('#endContinue').onclick=()=>{$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;};
     $('#endRestart').onclick=()=>restart();
 
@@ -257,7 +277,8 @@
       hud.prompt.innerHTML=inDialog||paused||!near?'':`<kbd>E</kbd> Parler à ${nameLow(near)}`;
       document.body.classList.toggle('cantalk',!!near&&!inDialog);
       if(touch){const lb=near?'Parler':'…';const el=$('#bAct b');if(el.textContent!==lb)el.textContent=lb;}}
-    function objectiveTarget(){if(S.finished)return null;const todo=ANIMALS.filter(a=>!S.met.includes(a.id));if(!todo.length)return null;
+    function objectiveTarget(){if(S.retry&&S.retry.length){const t=ANIMALS.filter(a=>retryOf(a).length);t.sort((a,b)=>Math.hypot(a.pos.x-P.x,a.pos.z-P.z)-Math.hypot(b.pos.x-P.x,b.pos.z-P.z));const a=t[0];return a?a.pos.clone().add(V3(0,a.kind==='elephant'?3.9:2.1,0)):null;}
+      if(S.finished)return null;const todo=ANIMALS.filter(a=>!S.met.includes(a.id));if(!todo.length)return null;
       todo.sort((a,b)=>Math.hypot(a.pos.x-P.x,a.pos.z-P.z)-Math.hypot(b.pos.x-P.x,b.pos.z-P.z));const a=todo[0];return a.pos.clone().add(V3(0,a.kind==='elephant'?3.9:2.1,0));}
 
     /* Tutoriel en 3 bulles */
@@ -342,6 +363,7 @@
       requestAnimationFrame(frame);}
     requestAnimationFrame(frame);
     $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.finished?'Explorer à nouveau':S.met.length?'Reprendre':'Jouer';
+    {const r=getRecord();if(r){$('#record').hidden=false;$('#record').textContent=`Votre record : ${r.ok>=12?'🥇 Flair d’or':r.ok>=10?'🥈 Flair d’argent':r.ok>=7?'🥉 Flair de bronze':'Chiot curieux'} (${r.ok}/12)`;}}
     if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Animaux rencontrés : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
     $('#newGame').onclick=()=>{const b=$('#newGame');if(b.dataset.ok){restart();return;}b.dataset.ok=1;b.textContent='Confirmer : effacer ma progression';};
     if(params.has('test')){started=true;paused=false;$('#start').hidden=true;}
