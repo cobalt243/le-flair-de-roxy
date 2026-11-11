@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.2 — 11 novembre 2026
+Les fichiers du jeu portent un numéro de version dans leur adresse, pour que les téléphones chargent toujours la dernière version ensemble.
+
 ## 0.9.1 — 11 novembre 2026
 Après la finale, la caméra ne traverse plus le grand baobab pendant les dialogues. Quand le parcours est terminé, l’écran d’accueil propose « Nouvelle partie » en bouton principal.
 
