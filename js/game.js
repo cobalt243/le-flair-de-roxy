@@ -219,7 +219,7 @@
     $('#ficheClose').onclick=()=>{$('#fiche').hidden=true;};
     $('#ficheCopy').onclick=()=>{const t=ficheText(),done=()=>toast('Fiche copiée : collez-la dans vos notes');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');done();}catch(e){}x.remove();});};
     $('#ficheShare').onclick=()=>{const t=ficheText();if(navigator.share)navigator.share({title:'Fiche aide-mémoire — Le Flair de Roxy',text:t}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener');};
-    const RANKS=[[12,'Flair d’or','Un sans-faute ! Vous avez tous les bons réflexes.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']];
+    const RANKS=[[12,'Flair d’or','Un sans-faute ! Tous vos réflexes sont\u00A0les\u00A0bons.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']];
     function showEnd(){document.body.classList.remove('finale');$('#finale').hidden=true;{const k=Object.values(S.ans).filter(Boolean).length;tier=k>=12?3:k>=10?2:k>=7?1:0;}
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];

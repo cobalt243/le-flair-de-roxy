@@ -1,5 +1,9 @@
 # Historique
 
+## 1.0.2 — 11 novembre 2026
+- Médailles : nouvelle tête de Roxy en blocs (style du jeu : plis du front, museau foncé, oreilles repliées, contour), médaille un peu plus grande.
+- Écriture inclusive par reformulation neutre : écran final 12/12, questions 3, 4 et 8, « À retenir ».
+
 ## 1.0.1 — 11 novembre 2026
 Écran final : le lien « Copier le message du défi » est retiré. « Défier mes collègues » ouvre déjà le menu de partage du téléphone (WhatsApp, Teams, courriel, SMS…).
 
