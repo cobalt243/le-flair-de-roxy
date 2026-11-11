@@ -68,7 +68,8 @@ body:has(#cine:not([hidden])) #hudL,body:has(#cine:not([hidden])) #hudR,body:has
 .opts{display:flex;flex-direction:column;gap:7px}
 .opt{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:2px solid var(--cream2);border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600;line-height:1.35}
 .opt b{font-family:var(--f-display);color:var(--ochre);min-width:14px}
-.opt:hover:not([disabled]){border-color:var(--ochre)}
+@media (hover:hover){.opt:hover:not([disabled]){border-color:var(--ochre)}}
+.opt{-webkit-tap-highlight-color:transparent}
 .opt.right{border-color:var(--good);background:#E3F2E6}.opt.wrong{border-color:var(--bad);background:#F8E1DA}.opt.dim{opacity:.5}
 .fb{font-size:14.5px;line-height:1.45;display:flex;flex-direction:column;gap:8px}
 .fb:empty{display:none}
