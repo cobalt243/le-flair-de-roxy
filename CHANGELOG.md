@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.1 — 11 novembre 2026
+Après la finale, la caméra ne traverse plus le grand baobab pendant les dialogues. Quand le parcours est terminé, l’écran d’accueil propose « Nouvelle partie » en bouton principal.
+
 ## 0.9 — 11 novembre 2026
 Son : le souffle de fond (vent) est fortement réduit et adouci, les bruits de pas sont plus discrets.
 

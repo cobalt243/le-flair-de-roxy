@@ -148,7 +148,8 @@
     /* ===== Dialogues et questions ===== */
     let dlgClosedAt=0,dq=[],dqDone=null,curQ=null,qAnswered=false,lineAt=0,talker=null;
     let dlgYaw=0;
-    function clearShot(t,yw,pt,dd){const dir=V3(Math.sin(yw)*Math.cos(pt),Math.sin(pt),Math.cos(yw)*Math.cos(pt));for(let s=.5;s<=dd;s+=.3){const q=t.clone().addScaledVector(dir,s);if(world.solid(q.x,q.y,q.z))return false;}return true;}
+    function blocked(q){if(world.solid(q.x,q.y,q.z))return true;if(!S.finished)return false;const d=Math.hypot(q.x-FETE.x,q.z-FETE.z),y=q.y-FETE.y;return (d<2.6&&y<9.5)||(d<5.4&&y>8.3&&y<12.6);}
+    function clearShot(t,yw,pt,dd){const dir=V3(Math.sin(yw)*Math.cos(pt),Math.sin(pt),Math.cos(yw)*Math.cos(pt));for(let s=.5;s<=dd;s+=.3){const q=t.clone().addScaledVector(dir,s);if(blocked(q))return false;}return true;}
     function dlgTarget(a){return V3((P.x+a.pos.x)/2,(P.y+a.pos.y)/2+.3,(P.z+a.pos.z)/2);}
     function chooseShot(a){const base=Math.atan2(P.x-a.pos.x,P.z-a.pos.z),t=dlgTarget(a),dd=a.kind==='elephant'?8.5:6.5;
       for(const o of [1.0,-1.0,.55,-.55,1.5,-1.5,0,2.2,-2.2]){if(clearShot(t,base+o,.42,dd)){dlgYaw=base+o;return;}}dlgYaw=base+1.0;}
@@ -320,7 +321,7 @@
         camT.lerp(target,Math.min(1,dt*4));const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));camera.position.copy(camT).addScaledVector(dir,dd);camera.lookAt(camT);return;}
       if(!camInit){camT.copy(target);camInit=true;}camT.lerp(target,Math.min(1,dt*(inDialog||feteT>0?3:8)));
       const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));
-      let d2=dd;for(let s=.5;s<=dd;s+=.25){const q=camT.clone().addScaledVector(dir,s);if(world.solid(q.x,q.y,q.z)){d2=Math.max(1.2,s-.35);break;}}
+      let d2=dd;for(let s=.5;s<=dd;s+=.25){const q=camT.clone().addScaledVector(dir,s);if(blocked(q)){d2=Math.max(1.2,s-.35);break;}}
       camera.position.copy(camT).addScaledVector(dir,d2);
       if(cineT>0){const k=1-cineT/CINE,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const S0=V3(P.x-26,30,P.z+30),L0=V3(32,14,10);
         camera.position.lerpVectors(S0,camera.position.clone(),e);camera.lookAt(V3(0,0,0).lerpVectors(L0,camT,e));}else camera.lookAt(camT);}
@@ -369,11 +370,13 @@
       if(fpsEl){fpsAcc+=dt;fpsN++;if(fpsAcc>1){fps=Math.round(fpsN/fpsAcc);fpsAcc=0;fpsN=0;fpsEl.textContent=fps+' img/s';}}
       requestAnimationFrame(frame);}
     requestAnimationFrame(frame);
-    $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.finished?'Explorer à nouveau':S.met.length?'Reprendre':'Jouer';
+    $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.met.length?'Reprendre':'Jouer';
     {const r=getRecord();if(r){$('#record').hidden=false;$('#record').textContent=`Votre record : ${r.ok>=12?'🥇 Flair d’or':r.ok>=10?'🥈 Flair d’argent':r.ok>=7?'🥉 Flair de bronze':'Chiot curieux'} (${r.ok}/12)`;}}
     if(S.finished){$('#seeResult').hidden=false;$('#pauseResult').hidden=false;}
     if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Animaux rencontrés : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
     $('#newGame').onclick=()=>{const b=$('#newGame');if(b.dataset.ok){restart();return;}b.dataset.ok=1;b.textContent='Confirmer : effacer ma progression';};
+    if(S.finished){const playGame=$('#play').onclick;$('#play').textContent='Nouvelle partie';$('#play').onclick=()=>restart();
+      const b=$('#newGame');b.textContent='Continuer à explorer l’ancienne partie';b.onclick=playGame;}
     if(params.has('test')){started=true;paused=false;$('#start').hidden=true;}
 
     /* Accès de test (automatisation) */
