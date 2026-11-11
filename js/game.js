@@ -235,7 +235,7 @@
       $('#endRetry').onclick=()=>{S.retry=missed;save();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;express=true;
         const lines=missed.map(q=>({q,who:ANIMALS.find(a=>a.q.includes(q))}));exN=lines.length;
         openDialog(lines[0].who,lines,()=>{express=false;S.retry=null;save();refreshHUD();startFete();});};
-      $('#endRetryWalk').hidden=!missed.length;
+      $('#endRetryWalk').hidden=true; // revanche à pied retirée de l'écran final (doublon de la revanche express)
       $('#endRetryWalk').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
       $('#ficheBtn').textContent=ok>=12?'🌳 La fiche du baobab doré':'📜 La fiche aide-mémoire';
       $('#ficheBtn').onclick=()=>openFiche(ok);

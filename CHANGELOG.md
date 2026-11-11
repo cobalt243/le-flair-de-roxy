@@ -1,5 +1,8 @@
 # Historique
 
+## 1.0 — 11 novembre 2026
+Écran final : le lien « Rejouer avec les animaux » est retiré (doublon de « Rejouer mes erreurs »). Il reste deux liens : « Continuer à explorer » et « Tout recommencer ».
+
 ## 0.9.9 — 11 novembre 2026
 Écran final simplifié : « À retenir » sous le score, « Rejouer mes erreurs » en premier quand il y a des erreurs (« Défier mes collègues » devient secondaire), actions secondaires regroupées sur une ligne de liens.
 
