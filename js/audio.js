@@ -4,8 +4,8 @@
   function init(){if(ctx)return;try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
     master=ctx.createGain();master.gain.value=1.0;master.connect(ctx.destination);
     const len=ctx.sampleRate*2,buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);let last=0;
-    for(let i=0;i<len;i++){last=(last+.02*(Math.random()*2-1))/1.02;d[i]=last*3.5;}
-    const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=420;
+    for(let i=0;i<len;i++){last=(last+.02*(Math.random()*2-1))/1.02;d[i]=last*3.5;}for(let i=0;i<2000;i++){const k=i/2000;d[i]*=k;d[len-1-i]*=k;}
+    const src=ctx.createBufferSource();src.buffer=buf;src.loop=true;const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=240;
     windGain=ctx.createGain();windGain.gain.value=0;src.connect(lp).connect(windGain).connect(master);src.start();}
   function tone(f,dur,type='sine',vol=.08,delay=0,slide=0){if(!enabled||!ctx)return;vol*=2.2;const t=ctx.currentTime+delay,o=ctx.createOscillator(),g=ctx.createGain();
     o.type=type;o.frequency.setValueAtTime(f,t);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(40,f+slide),t+dur);
@@ -80,13 +80,13 @@
     mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;piece=null;mTimer=setInterval(schedule,60);}
   function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}}
   RX.audio={
-    toggle(){init();if(!ctx)return false;enabled=!enabled;if(enabled){unlock();if(musicWanted)startMusic();}else stopMusic();if(windGain)windGain.gain.setTargetAtTime(enabled?.09:0,ctx.currentTime,.4);return enabled;},
+    toggle(){init();if(!ctx)return false;enabled=!enabled;if(enabled){unlock();if(musicWanted)startMusic();}else stopMusic();if(windGain)windGain.gain.setTargetAtTime(enabled?.015:0,ctx.currentTime,.4);return enabled;},
     setMusic(on){musicWanted=on;try{localStorage.setItem('flair-roxy-musique',on?'oui':'non');}catch(e){}if(on&&enabled)startMusic();else stopMusic();},
     get music(){return musicWanted;},
     get musicPlaying(){return !!mTimer;},
     unlock,
     get on(){return enabled;},
-    step(){noise(.06,700,.05);},
+    step(){noise(.05,500,.018);},
     jump(){tone(330,.18,'triangle',.06,0,220);},
     sniff(){for(let i=0;i<3;i++)noise(.09,2400,.09,i*.14);},
     dig(){noise(.18,260,.16);tone(90,.2,'sine',.08);},
@@ -104,7 +104,7 @@
     tick(n){tone(660+n*40,.06,'square',.025);},
     win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.3,'sine',.08,i*.12));},
     splash(){noise(.25,900,.08);},
-    ambience(dt,day,wind){if(!enabled||!ctx)return;dayF=day;if(mGain&&mTimer){const lv=.42+.18*day;if(Math.abs(lv-mLevel)>.02){mLevel=lv;mGain.gain.setTargetAtTime(mLevel,ctx.currentTime,2);}}if(windGain)windGain.gain.setTargetAtTime(.06+.08*wind,ctx.currentTime,.8);
+    ambience(dt,day,wind){if(!enabled||!ctx)return;dayF=day;if(mGain&&mTimer){const lv=.42+.18*day;if(Math.abs(lv-mLevel)>.02){mLevel=lv;mGain.gain.setTargetAtTime(mLevel,ctx.currentTime,2);}}if(windGain)windGain.gain.setTargetAtTime(.008+.014*wind,ctx.currentTime,.8);
       birdT-=dt;if(birdT<=0){birdT=3+Math.random()*7;if(day>.35){const f=1800+Math.random()*1400;tone(f,.09,'sine',.035,0,600);tone(f*1.1,.08,'sine',.03,.12,-400);}
         else{for(let i=0;i<4;i++)tone(4200,.03,'square',.012,i*.06);}}}
   };

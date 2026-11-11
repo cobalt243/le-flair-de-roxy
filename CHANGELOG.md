@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9 — 11 novembre 2026
+Son : le souffle de fond (vent) est fortement réduit et adouci, les bruits de pas sont plus discrets.
+
 ## 0.8 — 11 novembre 2026
 Jeu recentré sur Claude en entreprise : deux nouvelles questions posées par la tortue (« Claude au travail ») sur le compte de l’organisation et sur les artefacts (tableau de bord de suivi-évaluation). Elles remplacent deux questions sur la rédaction des demandes. L’éléphant pose désormais les questions 3 et 11. « Bailleur de fonds » dans la question 3.
 
