@@ -207,7 +207,7 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 <body>
 <div id="game" aria-label="Scène 3D du jeu"></div>
 
-<div id="hudL" class="panel"><h1><small>Version 0.9.2</small>Le Flair de Roxy</h1><p id="objective"></p><div class="row2"><div id="stars"></div><span id="dist"></span></div></div>
+<div id="hudL" class="panel"><h1><small>Version 0.9.3</small>Le Flair de Roxy</h1><p id="objective"></p><div class="row2"><div id="stars"></div><span id="dist"></span></div></div>
 <div id="hudR"><button class="chip" id="btnSound" aria-pressed="false">Son : non</button><button class="chip" id="btnPause" aria-label="Pause et options">Pause</button></div>
 <div id="prompt"></div>
 <div id="tip" hidden></div>
@@ -215,7 +215,7 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 <div id="finale" hidden aria-live="polite"><h2>Bravo&nbsp;!</h2><p>Le baobab du savoir a poussé</p></div>
 <div id="confetti" aria-hidden="true"></div>
 <div id="edge" hidden aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h13M11 5l8 7-8 7"/></svg><span></span></div>
-<div id="cine" hidden><p>Un monde en blocs</p><h2>Le Flair de <span>Roxy</span></h2><small>Touchez pour passer</small></div>
+<div id="cine" hidden><p>Apprendre Claude, bloc par bloc</p><h2>Le Flair de <span>Roxy</span></h2><small>Touchez pour passer</small></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="fps" hidden></div>
 <section id="dialog" class="panel" hidden aria-live="polite"></section>
@@ -240,7 +240,7 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
     <p id="loading" class="note">Construction du monde en blocs…</p>
     <p class="ts-sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span class="mob">Montez le volume. Sur iPhone, désactivez le mode silencieux.</span><span class="desk">Activez le son pour profiter de la musique. Environ 8 minutes.</span></p>
   </div>
-  <p class="ts-credit">Version 0.9.2 · Concept et création : Jean-Marc Pagé · Projet éducatif indépendant, non affilié à Anthropic</p>
+  <p class="ts-credit">Version 0.9.3 · Concept et création : Jean-Marc Pagé · Projet éducatif indépendant, non affilié à Anthropic</p>
 </div>
 
 <div id="pause" class="screen" hidden><div class="card panel">
@@ -275,13 +275,13 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>if(!window.THREE){document.write('<script src="vendor/three.min.js"><\/script>');}</script>
-<script src="js/voxel-sdf.js?v=0.9.2"></script>
-<script src="js/roxy.js?v=0.9.2"></script>
-<script src="js/animals.js?v=0.9.2"></script>
-<script src="js/world.js?v=0.9.2"></script>
-<script src="js/audio.js?v=0.9.2"></script>
-<script src="js/questions.js?v=0.9.2"></script>
-<script src="js/game.js?v=0.9.2"></script>
+<script src="js/voxel-sdf.js?v=0.9.3"></script>
+<script src="js/roxy.js?v=0.9.3"></script>
+<script src="js/animals.js?v=0.9.3"></script>
+<script src="js/world.js?v=0.9.3"></script>
+<script src="js/audio.js?v=0.9.3"></script>
+<script src="js/questions.js?v=0.9.3"></script>
+<script src="js/game.js?v=0.9.3"></script>
 <script>
   if(window.THREE)setTimeout(()=>RX.start(),30);
   else document.getElementById('loading').textContent='La bibliothèque 3D n’a pas pu se charger. Vérifiez la connexion internet.';
