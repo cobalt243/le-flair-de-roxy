@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.9 — 11 novembre 2026
+Écran final simplifié : « À retenir » sous le score, « Rejouer mes erreurs » en premier quand il y a des erreurs (« Défier mes collègues » devient secondaire), actions secondaires regroupées sur une ligne de liens.
+
 ## 0.9.8 — 11 novembre 2026
 Si la page est rechargée pendant une revanche, l’accueil propose « Reprendre ma revanche » en bouton principal (« Nouvelle partie » reste disponible, avec confirmation).
 

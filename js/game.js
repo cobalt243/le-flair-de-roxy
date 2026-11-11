@@ -231,7 +231,7 @@
       const next=[[7,'Flair de bronze'],[10,'Flair d’argent'],[12,'Flair d’or']].find(r=>ok<r[0]);
       $('#goal').hidden=!next;if(next){const k=next[0]-ok;$('#goal').innerHTML=`<b>Encore ${k} bonne${k>1?'s':''} réponse${k>1?'s':''}</b> pour le ${next[1]} ${next[0]===12?'et le baobab doré':''}<span class="gbar"><i style="width:${ok/12*100}%"></i></span>`;}
       const missed=Object.keys(RX.QUESTIONS).filter(q=>S.ans[q]===false);
-      $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=missed.length>1?`Rejouer mes ${missed.length} erreurs`:'Rejouer mon erreur';
+      $('#endRetry').hidden=!missed.length;$('#endBtns').classList.toggle('missed',missed.length>0);$('#endRetry').textContent=missed.length>1?`Rejouer mes ${missed.length} erreurs`:'Rejouer mon erreur';
       $('#endRetry').onclick=()=>{S.retry=missed;save();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;express=true;
         const lines=missed.map(q=>({q,who:ANIMALS.find(a=>a.q.includes(q))}));exN=lines.length;
         openDialog(lines[0].who,lines,()=>{express=false;S.retry=null;save();refreshHUD();startFete();});};
