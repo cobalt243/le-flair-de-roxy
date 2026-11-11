@@ -218,7 +218,7 @@
       const next=[[7,'Flair de bronze'],[10,'Flair d’argent'],[12,'Flair d’or']].find(r=>ok<r[0]);
       $('#goal').hidden=!next;if(next){const k=next[0]-ok;$('#goal').innerHTML=`<b>Encore ${k} bonne${k>1?'s':''} réponse${k>1?'s':''}</b> pour le ${next[1]} ${next[0]===12?'et le baobab doré':''}<span class="gbar"><i style="width:${ok/12*100}%"></i></span>`;}
       const missed=Object.keys(RX.QUESTIONS).filter(q=>S.ans[q]===false);
-      $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=`Rejouer mes ${missed.length} erreur${missed.length>1?'s':''}`;
+      $('#endRetry').hidden=!missed.length;$('#endRetry').textContent=missed.length>1?`Rejouer mes ${missed.length} erreurs`:'Rejouer mon erreur';
       $('#endRetry').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
       const prevR=S.prevRecord,newRec=!!prevR&&ok>prevR.ok;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';setRecord(ok);
       const medal=ok>=12?'🥇':ok>=10?'🥈':ok>=7?'🥉':'🐶';
