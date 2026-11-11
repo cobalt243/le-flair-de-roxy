@@ -1,5 +1,8 @@
 # Historique
 
+## 1.0.1 — 11 novembre 2026
+Écran final : le lien « Copier le message du défi » est retiré. « Défier mes collègues » ouvre déjà le menu de partage du téléphone (WhatsApp, Teams, courriel, SMS…).
+
 ## 1.0 — 11 novembre 2026
 Écran final : le lien « Rejouer avec les animaux » est retiré (doublon de « Rejouer mes erreurs »). Il reste deux liens : « Continuer à explorer » et « Tout recommencer ».
 
