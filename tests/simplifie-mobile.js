@@ -1,0 +1,14 @@
+const {chromium,devices}=require('playwright');const dir=process.argv[2];
+(async()=>{const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const ctx=await b.newContext({...devices['iPhone 13']});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push('PAGE '+e.message));
+await p.route('**/cdnjs.cloudflare.com/**',r=>r.abort());await p.route('**/fonts.g*/**',r=>r.abort());
+await p.goto('http://localhost:8000/?neuf&jour');await p.waitForFunction(()=>window.RX&&RX.debug,null,{timeout:60000});await p.waitForTimeout(300);
+await p.screenshot({path:dir+'/t-start.png'});
+await p.tap('#play');await p.waitForTimeout(1200);await p.screenshot({path:dir+'/t-cine.png'});
+await p.tap('#cine');await p.waitForTimeout(2500);await p.screenshot({path:dir+'/t-tip1.png'});
+console.log('tip',await p.evaluate(()=>[document.getElementById('tip').hidden,document.getElementById('tip').textContent]));
+await p.evaluate(()=>{RX.debug.setYaw(0);RX.debug.sim(1.5,['KeyW']);});await p.waitForTimeout(600);
+console.log('tip2',await p.evaluate(()=>document.getElementById('tip').textContent));
+await p.tap('#bAct');await p.waitForTimeout(1500);await p.screenshot({path:dir+'/t-sniff.png'});
+console.log('tip3',await p.evaluate(()=>[document.getElementById('tip').textContent,document.getElementById('dist').textContent]));
+console.log('ERR',JSON.stringify(errs));await b.close();})();

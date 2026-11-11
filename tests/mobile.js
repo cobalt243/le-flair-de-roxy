@@ -1,0 +1,10 @@
+const {chromium,devices}=require('playwright');const dir=process.argv[2];
+(async()=>{const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const ctx=await b.newContext({...devices['Pixel 7']});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push('PAGE '+e.message));
+await p.route('**/cdnjs.cloudflare.com/**',r=>r.abort());await p.route('**/fonts.g*/**',r=>r.abort());
+await p.goto('http://localhost:8000/?neuf&jour');await p.waitForFunction(()=>window.RX&&RX.debug,null,{timeout:60000});await p.waitForTimeout(500);
+await p.screenshot({path:dir+'/m-start.png'});await p.tap('#play');await p.waitForTimeout(800);
+await p.evaluate(()=>{RX.debug.teleport(30,5,52,Math.PI);RX.debug.setYaw(0);});
+await p.tap('#bSniff');await p.waitForTimeout(1500);await p.screenshot({path:dir+'/m-play.png'});
+const st=await p.evaluate(()=>RX.debug.state);console.log('touch',await p.evaluate(()=>document.body.classList.contains('touch')),'cubes',JSON.stringify(st.cubes),'overflow',await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth));
+console.log('ERR',JSON.stringify(errs));await b.close();})();

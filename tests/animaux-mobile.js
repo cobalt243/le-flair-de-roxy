@@ -1,0 +1,12 @@
+const {chromium,devices}=require('playwright');const dir=process.argv[2];
+(async()=>{const b=await chromium.launch({args:['--use-angle=swiftshader','--enable-unsafe-swiftshader','--ignore-gpu-blocklist']});
+const ctx=await b.newContext({...devices['iPhone 13']});const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push('PAGE '+e.message));
+await p.route('**/cdnjs.cloudflare.com/**',r=>r.abort());await p.route('**/fonts.g*/**',r=>r.abort());
+await p.goto('http://localhost:8000/?neuf&jour');await p.waitForFunction(()=>window.RX&&RX.debug,null,{timeout:60000});await p.waitForTimeout(300);
+await p.screenshot({path:dir+'/m3-start.png'});await p.tap('#play');await p.waitForTimeout(500);await p.tap('#cine');await p.waitForTimeout(1500);
+await p.screenshot({path:dir+'/m3-play.png'});
+await p.evaluate(()=>{const a=RX.debug.animals().find(x=>x.id==='elephant');RX.debug.teleport(a.pos[0]-3,a.pos[1],a.pos[2],Math.PI/2);RX.debug.sim(.3);});
+await p.waitForTimeout(800);console.log('near',await p.evaluate(()=>[RX.debug.state.near,document.body.classList.contains('cantalk')]));
+await p.screenshot({path:dir+'/m3-near.png'});
+await p.tap('#bAct',{force:true});await p.waitForTimeout(700);await p.tap('#dnext');await p.waitForTimeout(2200);await p.screenshot({path:dir+'/m3-q.png'});
+console.log('overflow',await p.evaluate(()=>document.documentElement.scrollWidth>innerWidth),'ERR',JSON.stringify(errs));await b.close();})();

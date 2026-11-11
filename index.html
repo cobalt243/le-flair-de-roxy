@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Le Flair de Roxy</title>
+<!--ARTIFACT-START-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+/* Layout : jeu plein écran — scène 3D en fond, interface en surimpression (objectif en haut à gauche, boutons en haut à droite, invite d’action en bas, dialogues en bas au centre). Univers imaginaire et assumé : couleurs indigo et ocre. */
+:root{
+  color-scheme:light;
+  --cream:#FFF6E6;--cream2:#F6E7CC;--ink:#2B1D14;--muted:#6E5A48;--ochre:#C9822B;--ochre-d:#9E6118;--indigo:#2E3A6B;--banco:#A85E38;--good:#3C8A55;--bad:#B4472F;--gold:#F2B93B;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;--f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0;background:#1F2A48;overflow:hidden}
+body{font-family:var(--f-body);color:var(--ink);-webkit-user-select:none;user-select:none;touch-action:none}
+#game{position:fixed;inset:0}
+#game canvas{display:block;width:100%;height:100%}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+kbd{font-family:var(--f-display);font-size:.8em;background:var(--ink);color:var(--cream);border-radius:6px;padding:1px 7px;margin-right:4px}
+.panel{background:rgba(255,246,230,.94);border-radius:16px;box-shadow:0 10px 30px rgba(20,12,6,.28),inset 0 0 0 2px rgba(255,255,255,.6)}
+/* HUD */
+#hudL{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));padding:12px 16px;max-width:min(360px,calc(100vw - 150px));display:flex;flex-direction:column;gap:6px}
+#hudL h1{margin:0;font-family:var(--f-display);font-weight:700;font-size:19px;color:var(--indigo);letter-spacing:.01em}
+#hudL h1 small{display:block;font-family:var(--f-body);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+#objective{margin:0;font-size:14px;font-weight:700;line-height:1.35}
+
+.star{width:20px;height:20px;background:rgba(43,29,20,.18);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.star.got{background:var(--gold);filter:drop-shadow(0 0 4px rgba(242,185,59,.9))}
+#stars{display:flex;gap:4px}
+#hudR{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));display:flex;gap:8px}
+.chip{font-weight:800;font-size:13px;padding:10px 14px;border-radius:999px;background:rgba(255,246,230,.94);box-shadow:0 6px 16px rgba(20,12,6,.25)}
+#prompt{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(26px + env(safe-area-inset-bottom,0px));font-weight:800;font-size:15px;color:var(--cream);text-shadow:0 2px 6px rgba(0,0,0,.6);white-space:nowrap;pointer-events:none}
+#toast{position:fixed;left:50%;top:calc(90px + env(safe-area-inset-top,0px));transform:translate(-50%,-10px);background:var(--indigo);color:var(--cream);font-weight:800;padding:11px 20px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;text-align:center;max-width:calc(100vw - 32px)}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#edge{position:fixed;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;z-index:5}
+#edge svg{width:46px;height:46px;padding:7px;border-radius:50%;background:var(--gold);fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+#edge span{font-family:var(--f-display);font-weight:700;font-size:13px;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+body.indialog #edge{display:none}
+.row2{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap}
+#dist{font-family:var(--f-display);font-weight:600;font-size:14px;color:var(--ochre-d)}
+#tip{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(70px + env(safe-area-inset-bottom,0px));max-width:min(440px,calc(100vw - 32px));background:var(--indigo);color:var(--cream);font-weight:800;font-size:16px;line-height:1.35;padding:13px 18px;border-radius:16px;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:tipin .5s ease;pointer-events:none}
+#tip::before{content:"Astuce";display:block;font-family:var(--f-display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+@keyframes tipin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+body.touch #tip{bottom:calc(170px + env(safe-area-inset-bottom,0px))}
+#cine{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:#fff;text-shadow:0 3px 14px rgba(0,0,0,.55);background:linear-gradient(transparent 55%,rgba(20,12,6,.35));cursor:pointer}
+#cine p{margin:0;font-weight:800;letter-spacing:.14em;text-transform:uppercase;font-size:13px;opacity:.9}
+#cine h2{margin:0;font-family:var(--f-display);font-size:clamp(40px,10vw,76px);line-height:1;animation:cinein 1.6s ease both}
+#cine h2 span{color:var(--gold)}
+#cine small{position:absolute;bottom:calc(24px + env(safe-area-inset-bottom,0px));font-weight:700;opacity:.8}
+@keyframes cinein{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+body:has(#cine:not([hidden])) #hudL,body:has(#cine:not([hidden])) #hudR,body:has(#cine:not([hidden])) .touchui{visibility:hidden}
+#fps{position:fixed;bottom:8px;left:8px;font:12px monospace;color:#fff;background:rgba(0,0,0,.4);padding:2px 6px;border-radius:4px}
+/* Dialogue */
+#dialog{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));width:min(640px,calc(100vw - 24px));padding:16px 18px;display:flex;flex-direction:column;gap:10px;max-height:72vh;overflow:auto}
+#dialog .who{font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--banco);text-transform:uppercase;letter-spacing:.05em}
+#dialog .say{margin:0;font-size:17px;font-weight:700;line-height:1.4}
+#dialog .lead{margin:0;font-size:13px;font-weight:800;color:var(--muted)}
+.opts.two{flex-direction:row}.opts.two .opt{flex:1;justify-content:center;font-family:var(--f-display);font-size:18px}.opts.two .opt b{display:none}
+.next{align-self:flex-end;background:var(--ochre);color:#fff;font-weight:800;padding:10px 16px;border-radius:12px;box-shadow:0 4px 0 var(--ochre-d)}
+.next kbd{background:rgba(255,255,255,.25);margin:0 0 0 6px}
+.opts{display:flex;flex-direction:column;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;text-align:left;background:#fff;border:2px solid var(--cream2);border-radius:12px;padding:10px 12px;font-size:15px;font-weight:600;line-height:1.35}
+.opt b{font-family:var(--f-display);color:var(--ochre);min-width:14px}
+.opt:hover:not([disabled]){border-color:var(--ochre)}
+.opt.right{border-color:var(--good);background:#E3F2E6}.opt.wrong{border-color:var(--bad);background:#F8E1DA}.opt.dim{opacity:.5}
+.fb{font-size:14.5px;line-height:1.45;display:flex;flex-direction:column;gap:8px}
+.fb:empty{display:none}
+.g{color:var(--good);font-weight:800}.r{color:var(--bad);font-weight:800}
+/* Écrans */
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-left,0px));background:rgba(31,24,40,.55);backdrop-filter:blur(3px)}
+.card{width:min(560px,100%);padding:24px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 40px);overflow:auto}
+.card h2{margin:0;font-family:var(--f-display);font-size:clamp(30px,6vw,44px);line-height:1;color:var(--indigo)}
+.card h2 span{color:var(--ochre)}
+.card .sub{margin:0;font-weight:800;color:var(--muted);font-size:14px;text-transform:uppercase;letter-spacing:.06em}
+.card p{margin:0;font-size:15.5px;line-height:1.5}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:14px;align-items:center;margin:0}
+.keys dt{font-weight:800;white-space:nowrap}.keys dd{margin:0}
+.big{background:var(--ochre);color:#fff;font-family:var(--f-display);font-weight:700;font-size:19px;padding:14px 22px;border-radius:14px;box-shadow:0 5px 0 var(--ochre-d)}
+.big[disabled]{opacity:.6;cursor:wait}
+.ghost{background:var(--cream2);font-weight:800;padding:12px 16px;border-radius:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:12.5px!important;color:var(--muted)}
+/* Écran titre */
+#start{position:fixed;inset:0;display:flex;flex-direction:column;justify-content:space-between;align-items:center;gap:16px;padding:calc(28px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(to bottom,rgba(24,16,10,.42) 0%,rgba(24,16,10,0) 32%,rgba(24,16,10,0) 48%,rgba(24,16,10,.5) 100%);overflow:auto}
+.ts-head{text-align:center;color:#fff;text-shadow:0 3px 18px rgba(0,0,0,.45),0 2px 0 rgba(0,0,0,.25);animation:tsrise .8s ease both}
+.ts-head h2{margin:0;font-family:var(--f-display);font-weight:700;font-size:clamp(46px,13vw,86px);line-height:.95;letter-spacing:-.01em}
+.ts-head h2 span{color:var(--gold)}
+.ts-head p{margin:8px 0 0;font-weight:800;font-size:clamp(15px,4vw,19px);opacity:.95}
+.ts-card{margin-top:auto;width:min(500px,100%);padding:20px;display:flex;flex-direction:column;gap:14px;animation:tsrise .8s .2s ease both}
+.ts-pitch{margin:0;font-size:16px;line-height:1.45;font-weight:600;text-align:center}
+.ts-how{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ts-how li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:3px;background:#fff;border-radius:12px;padding:10px 6px}
+.ts-how svg{width:30px;height:30px;color:var(--ochre);fill:none;stroke:currentColor;stroke-width:2}
+.ts-how b{font-family:var(--f-display);font-weight:600;font-size:14px;line-height:1.15}
+.ts-how small{font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.2}
+#progress{margin:0;text-align:center;font-weight:800;color:var(--indigo)}
+.big.wide{width:100%;font-size:22px}
+#newGame{align-self:center;font-weight:800;color:var(--muted);text-decoration:underline;font-size:14px}
+.ts-sound{margin:0;display:flex;gap:8px;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);font-weight:700;text-align:left}
+.ts-sound svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;color:var(--ochre)}
+.ts-credit{margin:0;font-size:11px;color:rgba(255,255,255,.88);text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.6);max-width:520px}
+body:not(.touch) .mob{display:none}body.touch .desk{display:none}
+body:has(#start:not([hidden])) #hudL,body:has(#start:not([hidden])) #hudR,body:has(#start:not([hidden])) .touchui,body:has(#start:not([hidden])) #prompt{visibility:hidden}
+@media (max-height:640px){.ts-how{display:none}}
+@keyframes tsrise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.howto summary{font-weight:800;cursor:pointer;color:var(--indigo)}
+.howto dl{margin-top:10px}
+.card .big{font-size:22px;padding:16px 34px}
+#endStats{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#endStats li{background:#fff;border-radius:12px;padding:10px 12px;font-size:14px}
+#endStats b{display:block;font-family:var(--f-display);font-size:22px;color:var(--indigo)}
+.memo{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.memo li{background:#fff;border-radius:10px;padding:8px 12px 8px 30px;font-size:14px;position:relative;font-weight:600}
+.memo li::before{content:"✓";position:absolute;left:11px;color:var(--good);font-weight:900}
+label.tog{display:flex;gap:8px;align-items:center;font-weight:700}
+/* Tactile */
+.touchui{display:none}
+body.touch .touchui{display:block}
+body.touch .keys.desk{display:none}
+body:not(.touch) .keys.mob{display:none}
+body:not(.touch) .mobnote{display:none}
+#joy{position:fixed;left:calc(22px + env(safe-area-inset-left,0px));bottom:calc(26px + env(safe-area-inset-bottom,0px));width:124px;height:124px;border-radius:50%;background:rgba(255,246,230,.25);border:2px solid rgba(255,246,230,.6);touch-action:none}
+#joy i{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px;border-radius:50%;background:rgba(255,246,230,.9);box-shadow:0 4px 10px rgba(0,0,0,.3)}
+#tbtns{position:fixed;right:calc(22px + env(safe-area-inset-right,0px));bottom:calc(30px + env(safe-area-inset-bottom,0px))}
+#bAct{width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFE08A,var(--gold) 55%,var(--ochre) 100%);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 6px 0 var(--ochre-d),0 10px 24px rgba(0,0,0,.35);touch-action:none}
+#bAct svg{width:36px;height:36px;fill:var(--ink)}#bAct svg circle{fill:var(--gold)}
+#bAct b{font-family:var(--f-display);font-size:15px}
+#bAct:active{transform:translateY(3px);box-shadow:0 3px 0 var(--ochre-d)}
+body:not(.cantalk) #bAct{filter:saturate(.25) brightness(.9);opacity:.7}
+body.cantalk #bAct{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.07)}}
+body.touch #prompt{display:none}
+body.indialog .touchui{display:none!important}
+body.touch kbd{display:none}
+body.touch #hudL{max-width:calc(100vw - 196px);padding:9px 12px;gap:4px}
+body.touch #hudL h1 small{display:none}
+body.touch #hudL h1{font-size:16px}
+body.touch #objective{font-size:12.5px}
+body.touch .star{width:15px;height:15px}
+#dist{white-space:nowrap}
+body.touch #dialog .say{font-size:16px}
+body.touch #dialog{max-height:60vh}
+body.touch #toast{top:34%;bottom:auto}
+body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+@media (max-width:560px){#hudL h1{font-size:16px}#objective{font-size:12.5px}.chip{padding:8px 11px;font-size:12px}}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="game" aria-label="Scène 3D du jeu"></div>
+
+<div id="hudL" class="panel"><h1><small>Prototype 0.3</small>Le Flair de Roxy</h1><p id="objective"></p><div class="row2"><div id="stars"></div><span id="dist"></span></div></div>
+<div id="hudR"><button class="chip" id="btnSound" aria-pressed="false">Son : non</button><button class="chip" id="btnPause" aria-label="Pause et options">Pause</button></div>
+<div id="prompt"></div>
+<div id="tip" hidden></div>
+<div id="edge" hidden aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h13M11 5l8 7-8 7"/></svg><span></span></div>
+<div id="cine" hidden><p>Un monde en blocs</p><h2>Le Flair de <span>Roxy</span></h2><small>Touchez pour passer</small></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<div id="fps" hidden></div>
+<section id="dialog" class="panel" hidden aria-live="polite"></section>
+
+<div class="touchui"><div id="joy" aria-label="Joystick de déplacement"><i></i></div>
+  <div id="tbtns"><button id="bAct" aria-label="Action"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16v10H10l-4 4v-4H4z"/></svg><b>…</b></button></div></div>
+
+<div id="start">
+  <header class="ts-head"><h2>Le Flair de <span>Roxy</span></h2><p>Bien utiliser Claude, bloc par bloc</p></header>
+  <div class="ts-card panel">
+    <p class="ts-pitch">Apprenez les bons réflexes pour travailler avec Claude, en vous amusant. Promenez Roxy, rencontrez six animaux et répondez à leurs questions.</p>
+    <ul class="ts-how" aria-label="Comment jouer">
+      <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg><b>Marcher</b><small><span class="mob">Joystick</span><span class="desk">ZQSD ou flèches</span></small></li>
+      <li><svg viewBox="0 0 24 24"><path d="M12 3l7 9h-4v9H9v-9H5z" fill="currentColor" stroke="none"/></svg><b>Suivre la flèche</b><small>Elle mène aux animaux</small></li>
+      <li><svg viewBox="0 0 24 24"><path d="M4 5h16v11H10l-4 4v-4H4z" fill="currentColor" stroke="none"/></svg><b>Parler</b><small><span class="mob">Bouton doré</span><span class="desk">Touche E</span></small></li>
+    </ul>
+    <p id="progress" hidden></p>
+    <button class="big wide" id="play" disabled>Chargement…</button>
+    <button class="linkbtn" id="newGame" hidden>Nouvelle partie</button>
+    <p id="loading" class="note">Construction du monde en blocs…</p>
+    <p class="ts-sound"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg><span class="mob">Montez le volume. Sur iPhone, désactivez le mode silencieux.</span><span class="desk">Activez le son pour profiter de la musique. Environ 8 minutes.</span></p>
+  </div>
+  <p class="ts-credit">Prototype 0.3 · Concept et création : Jean-Marc Pagé · Projet éducatif indépendant, non affilié à Anthropic</p>
+</div>
+
+<div id="pause" class="screen" hidden><div class="card panel">
+  <h2>Pause</h2>
+  <div class="row"><button class="big" id="resume">Reprendre</button></div>
+  <label class="tog"><input type="checkbox" id="music" checked> Musique</label>
+  <label class="tog"><input type="checkbox" id="shadows" checked> Ombres (désactiver si le jeu est lent)</label>
+  <dl class="keys desk"><dt>ZQSD / flèches</dt><dd>se déplacer</dd><dt>Maj · Espace</dt><dd>courir · sauter</dd><dt>E</dt><dd>parler à un animal</dd><dt>Échap</dt><dd>pause</dd></dl>
+  <div class="row"><button class="ghost" id="restartAsk">Recommencer depuis le début</button></div>
+  <div class="row" id="restartConfirm" hidden><span>Effacer la progression ?</span><button class="ghost" id="restartYes">Oui, effacer</button><button class="ghost" id="restartNo">Annuler</button></div>
+</div></div>
+
+<div id="end" class="screen" hidden><div class="card panel">
+  <p class="sub">Parcours terminé</p>
+  <h2>Bravo, <span>Roxy !</span></h2>
+  <p>Vous avez rencontré les six animaux et répondu à leurs douze questions. Le baobab est planté.</p>
+  <ul id="endStats"></ul>
+  <p class="sub" style="margin-top:4px">À retenir</p>
+  <ul id="endMemo" class="memo"></ul>
+  <div class="row"><button class="big" id="endContinue">Continuer à explorer</button><button class="ghost" id="endRestart">Rejouer</button></div>
+</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>if(!window.THREE){document.write('<script src="vendor/three.min.js"><\/script>');}</script>
+<script src="js/voxel-sdf.js"></script>
+<script src="js/roxy.js"></script>
+<script src="js/animals.js"></script>
+<script src="js/world.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/questions.js"></script>
+<script src="js/game.js"></script>
+<script>
+  if(window.THREE)setTimeout(()=>RX.start(),30);
+  else document.getElementById('loading').textContent='La bibliothèque 3D n’a pas pu se charger. Vérifiez la connexion internet.';
+</script>
+<!--ARTIFACT-END-->
+</body>
+</html>
