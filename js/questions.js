@@ -21,7 +21,7 @@
       {t:"Une Skill, une méthode enregistrée que Claude réapplique.",ok:true,why:"Une Skill garde votre méthode et vos modèles : Claude les applique chaque fois que la tâche revient."},
       {t:"La recherche web, pour trouver un modèle en ligne.",ok:false,why:"Votre procédure est interne : elle n’est pas sur le web."},
       {t:"Une nouvelle conversation, en réexpliquant tout.",ok:false,why:"Vous refaites le même travail d’explication à chaque fois."}]},
-    q7:BINS("Une liste de bénéficiaires avec noms, téléphones et villages, pour « nettoyer » le fichier.",2,"Ce sont des données de personnes potentiellement vulnérables. Ne les saisissez pas sans autorisation ; travaillez sur un fichier anonymisé."),
+    q7:BINS("L’itinéraire heure par heure d’une équipe qui part dans une zone dangereuse, pour que Claude l’aide à organiser le trajet.",2,"C’est une information de sécurité : si elle circulait, l’équipe pourrait être mise en danger. Ne la saisissez pas sans autorisation. Pour vous faire aider, restez général (« une région, 5 jours, 3 personnes »)."),
     q8:BINS("L’évaluation de performance d’un employé nommé, pour reformuler les commentaires.",1,"Retirez le nom et les détails identifiants : Claude peut reformuler sans savoir de qui il s’agit."),
     q9:VF("« Si la réponse de Claude est bien rédigée et sûre d’elle, l’information a été vérifiée. »",false,"Le ton ne prouve rien. Une réponse fluide peut contenir une erreur : c’est vous qui vérifiez."),
     q10:{q:"Claude cite un chiffre de 74 % tiré d’un rapport. Comment le vérifier ?",opts:[
