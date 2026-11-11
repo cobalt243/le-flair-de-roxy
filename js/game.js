@@ -207,6 +207,7 @@
       for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.t+=dt;r.y+=r.vy*dt;r.vy-=6*dt;emit({x:r.x,y:r.y,z:r.z,life:.45,age:0,c:'#FFE08A',s:.6});
         if(r.t>=r.fuse){rockets.splice(i,1);RX.audio.boom();for(let k=0;k<75;k++){const u=Math.random()*2-1,th=Math.random()*Math.PI*2,q=Math.sqrt(1-u*u),sp=6+Math.random()*2.5;
           emit({x:r.x,y:r.y,z:r.z,v:{x:q*Math.cos(th)*sp,y:u*sp,z:q*Math.sin(th)*sp},g:3.2,life:1.5+Math.random()*.9,age:0,c:k%3?r.c:r.c2,s:1.7});}}}}
+    const FICHE_ON=false;
     function ficheText(){return 'Le Flair de Roxy — fiche aide-mémoire\n\n'+Object.keys(RX.QUESTIONS).map((k,i)=>{const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k));
         return `${i+1}. ${a?a.theme+' — ':''}${(Q.lead?Q.lead+' ':'')+Q.q}\n→ ${r.t}\n${r.why}`;}).join('\n\n')+'\n\n'+GAME_URL;}
     function openFiche(ok){const gold=ok>=12,f=$('#fiche');f.classList.toggle('gold',gold);
@@ -238,6 +239,7 @@
       $('#endRetryWalk').onclick=()=>{S.retry=missed;save();refreshHUD();$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;toast('Revanche ! Suivez la flèche dorée jusqu’aux animaux concernés.',3500);};
       $('#ficheBtn').textContent=ok>=12?'🌳 La fiche du baobab doré':'📜 La fiche aide-mémoire';
       $('#ficheBtn').onclick=()=>openFiche(ok);
+      $('#ficheBtn').hidden=!FICHE_ON; // fiche aide-mémoire désactivée pour l'instant (activer : FICHE_ON=true)
       const prevR=S.prevRecord,newRec=!!prevR&&ok>prevR.ok;$('#recordLine').textContent=newRec?'🎉 Nouveau record !':'';setRecord(ok);
       const medal=ok>=12?'🥇':ok>=10?'🥈':ok>=7?'🥉':'🐶';
       const msg=`${medal} J’ai obtenu le « ${rk[1]} » (${ok}/12) dans Le Flair de Roxy, un petit jeu pour apprendre à bien utiliser Claude. À ton tour de faire mieux ! ${GAME_URL}`;

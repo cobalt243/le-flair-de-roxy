@@ -1,5 +1,8 @@
 # Historique
 
+## 0.9.6 — 11 novembre 2026
+Fiche aide-mémoire masquée pour l’instant, en attendant d’autres retours (code conservé : `FICHE_ON` dans `js/game.js`).
+
 ## 0.9.5 — 11 novembre 2026
 Suite aux premiers retours :
 - **Revanche express** : « Rejouer mes erreurs » affiche directement les questions ratées, sans marcher, puis rejoue la finale. « Rejouer avec les animaux » reste disponible.
