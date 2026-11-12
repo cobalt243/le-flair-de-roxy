@@ -199,7 +199,7 @@
     function startFete(){S.prevRecord=getRecord();const okN=Object.values(S.ans).filter(Boolean).length;tier=okN>=12?3:okN>=10?2:okN>=7?1:0;const T=TIERS[tier];
       setRecord(okN);S.recordSet=true;
       $('#finale h2').textContent=T.h;$('#finale p').textContent=T.p;document.body.dataset.tier=tier;S.finished=true;S.endTime=S.time;save();refreshHUD();placeFete(false);P.set(FETE.x+.4,FETE.y,FETE.z+4.2);heading=Math.PI;V.set(0,0,0);
-      feteT=FETE_DUR;growT=0;fwT=1.2;yaw=1.75;document.body.classList.add('finale');RX.audio.fanfare(tier);
+      feteT=FETE_DUR;growT=0;fwT=1.2;yaw=1.75;document.body.classList.add('finale');RX.audio.musicHold();RX.audio.chime(tier);   /* version B : carillon court au lieu de la fanfare */
       const f=$('#finale');f.hidden=false;f.classList.remove('go');void f.offsetWidth;f.classList.add('go');
       $('#flash').classList.remove('go');void $('#flash').offsetWidth;$('#flash').classList.add('go');}
     function launch(){const a=Math.random()*Math.PI*2,r=4+Math.random()*7;rockets.push({x:FETE.x+Math.cos(a)*r,y:FETE.y+1,z:FETE.z+Math.sin(a)*r,vy:13+Math.random()*4,fuse:.75+Math.random()*.45,t:0,c:FW[Math.floor(Math.random()*FW.length)],c2:FW[Math.floor(Math.random()*FW.length)]});RX.audio.whoosh();}
@@ -220,7 +220,7 @@
     $('#ficheCopy').onclick=()=>{const t=ficheText(),done=()=>toast('Fiche copiée : collez-la dans vos notes');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');done();}catch(e){}x.remove();});};
     $('#ficheShare').onclick=()=>{const t=ficheText();if(navigator.share)navigator.share({title:'Fiche aide-mémoire — Le Flair de Roxy',text:t}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank','noopener');};
     const RANKS=[[12,'Flair d’or','Un sans-faute ! Tous vos réflexes sont\u00A0les\u00A0bons.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']];
-    function showEnd(){document.body.classList.remove('finale');$('#finale').hidden=true;{const k=Object.values(S.ans).filter(Boolean).length;tier=k>=12?3:k>=10?2:k>=7?1:0;}
+    function showEnd(){RX.audio.musicFromStart();document.body.classList.remove('finale');$('#finale').hidden=true;{const k=Object.values(S.ans).filter(Boolean).length;tier=k>=12?3:k>=10?2:k>=7?1:0;}
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];
       const st=ok>=12?3:ok>=10?2:ok>=7?1:0;$('#endStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.9+i*.25}s">★</span>`).join('');

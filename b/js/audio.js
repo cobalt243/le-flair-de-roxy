@@ -60,11 +60,11 @@
     o.connect(lp).connect(g).connect(IN());o.start(t);o.stop(t+dur+.1);});}
   /* ===== Version B : morceau « piano doux + balafon, tambour d'eau, flûte, cloche » (fichier audio/musique-b.mp3),
      joué en entier puis suivi d'une pause de 45 à 75 s (compromis : musique rare, 3 à 4 passages par partie). ===== */
-  const B_GAIN=.5;let bBuf=null,bLoading=false,bSrc=null;
+  const B_GAIN=.5;let bBuf=null,bLoading=false,bSrc=null;let bHold=false;
   function loadB(){if(bBuf||bLoading||!ctx)return;bLoading=true;
     fetch('audio/musique-b.mp3').then(r=>r.arrayBuffer()).then(a=>new Promise((ok,ko)=>ctx.decodeAudioData(a,ok,ko))).then(b=>{bBuf=b;}).catch(()=>{}).finally(()=>{bLoading=false;});}
   function schedule(){
-    if(!ctx||ctx.state!=='running')return;
+    if(!ctx||ctx.state!=='running'||bHold)return;
     if(!bBuf){loadB();return;}
     if(mNext<ctx.currentTime)mNext=ctx.currentTime+.2;
     if(mNext<ctx.currentTime+.3){const src=ctx.createBufferSource(),g=ctx.createGain();g.gain.value=B_GAIN;src.buffer=bBuf;src.connect(g).connect(mGain);
@@ -73,12 +73,24 @@
     mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;mTimer=setInterval(schedule,200);}
   function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}
     if(bSrc&&ctx){try{bSrc.stop(ctx.currentTime+1.2);}catch(e){}bSrc=null;}}
+  /* Grand final (version B) : la musique s'efface, puis reprend depuis le début sur l'écran des résultats. */
+  function musicHold(){bHold=true;if(!ctx||!mGain)return;const t=ctx.currentTime;mGain.gain.cancelScheduledValues(t);mGain.gain.setValueAtTime(mGain.gain.value,t);mGain.gain.linearRampToValueAtTime(0,t+1.5);
+    if(bSrc){try{bSrc.stop(t+1.6);}catch(e){}bSrc=null;}}
+  function musicFromStart(){bHold=false;if(!ctx||!mGain||!mTimer)return;const t=ctx.currentTime;
+    if(bSrc){try{bSrc.stop(t+.3);}catch(e){}bSrc=null;}
+    mGain.gain.cancelScheduledValues(t);mGain.gain.setValueAtTime(mGain.gain.value,t);mGain.gain.linearRampToValueAtTime(0,t+.3);mGain.gain.linearRampToValueAtTime(mLevel,t+2.8);mNext=t+.5;}
+  /* Carillon de réussite (version B), court, en ré pentatonique comme la musique ; plus riche selon le score. */
+  function chime(lv){const N=[587.3,740,880,1174.7,1480,1760];const n=lv>=3?6:lv>=2?5:lv>=1?4:3;const step=lv>=3?.11:.14;
+    for(let i=0;i<n;i++){const f=N[i];tone(f,.9,'sine',.06,i*step);tone(f*3.93,.12,'sine',.012,i*step);}
+    const tb=n*step+.05;[[1174.7,1,2.2],[1174.7*2.76,.4,1.2],[1174.7*5.4,.18,.7]].forEach(([f,v,d])=>tone(f,d,'sine',.045*v,tb));
+    if(lv>=2)[293.7,440,587.3].forEach((f,k)=>tone(f,2.2,'triangle',.03,tb+k*.03));
+    if(lv>=3){[1760,2349.3].forEach((f,k)=>tone(f,.6,'sine',.025,tb+.25+k*.12));}}
   RX.audio={
     toggle(){init();if(!ctx)return false;enabled=!enabled;if(enabled){unlock();if(musicWanted)startMusic();}else stopMusic();if(windGain)windGain.gain.setTargetAtTime(enabled?.015:0,ctx.currentTime,.4);return enabled;},
     setMusic(on){musicWanted=on;try{localStorage.setItem('flair-roxy-b-musique',on?'oui':'non');}catch(e){}if(on&&enabled)startMusic();else stopMusic();},
     get music(){return musicWanted;},
     get musicPlaying(){return !!mTimer;},
-    unlock,
+    unlock,musicHold,musicFromStart,chime,
     get on(){return enabled;},
     step(){noise(.05,500,.018);},
     jump(){tone(330,.18,'triangle',.06,0,220);},

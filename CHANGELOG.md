@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026 (finale)
+Finale à l’esprit « jeu en blocs » : la musique s’efface, un carillon court (balafon et cloche, en ré comme la musique, plus riche selon le score) remplace la fanfare, puis le morceau reprend depuis le début sur l’écran des résultats.
+
 ## Version B — 12 novembre 2026 (pause musicale)
 Pause entre deux passages de la musique : 45 à 75 s (au lieu de 20 à 40 s). Compromis entre l’esprit « musique rare » et une partie de 8 minutes : 3 à 4 passages.
 
