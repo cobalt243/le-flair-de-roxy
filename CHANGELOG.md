@@ -1,5 +1,8 @@
 # Historique
 
+## Version B9 — 12 novembre 2026 (question 8)
+Question 8, nouvelle situation : « La liste des participants à une formation (noms, téléphones, sexe), pour compter les femmes et les hommes. » La bonne réponse reste « On l’anonymise d’abord ». L’ancienne situation (évaluation de performance d’une personne nommée) relève plutôt du « demander d’abord » de la politique IA de l’organisation ; elle quitte le jeu. Le calao enseigne ainsi deux réflexes distincts : ne pas saisir (question 7), ne garder que l’utile (question 8).
+
 ## Version B8 — 12 novembre 2026 (question 9)
 Question 9, variante plus difficile : la mauvaise réponse 1 devient « Je pose ma question : avec le compte de l’organisation, Claude connaît nos documents. », une idée fausse fréquente, reliée à la question 4. Explication : le compte de l’organisation protège les données, mais Claude ne lit les documents que s’ils sont joints ou si un connecteur est activé.
 
