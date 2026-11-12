@@ -1,5 +1,8 @@
 # Historique
 
+## Version B8 — 12 novembre 2026 (question 9)
+Question 9, variante plus difficile : la mauvaise réponse 1 devient « Je pose ma question : avec le compte de l’organisation, Claude connaît nos documents. », une idée fausse fréquente, reliée à la question 4. Explication : le compte de l’organisation protège les données, mais Claude ne lit les documents que s’ils sont joints ou si un connecteur est activé.
+
 ## Version B7 — 12 novembre 2026 (revue finale)
 Lot issu de la revue finale de la version B. La version principale n’est pas modifiée ; la musique garde sa qualité (pas d’allègement).
 
