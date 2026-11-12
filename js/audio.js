@@ -2,6 +2,7 @@
 (function(RX){
   let ctx=null,master=null,windGain=null,enabled=false,birdT=0;
   function init(){if(ctx)return;try{ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+    ctx.onstatechange=()=>{if(ctx.state==='interrupted'&&!document.hidden&&enabled){const pr=ctx.resume();if(pr&&pr.catch)pr.catch(()=>{});}};   // iOS : reprise après un appel ou une alerte
     master=ctx.createGain();master.gain.value=1.0;master.connect(ctx.destination);
     const len=ctx.sampleRate*2,buf=ctx.createBuffer(1,len,ctx.sampleRate),d=buf.getChannelData(0);let last=0;
     for(let i=0;i<len;i++){last=(last+.02*(Math.random()*2-1))/1.02;d[i]=last*3.5;}for(let i=0;i<2000;i++){const k=i/2000;d[i]*=k;d[len-1-i]*=k;}
@@ -31,8 +32,8 @@
      Timbres : kora (harpe-luth), balafon (xylophone) et nappe douce, pour un univers imaginaire.
      Esprit : musique d'ambiance calme et contemplative, notes rares, résonance, et silences entre les morceaux.
      Chaque morceau est composé en direct (gamme pentatonique, marche mélodique aléatoire) : aucune mélodie existante n'est reprise. */
-  let musicWanted=true,mGain=null,mDry=null,mWet=null,mTimer=null,mNext=0,mLevel=.55,dayF=1;
-  try{musicWanted=localStorage.getItem('flair-roxy-musique')!=='non';}catch(e){}
+  let musicWanted=true,mGain=null,mDry=null,mWet=null,mTimer=null,mNext=0,mLevel=.7,dayF=1;
+  try{musicWanted=localStorage.getItem('flair-roxy-2-musique')!=='non';}catch(e){}
   const PENTA=[0,3,5,7,10];                    // pentatonique mineure (demi-tons)
   const KEYS=[57,50,55,52];                     // la, ré, sol, mi (notes MIDI)
   const midi=n=>440*Math.pow(2,(n-69)/12);
@@ -58,42 +59,50 @@
   function pad(f,t,dur,vol){[-4,4].forEach(cents=>{const o=ctx.createOscillator(),g=ctx.createGain(),lp=ctx.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(f,t);o.detune.value=cents;
     lp.type='lowpass';lp.frequency.value=700;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+dur*.35);g.gain.linearRampToValueAtTime(0,t+dur);
     o.connect(lp).connect(g).connect(IN());o.start(t);o.stop(t+dur+.1);});}
+  /* ===== Musique : morceau « piano doux + balafon, tambour d'eau, flûte, cloche »,
+     trois variantes (audio/musique-1..3.mp3), une par passage, suivie d'une pause de 45 à 75 s (compromis : musique rare, 3 à 4 passages par partie). ===== */
+  const B_GAIN=1,B_N=3;let bBuf=null,bLoading=false,bSrc=null,bLast=-1;let bHold=false;
+  function loadB(){if(bBuf||bLoading||!ctx)return;bLoading=true;
+    let k=Math.floor(Math.random()*B_N);if(k===bLast)k=(k+1)%B_N;bLast=k;        // trois variantes, jamais deux fois la même de suite
+    fetch('audio/musique-'+(k+1)+'.mp3').then(r=>r.arrayBuffer()).then(a=>new Promise((ok,ko)=>ctx.decodeAudioData(a,ok,ko))).then(b=>{bBuf=b;}).catch(()=>{}).finally(()=>{bLoading=false;});}
   function schedule(){
-    if(!ctx||ctx.state!=='running')return;
-    while(mNext<ctx.currentTime+.3){
-      if(!piece){piece=newPiece();}
-      const beatDur=60/piece.bpm/2,t=mNext;
-      if(piece.rest>0){piece.rest-=beatDur;mNext+=beatDur;if(piece.rest<=0)piece=null;continue;}
-      const b=piece.beat;
-      if(b%16===0){const root=midi(note(piece.pad[(b/16)%piece.pad.length],-2));pad(root,t,beatDur*16.5,.06);pad(root*1.5,t,beatDur*16.5,.035);}
-      const density=(.26+.12*dayF)*(b>piece.len-12?.5:1);
-      if(b%2===0&&Math.random()<density){
-        piece.deg+=[-2,-1,-1,1,1,2,0][Math.floor(Math.random()*7)];piece.deg=Math.max(3,Math.min(13,piece.deg));
-        const f=midi(note(piece.deg));pluck(f,t+(Math.random()-.5)*.02,.16,piece.voice);
-        if(Math.random()<.18)pluck(midi(note(piece.deg-2)),t+.01,.08,piece.voice);
-        if(Math.random()<.12)pluck(f*2,t+beatDur,.05,'balafon');}
-      if(b%16===8&&Math.random()<.35)pluck(midi(note(0,-1)),t,.1,'kora');
-      piece.beat++;mNext+=beatDur;
-      if(piece.beat>=piece.len){piece.rest=25+Math.random()*45;}
-    }}
-  function startMusic(){if(!ctx||mTimer)return;if(!mGain)setupMusic();mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setValueAtTime(mGain.gain.value,ctx.currentTime);
-    mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;piece=null;mTimer=setInterval(schedule,60);}
-  function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}}
+    if(!ctx||ctx.state!=='running'||bHold)return;
+    if(!bBuf){loadB();return;}
+    if(mNext<ctx.currentTime)mNext=ctx.currentTime+.2;
+    if(mNext<ctx.currentTime+.3){const src=ctx.createBufferSource(),g=ctx.createGain();g.gain.value=B_GAIN;src.buffer=bBuf;src.connect(g).connect(mGain);
+      src.start(mNext);bSrc=src;src.onended=()=>{if(bSrc===src)bSrc=null;};mNext+=bBuf.duration+45+Math.random()*30;
+      bBuf=null;setTimeout(loadB,8000);}}                                     // la variante suivante se charge pendant que celle-ci joue
+  function startMusic(){if(!ctx||mTimer)return;if(!mGain)setupMusic();loadB();mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setValueAtTime(mGain.gain.value,ctx.currentTime);
+    mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+1);mNext=ctx.currentTime+1.2;mTimer=setInterval(schedule,200);}
+  function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}
+    if(bSrc&&ctx){try{bSrc.stop(ctx.currentTime+1.2);}catch(e){}bSrc=null;}}
+  /* Grand final : la musique s'efface, puis reprend depuis le début sur l'écran des résultats. */
+  function musicHold(){bHold=true;if(!ctx||!mGain)return;const t=ctx.currentTime;mGain.gain.cancelScheduledValues(t);mGain.gain.setValueAtTime(mGain.gain.value,t);mGain.gain.linearRampToValueAtTime(0,t+1.5);
+    if(bSrc){try{bSrc.stop(t+1.6);}catch(e){}bSrc=null;}}
+  function musicFromStart(){bHold=false;if(!ctx||!mGain||!mTimer)return;const t=ctx.currentTime;
+    if(bSrc){try{bSrc.stop(t+.3);}catch(e){}bSrc=null;}
+    mGain.gain.cancelScheduledValues(t);mGain.gain.setValueAtTime(mGain.gain.value,t);mGain.gain.linearRampToValueAtTime(0,t+.3);mGain.gain.linearRampToValueAtTime(mLevel,t+.5);mNext=t+.6;}   // plein volume avant le premier accord
+  /* Carillon de réussite, court, en ré pentatonique comme la musique ; plus riche selon le score. */
+  function chime(lv){const N=[587.3,740,880,1174.7,1480,1760];const n=lv>=3?6:lv>=2?5:lv>=1?4:3;const step=lv>=3?.11:.14;
+    for(let i=0;i<n;i++){const f=N[i];tone(f,.9,'sine',.06,i*step);tone(f*3.93,.12,'sine',.012,i*step);}
+    const tb=n*step+.05;[[1174.7,1,2.2],[1174.7*2.76,.4,1.2],[1174.7*5.4,.18,.7]].forEach(([f,v,d])=>tone(f,d,'sine',.045*v,tb));
+    if(lv>=2)[293.7,440,587.3].forEach((f,k)=>tone(f,2.2,'triangle',.03,tb+k*.03));
+    if(lv>=3){[1760,2349.3].forEach((f,k)=>tone(f,.6,'sine',.025,tb+.25+k*.12));}}
   RX.audio={
     toggle(){init();if(!ctx)return false;enabled=!enabled;if(enabled){unlock();if(musicWanted)startMusic();}else stopMusic();if(windGain)windGain.gain.setTargetAtTime(enabled?.015:0,ctx.currentTime,.4);return enabled;},
-    setMusic(on){musicWanted=on;try{localStorage.setItem('flair-roxy-musique',on?'oui':'non');}catch(e){}if(on&&enabled)startMusic();else stopMusic();},
+    setMusic(on){musicWanted=on;try{localStorage.setItem('flair-roxy-2-musique',on?'oui':'non');}catch(e){}if(on&&enabled)startMusic();else stopMusic();},
     get music(){return musicWanted;},
     get musicPlaying(){return !!mTimer;},
-    unlock,
+    unlock,musicHold,musicFromStart,chime,
     get on(){return enabled;},
-    step(){noise(.05,500,.018);},
+    step(){noise(.05,500,.04);},
     jump(){tone(330,.18,'triangle',.06,0,220);},
     sniff(){for(let i=0;i<3;i++)noise(.09,2400,.09,i*.14);},
-    dig(){noise(.18,260,.16);tone(90,.2,'sine',.08);},
+    dig(){noise(.18,260,.16);tone(180,.2,'sine',.08);},
     pick(){[784,988,1175,1568].forEach((f,i)=>tone(f,.25,'sine',.07,i*.08));},
-    talk(){tone(196,.25,'triangle',.07);tone(147,.3,'triangle',.06,.12);},
-    ok(){tone(523,.18,'sine',.08);tone(784,.25,'sine',.08,.1);},
-    no(){tone(220,.25,'triangle',.07);tone(175,.3,'triangle',.06,.12);},
+    talk(){tone(392,.25,'triangle',.06);tone(294,.3,'triangle',.05,.12);},
+    ok(){tone(587.3,.18,'sine',.08);tone(880,.25,'sine',.08,.1);},
+    no(){tone(440,.25,'triangle',.06);tone(349.2,.3,'triangle',.05,.12);},
     /* Grand final : fanfare originale (balafon + kora + percussions), environ 6 s */
     fanfare(lv=3){const N=[523,659,784,1047,880,1047,1175,1319,1568].slice(0,lv>=2?9:lv===1?6:4);N.forEach((f,i)=>{tone(f,.35,'sine',.07,i*.13);tone(f*4.02,.06,'triangle',.02,i*.13);});
       if(lv<1)return;[[262,330,392],[294,370,440],[330,415,494],[349,440,523]].slice(0,lv+1).forEach((ch,j)=>ch.forEach((f,k)=>tone(f,2.2,'sine',.045,1.3+j*.9+k*.04)));
@@ -104,7 +113,7 @@
     tick(n){tone(660+n*40,.06,'square',.025);},
     win(){[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.3,'sine',.08,i*.12));},
     splash(){noise(.25,900,.08);},
-    ambience(dt,day,wind){if(!enabled||!ctx)return;dayF=day;if(mGain&&mTimer){const lv=.42+.18*day;if(Math.abs(lv-mLevel)>.02){mLevel=lv;mGain.gain.setTargetAtTime(mLevel,ctx.currentTime,2);}}if(windGain)windGain.gain.setTargetAtTime(.008+.014*wind,ctx.currentTime,.8);
+    ambience(dt,day,wind){if(!enabled||!ctx)return;dayF=day;if(mGain&&mTimer){const lv=.5+.2*day;if(Math.abs(lv-mLevel)>.02){mLevel=lv;mGain.gain.setTargetAtTime(mLevel,ctx.currentTime,2);}}if(windGain)windGain.gain.setTargetAtTime(.008+.014*wind,ctx.currentTime,.8);
       birdT-=dt;if(birdT<=0){birdT=3+Math.random()*7;if(day>.35){const f=1800+Math.random()*1400;tone(f,.09,'sine',.035,0,600);tone(f*1.1,.08,'sine',.03,.12,-400);}
         else{for(let i=0;i<4;i++)tone(4200,.03,'square',.012,i*.06);}}}
   };

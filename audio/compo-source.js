@@ -1,4 +1,4 @@
-/* Le Flair de Roxy — musique de la version B (v2, après revue de la qualité sonore).
+/* Le Flair de Roxy — musique (v2, après revue de la qualité sonore).
    Esprit « jeu en blocs » contemplatif (piano doux, silences) + couleurs du Sahel (balafon, tambour d'eau, flûte, cloche).
    Composition originale générée par le code (aucune mélodie existante reprise).
    composeB(ctx, sortie, variante 0..2) programme tout le morceau et renvoie sa durée en secondes.

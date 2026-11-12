@@ -1,5 +1,13 @@
 # Historique
 
+## 2.0 — 12 novembre 2026
+La version B (B9) devient la version officielle 2.0, à l’adresse principale. Nouvelle organisation :
+- `/` : version officielle 2.0. Nouvelles sauvegardes : chacun repart de zéro, car les questions 8 et 9 ont changé.
+- `beta/` : espace de test, copie exacte de la 2.0 au départ.
+- `v1/` : archive figée de la version 1.1 ; les anciennes parties y restent jouables.
+- `/b/` : renvoie vers la version officielle.
+Chaque version est autonome (fichiers, sauvegardes, lien de partage). Repères Git : `v1.1` et `v2.0`. Fichiers de musique renommés `musique-1.mp3` à `musique-3.mp3`.
+
 ## Version B9 — 12 novembre 2026 (question 8)
 Question 8, nouvelle situation : « La liste des participants à une formation (noms, téléphones, sexe), pour compter les femmes et les hommes. » La bonne réponse reste « On l’anonymise d’abord ». L’ancienne situation (évaluation de performance d’une personne nommée) relève plutôt du « demander d’abord » de la politique IA de l’organisation ; elle quitte le jeu. Le calao enseigne ainsi deux réflexes distincts : ne pas saisir (question 7), ne garder que l’utile (question 8).
 
