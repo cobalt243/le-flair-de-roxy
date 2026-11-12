@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026 (qualité sonore)
+Après revue de la qualité sonore : piano plus riche et plus clair, tambour et accords remontés pour les haut-parleurs de téléphone, balafon et cloche renforcés, réverbération plus courte ; trois variantes du morceau (une par passage, 0,8 Mo chacune) ; musique environ 9 dB plus forte et premier accord audible à la reprise ; effets « parler », « erreur », « creuser », « pas » plus audibles ; note « bonne réponse » accordée sur la musique ; reprise du son après une interruption sur iPhone.
+
 ## Version B — 12 novembre 2026 (finale)
 Finale à l’esprit « jeu en blocs » : la musique s’efface, un carillon court (balafon et cloche, en ré comme la musique, plus riche selon le score) remplace la fanfare, puis le morceau reprend depuis le début sur l’écran des résultats.
 
