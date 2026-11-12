@@ -273,6 +273,9 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 #slotInfo .fq{margin:3px 0;font-size:14px;font-weight:700;line-height:1.4}#slotInfo .fa{margin:0;font-size:14px;color:var(--good);font-weight:700;line-height:1.4}#slotInfo .fw{margin:3px 0 0;font-size:13px;color:var(--muted);line-height:1.4}
 /* Titre du grand final : lisible sur le ciel doré des meilleurs scores */
 body[data-tier="2"] #finale h2,body[data-tier="3"] #finale h2{color:#FFF6DC;text-shadow:0 4px 0 #9E6118,0 8px 22px rgba(80,30,0,.6)}
+/* Scène de la graine de savoir : les commandes s'effacent le temps de voir la pousse grandir */
+body.seedcut .touchui,body.seedcut #prompt,body.seedcut #edge{visibility:hidden}
+body.seedcut #toast,body.touch.seedcut #toast{top:auto;bottom:calc(13% + env(safe-area-inset-bottom,0px))}
 /* Aller plus loin */
 .endcard .endmore{margin:0;font-size:12.5px;color:var(--muted);font-weight:700;line-height:1.5;text-align:center}
 .endmore a{color:var(--indigo);font-weight:800;display:inline-block;padding:5px 2px}
@@ -300,7 +303,7 @@ body[data-tier="2"] #finale h2,body[data-tier="3"] #finale h2{color:#FFF6DC;text
 <div id="start">
   <header class="ts-head"><h2>Le Flair de <span>Roxy</span></h2><p>Bien utiliser Claude, bloc par bloc</p></header>
   <div class="ts-card panel">
-    <p class="ts-pitch">Apprenez les bons réflexes pour travailler avec Claude, en vous amusant. Promenez Roxy, rencontrez six animaux et répondez à leurs questions.</p>
+    <p class="ts-pitch">Le baobab du savoir ne pousse plus ! Six animaux gardent chacun une graine de savoir. Aidez Roxy : répondez à leurs questions sur Claude pour le faire grandir.</p>
     <ul class="ts-how" aria-label="Comment jouer">
       <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg><b>Marcher</b><small><span class="mob">Joystick</span><span class="desk">ZQSD ou flèches</span></small></li>
       <li><svg viewBox="0 0 24 24"><path d="M12 3l7 9h-4v9H9v-9H5z" fill="currentColor" stroke="none"/></svg><b>Suivre la flèche</b><small>Elle mène aux animaux</small></li>
@@ -356,13 +359,13 @@ body[data-tier="2"] #finale h2,body[data-tier="3"] #finale h2{color:#FFF6DC;text
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>if(!window.THREE){document.write('<script src="vendor/three.min.js"><\/script>');}</script>
-<script src="js/voxel-sdf.js?v=beta7"></script>
-<script src="js/roxy.js?v=beta7"></script>
-<script src="js/animals.js?v=beta7"></script>
-<script src="js/world.js?v=beta7"></script>
-<script src="js/audio.js?v=beta7"></script>
-<script src="js/questions.js?v=beta7"></script>
-<script src="js/game.js?v=beta7"></script>
+<script src="js/voxel-sdf.js?v=beta8"></script>
+<script src="js/roxy.js?v=beta8"></script>
+<script src="js/animals.js?v=beta8"></script>
+<script src="js/world.js?v=beta8"></script>
+<script src="js/audio.js?v=beta8"></script>
+<script src="js/questions.js?v=beta8"></script>
+<script src="js/game.js?v=beta8"></script>
 <script>
   if(window.THREE)setTimeout(()=>RX.start(),30);
   else document.getElementById('loading').textContent='La bibliothèque 3D n’a pas pu se charger. Vérifiez la connexion internet.';

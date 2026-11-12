@@ -1,5 +1,8 @@
 # Historique
 
+## Bêta — 12 novembre 2026 (la quête du baobab)
+Suite au commentaire d’un joueur (« il manque une quête ») : le jeu raconte maintenant une histoire. Le baobab du savoir ne pousse plus ; chaque animal garde une graine de savoir. Une jeune pousse est visible dès le départ à l’emplacement du baobab ; après chaque animal, une courte scène (3 s) la montre qui grandit d’un cran, et le grand final devient la dernière étape. L’objectif affiche « Graines de savoir : n sur 6 ». Aucune nouvelle commande, durée de partie inchangée (15 s de scènes au total). Version officielle inchangée.
+
 ## 2.0.5 — 12 novembre 2026
 Ligne « À revoir » de la bêta reportée : sous les 12 blocs de l’écran de fin, les thèmes où le joueur s’est trompé (en indigo, avec l’animal), suivis de la consigne « Touchez un bloc gris… ». Rien de plus à 12/12.
 

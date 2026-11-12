@@ -67,9 +67,12 @@
     /* Jeune baobab de la fête finale */
     const FETE=V3(37.5,world.surface(37,45),45.5);
     const sapling=new THREE.Group();{const bark=new THREE.MeshLambertMaterial({color:new THREE.Color('#8B7A66').convertSRGBToLinear(),map:tex}),leaf=new THREE.MeshLambertMaterial({color:new THREE.Color('#8E9A47').convertSRGBToLinear(),map:tex});
-      for(let y=0;y<4;y++){const m=new THREE.Mesh(new THREE.BoxGeometry(.5,1,.5),bark);m.position.y=y+.5;m.castShadow=true;sapling.add(m);}
-      [[1,0],[-1,0],[0,1],[0,-1],[0,0]].forEach(([a,b])=>{const m=new THREE.Mesh(new THREE.BoxGeometry(1,.5,1),leaf);m.position.set(a*.9,4.2+(a||b?0:.5),b*.9);m.castShadow=true;sapling.add(m);});
-      sapling.position.copy(FETE);sapling.scale.setScalar(.001);sapling.visible=false;scene.add(sapling);}
+      for(let y=0;y<3;y++){const w=y?.8:1.05,m=new THREE.Mesh(new THREE.BoxGeometry(w,1,w),bark);m.position.y=y+.5;m.castShadow=true;sapling.add(m);}
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const br=new THREE.Mesh(new THREE.BoxGeometry(a?1:.4,.4,b?1:.4),bark);br.position.set(a*.8,2.9,b*.8);br.castShadow=true;sapling.add(br);
+        const m=new THREE.Mesh(new THREE.BoxGeometry(1.1,.6,1.1),leaf);m.position.set(a*1.25,3.4,b*1.25);m.castShadow=true;sapling.add(m);});
+      {const m=new THREE.Mesh(new THREE.BoxGeometry(1.2,.7,1.2),leaf);m.position.set(0,3.55,0);m.castShadow=true;sapling.add(m);}
+      sapling.position.copy(FETE);scene.add(sapling);}
+    const SEED_SC=[.42,.64,.86,1.08,1.3,1.52],seedSc=n=>SEED_SC[Math.max(0,Math.min(5,n))];   // taille de la pousse selon le nombre de graines de savoir
     const TREE=(()=>{const L=[],add=(x,y,z,c)=>L.push([x,y,z,c]),H=RX.hash3;
       for(let y=0;y<9;y++)for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++){if(y>5&&Math.abs(x)+Math.abs(z)>1)continue;add(x,y,z,H(x,y,z)>.5?'#8B7A66':'#7C6B58');}
       [[-1,-1],[1,-1],[-1,1],[1,1]].forEach(([x,z])=>add(x*2,0,z*2,'#7C6B58'));
@@ -112,6 +115,7 @@
         a.model.object.position.copy(a.pos);a.model.object.rotation.y=Math.atan2(FETE.x-x,FETE.z-z);});
       TREE.show(instant?1:0);if(instant){const okN=Object.values(S.ans).filter(Boolean).length;TREE.gold(okN>=12);}}
     if(S.finished)placeFete(true);
+    sapling.visible=!S.finished;sapling.scale.setScalar(seedSc(S.met.length));
 
     /* ===== Entrées ===== */
     const keys={};let joy={x:0,y:0,run:false};
@@ -142,7 +146,7 @@
     function toast(t,ms=2800){hud.toast.textContent=t;hud.toast.classList.add('show');clearTimeout(hud.toast._t);hud.toast._t=setTimeout(()=>hud.toast.classList.remove('show'),ms);}
     function refreshHUD(){const n=S.met.length;
       hud.stars.innerHTML=ANIMALS.map((a,i)=>`<span class="star ${i<n?'got':''}"></span>`).join('');hud.stars.setAttribute('role','img');hud.stars.setAttribute('aria-label',`Étoiles gagnées : ${n} sur 6`);
-      hud.obj.textContent=S.retry&&S.retry.length?`Revanche : ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`:S.finished?'Bravo ! Explorez librement.':n===0?'Allez à la rencontre des animaux.':n<6?`Animaux rencontrés : ${n} sur 6`:'Tous les animaux sont rencontrés !';}
+      hud.obj.textContent=S.retry&&S.retry.length?`Revanche : ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`:S.finished?'Bravo ! Explorez librement.':n===0?'Le baobab ne pousse plus : allez voir les animaux.':n<6?`Graines de savoir : ${n} sur 6`:'Les 6 graines de savoir sont réunies !';}
     refreshHUD();
 
     /* ===== Dialogues et questions ===== */
@@ -189,8 +193,11 @@
       if(S.met.includes(a.id)){openDialog(a,[{t:S.finished?'Merci encore, Roxy ! Le baobab pousse bien.':'Merci Roxy ! Va voir les autres animaux : suis la flèche dorée.',btn:'À plus tard'}]);return;}
       openDialog(a,[{t:a.intro,btn:'C’est parti'},{q:a.q[0]},{q:a.q[1]}],()=>{
         S.met.push(a.id);save();refreshHUD();RX.audio.pick();sparkle(V3(a.pos.x,a.pos.y+1.5,a.pos.z),['#F2B93B','#FFE08A','#E2652C'],40);
-        if(S.met.length<6)toast(`Bravo ! ${a.name} vous donne une étoile (${S.met.length}/6)`,3200);else startFete();});}
+        if(S.met.length<6){toast(`${a.name} vous donne sa graine de savoir : le baobab grandit ! (${S.met.length}/6)`,3600);startSeed(S.met.length);}else startFete();});}
 
+    /* Graine de savoir : après chaque animal (sauf le dernier, qui lance la fête), la caméra montre la pousse qui grandit d'un cran. */
+    const SEED_DUR=3;let seedT=0,seedFrom=0,seedTo=0;
+    function startSeed(n){seedFrom=seedSc(n-1);seedTo=seedSc(n);if(reduced){sapling.scale.setScalar(seedTo);return;}seedT=SEED_DUR;V.set(0,0,0);document.body.classList.add('seedcut');}
     let feteT=0,growT=-1,rockets=[],fwT=0;const FETE_DUR=reduced?.6:11;const FW=['#F2B93B','#E2652C','#5B79C2','#FFE08A','#62C186','#D3372B','#F4F1EA'];
     let tier=3;const TIERS=[ // 0 : <7, 1 : 7-9, 2 : 10-11, 3 : 12
       {h:'Bon début !',p:'Le baobab a poussé. Rejouez pour qu’il fleurisse d’or !',gap:[9,9],dbl:0,sky:0,skyC:'#FFE3A8'},
@@ -265,7 +272,7 @@
 
     /* ===== Action ===== */
     let near=null;
-    function action(){if(inDialog||cineT>0||feteT>0||performance.now()-dlgClosedAt<500)return;if(near){talkTo(near);if(S.tuto<3){S.tuto=3;save();}}else toast('Approchez-vous d’un animal pour lui parler. Suivez la flèche dorée.');}
+    function action(){if(inDialog||cineT>0||feteT>0||seedT>0||performance.now()-dlgClosedAt<500)return;if(near){talkTo(near);if(S.tuto<3){S.tuto=3;save();}}else toast('Approchez-vous d’un animal pour lui parler. Suivez la flèche dorée.');}
     function restart(){try{localStorage.removeItem(SAVE_KEY);}catch(e){}location.replace(location.pathname);}
 
     /* ===== Pause ===== */
@@ -287,10 +294,10 @@
       if(a==='y'){if(d<0){P.y=Math.floor(P.y)+1;grounded=true;}else P.y=Math.floor(P.y+HH)-HH-1e-3;V.y=0;}
       else{P[a]=d>0?Math.floor(P[a]+HW)-HW-1e-3:Math.floor(P[a]-HW)+1+HW+1e-3;V[a]=0;}
       if(collides(P.x,P.y,P.z)){P[a]=o;if(a==='y')V.y=0;else V[a]=0;}}
-    function animalBlocks(){if(S.finished){const dx=P.x-FETE.x,dz=P.z-FETE.z,d=Math.hypot(dx,dz);if(d<1.9&&d>1e-3){const k=(1.9-d)/d;P.x+=dx*k;P.z+=dz*k;}}ANIMALS.forEach(a=>{const r=a.kind==='elephant'?1.6:.7,dx=P.x-a.pos.x,dz=P.z-a.pos.z,d=Math.hypot(dx,dz);
+    function animalBlocks(){{const R=S.finished?1.9:.4+.45*sapling.scale.x,dx=P.x-FETE.x,dz=P.z-FETE.z,d=Math.hypot(dx,dz);if(d<R&&d>1e-3){const k=(R-d)/d;P.x+=dx*k;P.z+=dz*k;}}ANIMALS.forEach(a=>{const r=a.kind==='elephant'?1.6:.7,dx=P.x-a.pos.x,dz=P.z-a.pos.z,d=Math.hypot(dx,dz);
       if(d<r+HW&&Math.abs(P.y-a.pos.y)<1.5&&d>1e-3){const k=(r+HW-d)/d,ox=P.x,oz=P.z;P.x+=dx*k;P.z+=dz*k;if(collides(P.x,P.y,P.z)){P.x=ox;P.z=oz;}}});}
     function physics(dt){
-      let ix=0,iz=0;if(!inDialog&&feteT<=0){if(keys.KeyW||keys.ArrowUp)iz-=1;if(keys.KeyS||keys.ArrowDown)iz+=1;if(keys.KeyA||keys.ArrowLeft)ix-=1;if(keys.KeyD||keys.ArrowRight)ix+=1;ix+=joy.x;iz+=joy.y;}
+      let ix=0,iz=0;if(!inDialog&&feteT<=0&&seedT<=0){if(keys.KeyW||keys.ArrowUp)iz-=1;if(keys.KeyS||keys.ArrowDown)iz+=1;if(keys.KeyA||keys.ArrowLeft)ix-=1;if(keys.KeyD||keys.ArrowRight)ix+=1;ix+=joy.x;iz+=joy.y;}
       const m=Math.hypot(ix,iz);if(m>1){ix/=m;iz/=m;}
       const fx=-Math.sin(yaw),fz=-Math.cos(yaw),rx=Math.cos(yaw),rz=-Math.sin(yaw);const dx=fx*(-iz)+rx*ix,dz=fz*(-iz)+rz*ix;
       const water=world.water(P.x,P.y+.2,P.z);if(water&&!wasWater)RX.audio.splash();wasWater=water;
@@ -299,7 +306,7 @@
       const run=(keys.ShiftLeft||keys.ShiftRight||joy.run)&&!water;const sp=(run?6.2:3.6)*(water?.55:1);
       const acc=grounded?14:5;V.x+=(dx*sp-V.x)*Math.min(1,acc*dt);V.z+=(dz*sp-V.z)*Math.min(1,acc*dt);
       if(Math.hypot(dx,dz)>.05){let d=Math.atan2(dx,dz)-heading;d=Math.atan2(Math.sin(d),Math.cos(d));heading+=d*Math.min(1,dt*10);}
-      if(grounded&&!inDialog){let jump=keys.Space;
+      if(grounded&&!inDialog&&seedT<=0){let jump=keys.Space;
         if(!jump&&Math.hypot(dx,dz)>.3){const ax=P.x+Math.sign(dx)*(HW+.15)*(Math.abs(dx)>.3?1:0),az=P.z+Math.sign(dz)*(HW+.15)*(Math.abs(dz)>.3?1:0),yb=Math.floor(P.y+.01);
           if(world.solid(Math.floor(ax),yb,Math.floor(az))&&!world.solid(Math.floor(ax),yb+1,Math.floor(az))&&!world.solid(Math.floor(P.x),yb+1,Math.floor(P.z)))jump=true;}
         if(jump){V.y=8.4;grounded=false;RX.audio.jump();}}
@@ -354,6 +361,8 @@
       let target=V3(P.x,P.y+1.05+3*tabK,P.z),pt=pitch,dd=dist;
       if(inDialog&&talker&&!express){target=dlgTarget(talker);let d=dlgYaw-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*3);pt=.42;dd=talker.kind==='elephant'?8.5:6.5;}
       if(express){yaw+=dt*.12;const port=camera.aspect<.8?1.35:1;const t=V3(FETE.x,FETE.y+4,FETE.z),dir=V3(Math.sin(yaw)*Math.cos(.5),Math.sin(.5),Math.cos(yaw)*Math.cos(.5));camT.lerp(t,Math.min(1,dt*3));camera.position.copy(camT).addScaledVector(dir,24*port);camera.lookAt(camT);return;}
+      if(seedT>0){const h=3.9*sapling.scale.x,t=V3(FETE.x,FETE.y+h*.55,FETE.z),yw=.55+(SEED_DUR-seedT)*.12,pt=.26,dd=(4.2+h*1.5)*(camera.aspect<.8?1.15:1);camT.lerp(t,Math.min(1,dt*5));
+        const dir=V3(Math.sin(yw)*Math.cos(pt),Math.sin(pt),Math.cos(yw)*Math.cos(pt));camera.position.lerp(camT.clone().addScaledVector(dir,dd),Math.min(1,dt*5));camera.lookAt(camT);return;}
       if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,Math.max(0,(e-1.2)/7)),ek=k*k*(3-2*k);const port=camera.aspect<.8?.95:1;target=V3(FETE.x,FETE.y+1.6+ek*4.5,FETE.z);yaw+=dt*.3;pt=.42+ek*.08;dd=(16+ek*12)*port;
         camT.lerp(target,Math.min(1,dt*4));const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));camera.position.copy(camT).addScaledVector(dir,dd);camera.lookAt(camT);return;}
       if(!camInit){camT.copy(target);camInit=true;}camT.lerp(target,Math.min(1,dt*(inDialog||feteT>0?3:8)));
@@ -371,17 +380,20 @@
       if(!paused){clock+=dt;if(!S.finished)S.time+=dt;}
       if(cineT>0&&!paused){cineT-=dt;if(cineT<=0){cineT=0;$('#cine').hidden=true;}}
       if(feteT>0&&!paused){feteT-=dt;if(feteT<=0){feteT=0;afterFete();showEnd();}}
+      if(seedT>0&&!paused){seedT=Math.max(0,seedT-dt);if(!seedT){sapling.scale.setScalar(seedTo);document.body.classList.remove('seedcut');}const k=Math.min(1,Math.max(0,(SEED_DUR-seedT-.7)/1.4)),e=1-Math.pow(1-k,3);sapling.scale.setScalar(seedFrom+(seedTo-seedFrom)*e);
+        if(k>0&&k<1&&Math.random()<dt*40)emit({x:FETE.x+(Math.random()-.5)*2.4,y:FETE.y+Math.random()*3.9*sapling.scale.x,z:FETE.z+(Math.random()-.5)*2.4,v:{x:0,y:1.6,z:0},g:0,life:1,age:0,c:Math.random()<.5?'#FFE08A':'#F2B93B',s:.9});}
+      else if(!S.finished&&!paused&&!reduced&&Math.random()<dt*1.2)emit({x:FETE.x+(Math.random()-.5)*1.2,y:FETE.y+3.9*sapling.scale.x,z:FETE.z+(Math.random()-.5)*1.2,v:{x:0,y:.6,z:0},g:0,life:1.6,age:0,c:'#FFE08A',s:.55});
       let hs=0;if(!paused&&cineT<=0)for(let i=0;i<nSub;i++)hs=physics(dt/nSub);   // la physique avance par petits pas pour rester fiable
       if(!paused)updateContext();
       if(hs>.4||inDialog)idleT=0;else idleT+=dt;
-      const state=feteT>0?'happy':!grounded?'air':hs>4.6?'run':hs>.4?'walk':idleT>16?'lie':idleT>7?'sit':'idle';
+      const state=feteT>0||seedT>0?'happy':!grounded?'air':hs>4.6?'run':hs>.4?'walk':idleT>16?'lie':idleT>7?'sit':'idle';
       RX.animateRoxy(roxy,state,clock,dt,hs);roxy.object.position.copy(P);
       if(inDialog&&talker){let d=Math.atan2(talker.pos.x-P.x,talker.pos.z-P.z)-heading;d=Math.atan2(Math.sin(d),Math.cos(d));heading+=d*Math.min(1,dt*6);}
       roxy.object.rotation.y=heading;
       ANIMALS.forEach(a=>{RX.animateCritter(a.kind,a.model,clock+a.phase,talker===a||feteT>0);
         if(feteT<=0&&!S.finished&&Math.hypot(P.x-a.pos.x,P.z-a.pos.z)<9){const o=a.model.object;let d=Math.atan2(P.x-a.pos.x,P.z-a.pos.z)-o.rotation.y;d=Math.atan2(Math.sin(d),Math.cos(d));o.rotation.y+=d*Math.min(1,dt*2);}
         if(S.met.includes(a.id)&&!reduced&&Math.random()<dt*.8)emit({x:a.pos.x+(Math.random()-.5),y:a.pos.y+(a.kind==='elephant'?3.6:1.6),z:a.pos.z+(Math.random()-.5),v:{x:0,y:.7,z:0},g:0,life:1.4,age:0,c:'#FFE08A',s:.6});});
-      if(growT>=0){growT+=dt;const k=Math.min(1,growT/(reduced?.1:4.2));TREE.show(1-Math.pow(1-k,2));if(!reduced&&Math.random()<dt*(8+tier*8))emit({x:FETE.x+(Math.random()-.5)*(tier===3?9:3),y:FETE.y+k*11,z:FETE.z+(Math.random()-.5)*(tier===3?9:3),v:{x:0,y:2,z:0},g:0,life:1.2,age:0,c:tier===3?'#FFD54A':'#FFE08A',s:tier===3?1.4:1});if(k>=1){growT=-1;TREE.show(1);if(tier===3){TREE.gold(true);RX.audio.pick();sparkle(V3(FETE.x,FETE.y+10,FETE.z),['#FFD873','#F2C14E','#FFFFFF'],90,7);}}}
+      if(growT>=0){growT+=dt;const k=Math.min(1,growT/(reduced?.1:4.2));TREE.show(1-Math.pow(1-k,2));if(sapling.visible){const q=1-Math.min(1,growT/(reduced?.05:1.4));if(q<=0)sapling.visible=false;else sapling.scale.setScalar(seedSc(5)*q);}if(!reduced&&Math.random()<dt*(8+tier*8))emit({x:FETE.x+(Math.random()-.5)*(tier===3?9:3),y:FETE.y+k*11,z:FETE.z+(Math.random()-.5)*(tier===3?9:3),v:{x:0,y:2,z:0},g:0,life:1.2,age:0,c:tier===3?'#FFD54A':'#FFE08A',s:tier===3?1.4:1});if(k>=1){growT=-1;TREE.show(1);if(tier===3){TREE.gold(true);RX.audio.pick();sparkle(V3(FETE.x,FETE.y+10,FETE.z),['#FFD873','#F2C14E','#FFFFFF'],90,7);}}}
       updateFireworks(dt);
       if(feteT>0){const e=FETE_DUR-feteT;ANIMALS.forEach((a,i)=>{const ph=e*3-i*.55;a.model.object.position.y=a.pos.y+(ph>0?Math.abs(Math.sin(ph*Math.PI*.9))*(a.kind==='elephant'?.35:.7)*(.45+tier*.2):0);});}
       else if(S.finished)ANIMALS.forEach(a=>a.model.object.position.y=a.pos.y);
@@ -391,7 +403,7 @@
       if(!reduced)world.animateTufts(clock,wind);
       const day=lighting(clock);RX.audio.ambience(dt,day,wind);
       updateParticles(dt,clock);updateCamera(dt,hs>.4);updateTuto(dt,hs);
-      {const tg=objectiveTarget();const showG=!!tg&&!inDialog&&started&&cineT<=0&&!paused;marker.visible=showG;guide.visible=false;edgeEl.hidden=true;
+      {const tg=objectiveTarget();const showG=!!tg&&!inDialog&&started&&cineT<=0&&seedT<=0&&!paused;marker.visible=showG;guide.visible=false;edgeEl.hidden=true;
         if(tg){marker.position.copy(tg);marker.position.y+=reduced?0:Math.sin(clock*3)*.18;marker.rotation.y=clock*1.2;
         const d=Math.hypot(tg.x-P.x,tg.z-P.z);marker.scale.setScalar(Math.min(2.6,1.3+d/14)*(d<6?Math.max(.5,d/6):1));
         if(showG&&d>2.5){const ux=(tg.x-P.x)/d,uz=(tg.z-P.z)/d,pulse=reduced?0:Math.sin(clock*5)*.12;
@@ -412,7 +424,7 @@
     $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.met.length?'Reprendre':'Jouer';
     {const r=getRecord();if(r){$('#record').hidden=false;$('#record').textContent=`Votre record : ${r.ok>=12?'🥇 Flair d’or':r.ok>=10?'🥈 Flair d’argent':r.ok>=7?'🥉 Flair de bronze':'Chiot curieux'} (${r.ok}/12)`;}}
     if(S.finished){$('#seeResult').hidden=false;$('#pauseResult').hidden=false;}
-    if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Animaux rencontrés : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
+    if(S.met.length){$('#progress').hidden=false;$('#progress').textContent=S.finished?'Parcours terminé : 6 animaux sur 6':`Graines de savoir : ${S.met.length} sur 6`;$('#newGame').hidden=false;}
     $('#newGame').onclick=()=>{const b=$('#newGame');if(b.dataset.ok){restart();return;}b.dataset.ok=1;b.textContent='Confirmer : effacer ma progression';};
     if(S.finished&&S.retry&&S.retry.length){const n=S.retry.length;$('#play').textContent='Reprendre ma revanche';$('#progress').textContent=`Revanche en cours : ${n} question${n>1?'s':''} à rejouer`;
       $('#newGame').textContent='Nouvelle partie';$('#newGame').dataset.ok='';}
@@ -421,8 +433,9 @@
     if(params.has('test')){started=true;paused=false;$('#start').hidden=true;}
 
     /* Accès de test (automatisation) */
-    RX.debug={get state(){return {pos:[P.x,P.y,P.z],grounded,met:S.met.slice(),ans:{...S.ans},finished:S.finished,fete:+feteT.toFixed(2),near:near&&near.id,inDialog,paused,cubes:{roxy:roxy.count,animals:ANIMALS.map(a=>a.model.count)},fps,time:S.time};},
+    RX.debug={get state(){return {pos:[P.x,P.y,P.z],grounded,met:S.met.slice(),ans:{...S.ans},finished:S.finished,fete:+feteT.toFixed(2),seed:+seedT.toFixed(2),pousse:{visible:sapling.visible,taille:+sapling.scale.x.toFixed(2)},near:near&&near.id,inDialog,paused,cubes:{roxy:roxy.count,animals:ANIMALS.map(a=>a.model.count)},fps,time:S.time};},
       animals:()=>ANIMALS.map(a=>({id:a.id,pos:[a.pos.x,a.pos.y,a.pos.z],q:a.q})),
+      seedAt(n,e){seedFrom=seedSc(n-1);seedTo=seedSc(n);seedT=Math.max(.05,SEED_DUR-e);const k=Math.min(1,Math.max(0,(e-.7)/1.4));sapling.scale.setScalar(seedFrom+(seedTo-seedFrom)*(1-Math.pow(1-k,3)));document.body.classList.add('seedcut');},
       feteAt(e){feteT=Math.max(.05,FETE_DUR-e);growT=Math.min(e,4.2);},
       teleport(x,y,z,h){P.set(x,y,z);V.set(0,0,0);if(h!==undefined)heading=h;camInit=false;},setYaw(v){yaw=v;lastCamInput=clock;},world,
       sim(sec,input=[]){input.forEach(k=>keys[k]=true);for(let i=0;i<Math.round(sec*60);i++){const hs=physics(1/60);updateContext();updateTuto(1/60,hs);}input.forEach(k=>keys[k]=false);return [P.x,P.y,P.z];}};
