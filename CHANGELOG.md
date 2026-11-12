@@ -1,5 +1,8 @@
 # Historique
 
+## Bêta — 12 novembre 2026 (thèmes à revoir)
+Écran de fin : une ligne « À revoir » sous les 12 blocs nomme les thèmes où le joueur s’est trompé, avec l’animal entre parenthèses, du plus raté au moins raté. À partir de quatre thèmes, seuls les deux premiers sont nommés. Rien de plus à 12/12. Version officielle inchangée.
+
 ## 2.0.4 et bêta — 12 novembre 2026
 Question 11 ajustée : la note demandée compare 3 fournisseurs (le tableau « coût, délai, risque » devient logique) et les quatre relances ont des longueurs proches, pour que la bonne ne se repère plus à sa taille. Explications inchangées.
 
