@@ -58,27 +58,21 @@
   function pad(f,t,dur,vol){[-4,4].forEach(cents=>{const o=ctx.createOscillator(),g=ctx.createGain(),lp=ctx.createBiquadFilter();o.type='triangle';o.frequency.setValueAtTime(f,t);o.detune.value=cents;
     lp.type='lowpass';lp.frequency.value=700;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+dur*.35);g.gain.linearRampToValueAtTime(0,t+dur);
     o.connect(lp).connect(g).connect(IN());o.start(t);o.stop(t+dur+.1);});}
+  /* ===== Version B : morceau « piano doux + balafon, tambour d'eau, flûte, cloche » (fichier audio/musique-b.mp3),
+     joué en entier puis suivi d'un silence de 20 à 40 s, comme les morceaux de la version A. ===== */
+  const B_GAIN=.5;let bBuf=null,bLoading=false,bSrc=null;
+  function loadB(){if(bBuf||bLoading||!ctx)return;bLoading=true;
+    fetch('audio/musique-b.mp3').then(r=>r.arrayBuffer()).then(a=>new Promise((ok,ko)=>ctx.decodeAudioData(a,ok,ko))).then(b=>{bBuf=b;}).catch(()=>{}).finally(()=>{bLoading=false;});}
   function schedule(){
     if(!ctx||ctx.state!=='running')return;
-    while(mNext<ctx.currentTime+.3){
-      if(!piece){piece=newPiece();}
-      const beatDur=60/piece.bpm/2,t=mNext;
-      if(piece.rest>0){piece.rest-=beatDur;mNext+=beatDur;if(piece.rest<=0)piece=null;continue;}
-      const b=piece.beat;
-      if(b%16===0){const root=midi(note(piece.pad[(b/16)%piece.pad.length],-2));pad(root,t,beatDur*16.5,.06);pad(root*1.5,t,beatDur*16.5,.035);}
-      const density=(.26+.12*dayF)*(b>piece.len-12?.5:1);
-      if(b%2===0&&Math.random()<density){
-        piece.deg+=[-2,-1,-1,1,1,2,0][Math.floor(Math.random()*7)];piece.deg=Math.max(3,Math.min(13,piece.deg));
-        const f=midi(note(piece.deg));pluck(f,t+(Math.random()-.5)*.02,.16,piece.voice);
-        if(Math.random()<.18)pluck(midi(note(piece.deg-2)),t+.01,.08,piece.voice);
-        if(Math.random()<.12)pluck(f*2,t+beatDur,.05,'balafon');}
-      if(b%16===8&&Math.random()<.35)pluck(midi(note(0,-1)),t,.1,'kora');
-      piece.beat++;mNext+=beatDur;
-      if(piece.beat>=piece.len){piece.rest=25+Math.random()*45;}
-    }}
-  function startMusic(){if(!ctx||mTimer)return;if(!mGain)setupMusic();mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setValueAtTime(mGain.gain.value,ctx.currentTime);
-    mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;piece=null;mTimer=setInterval(schedule,60);}
-  function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}}
+    if(!bBuf){loadB();return;}
+    if(mNext<ctx.currentTime)mNext=ctx.currentTime+.2;
+    if(mNext<ctx.currentTime+.3){const src=ctx.createBufferSource(),g=ctx.createGain();g.gain.value=B_GAIN;src.buffer=bBuf;src.connect(g).connect(mGain);
+      src.start(mNext);bSrc=src;src.onended=()=>{if(bSrc===src)bSrc=null;};mNext+=bBuf.duration+20+Math.random()*20;}}
+  function startMusic(){if(!ctx||mTimer)return;if(!mGain)setupMusic();loadB();mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setValueAtTime(mGain.gain.value,ctx.currentTime);
+    mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;mTimer=setInterval(schedule,200);}
+  function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}
+    if(bSrc&&ctx){try{bSrc.stop(ctx.currentTime+1.2);}catch(e){}bSrc=null;}}
   RX.audio={
     toggle(){init();if(!ctx)return false;enabled=!enabled;if(enabled){unlock();if(musicWanted)startMusic();}else stopMusic();if(windGain)windGain.gain.setTargetAtTime(enabled?.015:0,ctx.currentTime,.4);return enabled;},
     setMusic(on){musicWanted=on;try{localStorage.setItem('flair-roxy-b-musique',on?'oui':'non');}catch(e){}if(on&&enabled)startMusic();else stopMusic();},

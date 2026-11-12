@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026 (musique)
+Nouvelle musique dans B uniquement : piano doux (esprit jeu en blocs) avec balafon, tambour d’eau, flûte en bois et cloche en fer, sans vent (`b/audio/musique-b.mp3`, 65 s, composition originale générée par le code). Jouée en entier puis suivie de 20 à 40 s de silence.
+
 ## Version B — 12 novembre 2026
 B devient autonome : sa propre copie de la bibliothèque 3D (`b/vendor/`) et son lien de défi vers `/b/`. Aucun fichier de la version principale n’est utilisé par B.
 
