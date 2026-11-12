@@ -1,5 +1,8 @@
 # Historique
 
+## Bêta — 12 novembre 2026 (thèmes à revoir, retouches)
+La ligne « À revoir » et la consigne « Touchez un bloc gris… » ne font plus qu’un seul paragraphe ; les thèmes sont en indigo au lieu du rouge.
+
 ## Bêta — 12 novembre 2026 (thèmes à revoir)
 Écran de fin : une ligne « À revoir » sous les 12 blocs nomme les thèmes où le joueur s’est trompé, avec l’animal entre parenthèses, du plus raté au moins raté. À partir de quatre thèmes, seuls les deux premiers sont nommés. Rien de plus à 12/12. Version officielle inchangée.
 

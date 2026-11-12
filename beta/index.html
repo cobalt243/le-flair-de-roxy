@@ -266,7 +266,7 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 /* Blocs de l'écran de fin : on les touche pour revoir la question et la bonne réponse */
 .slots .slot{padding:9px 0;min-width:0;-webkit-tap-highlight-color:transparent}
 .slots .slot.sel i{outline:3px solid var(--indigo);outline-offset:1px}
-.endcard .weak{margin:10px 0 0;font-size:13.5px;line-height:1.4;font-weight:600;text-align:center;color:var(--ink)}#endStats .weak b{display:inline;font-family:inherit;font-size:inherit;color:var(--bad);font-weight:800}
+.endcard .weak{margin:10px 0 0;font-size:13.5px;line-height:1.4;font-weight:600;text-align:center;color:var(--ink)}#endStats .weak b{display:inline;font-family:inherit;font-size:inherit;color:var(--indigo);font-weight:800}.endcard .weak span{color:var(--muted);font-size:12.5px;font-weight:700}
 .endcard .slothint{margin:7px 0 0;font-size:12px;font-weight:700;color:var(--muted);text-align:center}
 #slotInfo{margin-top:8px;background:#FFF8E9;border-radius:10px;padding:10px 12px;border-left:4px solid var(--good);text-align:left}
 #slotInfo small{display:block;font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.03em}
@@ -356,13 +356,13 @@ body[data-tier="2"] #finale h2,body[data-tier="3"] #finale h2{color:#FFF6DC;text
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>if(!window.THREE){document.write('<script src="vendor/three.min.js"><\/script>');}</script>
-<script src="js/voxel-sdf.js?v=beta6"></script>
-<script src="js/roxy.js?v=beta6"></script>
-<script src="js/animals.js?v=beta6"></script>
-<script src="js/world.js?v=beta6"></script>
-<script src="js/audio.js?v=beta6"></script>
-<script src="js/questions.js?v=beta6"></script>
-<script src="js/game.js?v=beta6"></script>
+<script src="js/voxel-sdf.js?v=beta7"></script>
+<script src="js/roxy.js?v=beta7"></script>
+<script src="js/animals.js?v=beta7"></script>
+<script src="js/world.js?v=beta7"></script>
+<script src="js/audio.js?v=beta7"></script>
+<script src="js/questions.js?v=beta7"></script>
+<script src="js/game.js?v=beta7"></script>
 <script>
   if(window.THREE)setTimeout(()=>RX.start(),30);
   else document.getElementById('loading').textContent='La bibliothèque 3D n’a pas pu se charger. Vérifiez la connexion internet.';
