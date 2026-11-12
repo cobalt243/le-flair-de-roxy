@@ -59,7 +59,7 @@
     lp.type='lowpass';lp.frequency.value=700;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+dur*.35);g.gain.linearRampToValueAtTime(0,t+dur);
     o.connect(lp).connect(g).connect(IN());o.start(t);o.stop(t+dur+.1);});}
   /* ===== Version B : morceau « piano doux + balafon, tambour d'eau, flûte, cloche » (fichier audio/musique-b.mp3),
-     joué en entier puis suivi d'un silence de 20 à 40 s, comme les morceaux de la version A. ===== */
+     joué en entier puis suivi d'une pause de 45 à 75 s (compromis : musique rare, 3 à 4 passages par partie). ===== */
   const B_GAIN=.5;let bBuf=null,bLoading=false,bSrc=null;
   function loadB(){if(bBuf||bLoading||!ctx)return;bLoading=true;
     fetch('audio/musique-b.mp3').then(r=>r.arrayBuffer()).then(a=>new Promise((ok,ko)=>ctx.decodeAudioData(a,ok,ko))).then(b=>{bBuf=b;}).catch(()=>{}).finally(()=>{bLoading=false;});}
@@ -68,7 +68,7 @@
     if(!bBuf){loadB();return;}
     if(mNext<ctx.currentTime)mNext=ctx.currentTime+.2;
     if(mNext<ctx.currentTime+.3){const src=ctx.createBufferSource(),g=ctx.createGain();g.gain.value=B_GAIN;src.buffer=bBuf;src.connect(g).connect(mGain);
-      src.start(mNext);bSrc=src;src.onended=()=>{if(bSrc===src)bSrc=null;};mNext+=bBuf.duration+20+Math.random()*20;}}
+      src.start(mNext);bSrc=src;src.onended=()=>{if(bSrc===src)bSrc=null;};mNext+=bBuf.duration+45+Math.random()*30;}}
   function startMusic(){if(!ctx||mTimer)return;if(!mGain)setupMusic();loadB();mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setValueAtTime(mGain.gain.value,ctx.currentTime);
     mGain.gain.linearRampToValueAtTime(mLevel,ctx.currentTime+3);mNext=ctx.currentTime+1.2;mTimer=setInterval(schedule,200);}
   function stopMusic(){if(mTimer){clearInterval(mTimer);mTimer=null;}if(mGain&&ctx){mGain.gain.cancelScheduledValues(ctx.currentTime);mGain.gain.setTargetAtTime(0,ctx.currentTime,.25);}

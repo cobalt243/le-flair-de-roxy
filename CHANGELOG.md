@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026 (pause musicale)
+Pause entre deux passages de la musique : 45 à 75 s (au lieu de 20 à 40 s). Compromis entre l’esprit « musique rare » et une partie de 8 minutes : 3 à 4 passages.
+
 ## Version B — 12 novembre 2026 (musique)
 Nouvelle musique dans B uniquement : piano doux (esprit jeu en blocs) avec balafon, tambour d’eau, flûte en bois et cloche en fer, sans vent (`b/audio/musique-b.mp3`, 65 s, composition originale générée par le code). Jouée en entier puis suivie de 20 à 40 s de silence.
 
