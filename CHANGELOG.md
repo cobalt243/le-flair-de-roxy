@@ -1,5 +1,8 @@
 # Historique
 
+## Bêta — 12 novembre 2026 (ponctuation)
+Dans le retour après une mauvaise réponse, un point s’ajoute après la bonne réponse quand elle n’en a pas (« On l’anonymise d’abord. Pour compter… »). En pratique, seule la question 8 était concernée. Version officielle 2.0 inchangée.
+
 ## 2.0 — 12 novembre 2026
 La version B (B9) devient la version officielle 2.0, à l’adresse principale. Nouvelle organisation :
 - `/` : version officielle 2.0. Nouvelles sauvegardes : chacun repart de zéro, car les questions 8 et 9 ont changé.
