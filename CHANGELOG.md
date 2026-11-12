@@ -1,5 +1,8 @@
 # Historique
 
+## 2.0.4 et bêta — 12 novembre 2026
+Question 11 ajustée : la note demandée compare 3 fournisseurs (le tableau « coût, délai, risque » devient logique) et les quatre relances ont des longueurs proches, pour que la bonne ne se repère plus à sa taille. Explications inchangées.
+
 ## 2.0.3 — 12 novembre 2026
 Question 3 de la bêta reportée : « Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ? » (l’intrus : « Viser le prompt parfait du premier coup. »).
 

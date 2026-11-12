@@ -38,11 +38,11 @@
       {t:"Je demande à Claude « Es-tu sûr ? » et j’envoie s’il confirme.",ok:false,why:"Claude peut confirmer sa propre erreur : ce n’est pas une vérification."},
       {t:"J’écris « environ les trois quarts » pour rester prudent.",ok:false,why:"Arrondir ne corrige rien : si le chiffre est faux, « trois quarts » l’est aussi."},
       {t:"Je retire le chiffre ou j’indique « à vérifier » avant d’envoyer.",ok:true,why:"Un chiffre non vérifié ne part pas. Vous le remettrez quand vous aurez ouvert le rapport original."}]},
-    q11:{q:"Vous avez demandé une note de 2 pages. Claude rend 6 pages très générales. Quelle relance est la plus efficace ?",opts:[
-      {t:"« Fais plus court et va à l’essentiel. »",ok:false,why:"Claude choisira seul ce qui est « essentiel » : le résultat restera flou."},
-      {t:"« 2 pages maximum : compare 3 options dans un tableau (coût, délai, risque) et termine par ta recommandation. »",ok:true,why:"Longueur, structure et contenu attendus : Claude sait exactement quoi corriger."},
-      {t:"« 2 pages maximum : compare 3 options et annonce la décision finale de la direction. »",ok:false,why:"Claude ne doit pas décider à la place de la direction : il recommande, vous décidez."},
-      {t:"« Propose-moi 3 versions différentes, je choisirai. »",ok:false,why:"Trois fois plus à relire, sans avoir dit ce qui n’allait pas."}]},
+    q11:{q:"Vous avez demandé une note de 2 pages pour comparer 3 fournisseurs. Claude rend 6 pages très générales. Quelle relance est la plus efficace ?",opts:[
+      {t:"« Fais beaucoup plus court et garde seulement l’essentiel. »",ok:false,why:"Claude choisira seul ce qui est « essentiel » : le résultat restera flou."},
+      {t:"« 2 pages : un tableau des 3 fournisseurs (coût, délai, risque), puis ta recommandation. »",ok:true,why:"Longueur, structure et contenu attendus : Claude sait exactement quoi corriger."},
+      {t:"« 2 pages : compare les 3 fournisseurs, puis annonce la décision finale de la direction. »",ok:false,why:"Claude ne doit pas décider à la place de la direction : il recommande, vous décidez."},
+      {t:"« Propose-moi 3 versions différentes de la note, je choisirai la meilleure. »",ok:false,why:"Trois fois plus à relire, sans avoir dit ce qui n’allait pas."}]},
     q12:{q:"L’équipe de suivi-évaluation veut présenter 5 indicateurs en réunion, avec la cible et le résultat atteint. Quelle fonction de Claude utilisez-vous ?",opts:[
       {t:"Un artefact : une page que Claude crée (tableau de bord, graphiques) et que vous partagez.",ok:true,why:"Un artefact est une page, un outil ou un document que Claude crée et que vous ouvrez et partagez. Les chiffres, c’est vous qui les fournissez."},
       {t:"Un Projet, qui garde vos documents et vos consignes.",ok:false,why:"Un Projet organise votre travail, mais il ne produit pas la page à présenter."},
