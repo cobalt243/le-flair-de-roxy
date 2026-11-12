@@ -1,5 +1,8 @@
 # Historique
 
+## 2.0.2 et bêta — 12 novembre 2026
+Question 8 : l’explication de la bonne réponse nomme la colonne utile (« Pour compter, Claude n’a besoin que de la colonne « sexe » : retirez les noms et les téléphones avant de lui donner la liste. »).
+
 ## 2.0.1 — 12 novembre 2026
 Correction de la bêta reportée : point ajouté après la bonne réponse dans le retour (question 8).
 
