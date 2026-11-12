@@ -1,5 +1,8 @@
 # Historique
 
+## Version B (test) — 12 novembre 2026
+Dossier `b/` : copie de la 1.0.3 avec un paysage plus dogon (maisons nichées dans la falaise, case à palabres). Sauvegardes séparées (`flair-roxy-b-*`). La version principale n’est pas modifiée.
+
 ## 1.0.3 — 12 novembre 2026
 Question 4 : la mise en situation se passe sur l’ordinateur de travail, avec le compte personnel déjà ouvert. La bonne réponse n’encourage plus l’usage d’un appareil personnel ; débuts de réponses variés.
 
