@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026
+B devient autonome : sa propre copie de la bibliothèque 3D (`b/vendor/`) et son lien de défi vers `/b/`. Aucun fichier de la version principale n’est utilisé par B.
+
 ## 1.1 — 12 novembre 2026
 Paysage plus dogon, repris de la version B : petits villages nichés sous un surplomb de la falaise (maisons en banco, greniers), case à palabres (toguna) à piliers de bois et toit épais de tiges de mil. Univers toujours imaginaire, sans objet sacré.
 

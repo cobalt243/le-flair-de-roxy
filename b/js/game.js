@@ -175,7 +175,7 @@
     function dialogAdvance(){if(curQ&&!qAnswered)return;if(performance.now()-lineAt<400)return;lineAt=performance.now();dq.shift();
       if(dq.length)showLine();else{dlgClosedAt=performance.now();hud.dlg.hidden=true;inDialog=false;document.body.classList.remove('indialog');curQ=null;const d=dqDone;dqDone=null;talker=null;d&&d();}}
 
-    const GAME_URL='https://cobalt243.github.io/le-flair-de-roxy/';
+    const GAME_URL='https://cobalt243.github.io/le-flair-de-roxy/b/';
     const REC_KEY='flair-roxy-b-record';
     function getRecord(){try{return JSON.parse(localStorage.getItem(REC_KEY))||null;}catch(e){return null;}}
     function setRecord(ok){const r=getRecord();if(!r||ok>r.ok){try{localStorage.setItem(REC_KEY,JSON.stringify({ok}));}catch(e){}return true;}return false;}
