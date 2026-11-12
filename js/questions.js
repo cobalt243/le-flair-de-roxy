@@ -12,11 +12,11 @@
     q3:{q:"Lequel de ces deux prompts donnera le meilleur résumé pour notre bailleur de fonds ?",opts:[
       {t:"« Résume ce rapport. »",ok:false,why:"Claude ignore qui va lire et pourquoi : le résumé sera générique."},
       {t:"« Résume ce rapport T3 pour notre bailleur de fonds, qui le lira en 5 minutes. »",ok:true,why:"Il précise qui va lire, en combien de temps et l’objet du document : Claude peut cibler l’essentiel."}]},
-    q4:{q:"Il est 22 h, vous êtes chez vous et vous devez relire un contrat de travail pour demain. Votre ordinateur du bureau est resté au travail. Que faites-vous ?",opts:[
-      {t:"J’utilise mon compte Claude personnel, en retirant d’abord le nom de la personne.",ok:false,why:"Même sans le nom, c’est un document de travail : il ne va pas dans un compte personnel."},
-      {t:"Je me connecte au compte Claude de mon organisation depuis mon appareil.",ok:true,why:"Un document de travail va dans le compte de l’organisation : seul ce compte est couvert par le contrat et les règles de votre organisation."},
+    q4:{q:"Il est 22 h. Chez vous, sur votre ordinateur de travail, vous devez relire un contrat de travail pour demain. Votre compte Claude personnel est déjà ouvert dans le navigateur. Que faites-vous ?",opts:[
+      {t:"Je retire d’abord le nom de la personne, puis j’utilise mon compte personnel.",ok:false,why:"Même sans le nom, c’est un document de travail : il ne va pas dans un compte personnel."},
+      {t:"Je passe au compte Claude de mon organisation avant d’ajouter le contrat.",ok:true,why:"Un document de travail va dans le compte de l’organisation : seul ce compte est couvert par le contrat et les règles de votre organisation."},
       {t:"J’utilise mon compte personnel, puis je supprime la conversation juste après.",ok:false,why:"Supprimer ensuite ne change rien : le document est déjà sorti du cadre de votre organisation."},
-      {t:"J’utilise mon compte personnel en activant le mode incognito.",ok:false,why:"Le mode incognito reste un compte personnel : il n’est pas couvert par les règles de votre organisation."}]},
+      {t:"J’active le mode incognito de mon compte personnel avant d’ajouter le contrat.",ok:false,why:"Le mode incognito reste un compte personnel : il n’est pas couvert par les règles de votre organisation."}]},
     q5:{q:"Chaque semaine, vous travaillez sur le même dossier, avec les mêmes documents et les mêmes consignes. Que choisissez-vous ?",opts:[
       {t:"Un Projet, qui garde vos documents et vos consignes.",ok:true,why:"Un Projet regroupe les documents de référence et des instructions permanentes : plus besoin de tout réexpliquer."},
       {t:"Une nouvelle conversation, en recollant tout à chaque fois.",ok:false,why:"Possible, mais vous perdez du temps à tout recharger chaque semaine."},

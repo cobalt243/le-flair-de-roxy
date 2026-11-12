@@ -1,5 +1,8 @@
 # Historique
 
+## 1.0.3 — 12 novembre 2026
+Question 4 : la mise en situation se passe sur l’ordinateur de travail, avec le compte personnel déjà ouvert. La bonne réponse n’encourage plus l’usage d’un appareil personnel ; débuts de réponses variés.
+
 ## 1.0.2 — 11 novembre 2026
 - Médailles : nouvelle tête de Roxy en blocs (style du jeu : plis du front, museau foncé, oreilles repliées, contour), médaille un peu plus grande.
 - Écriture inclusive par reformulation neutre : écran final 12/12, questions 3, 4 et 8, « À retenir ».
