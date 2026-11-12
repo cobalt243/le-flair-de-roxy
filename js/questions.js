@@ -9,9 +9,11 @@
       {t:"Je demande à Claude ce que dit le décret.",ok:false,why:"Sans recherche web, le décret est peut-être plus récent que ses connaissances : il risque de deviner."},
       {t:"J’active la recherche web et je demande la source officielle.",ok:true,why:"La recherche web donne accès aux textes récents. Ouvrez ensuite la source officielle pour confirmer."},
       {t:"Je donne le titre du décret et je demande un résumé.",ok:false,why:"Avec le titre seul, Claude n’a pas le texte : il risque d’inventer ou de rester vague."}]},
-    q3:{q:"Lequel de ces deux prompts donnera le meilleur résumé pour notre bailleur de fonds ?",opts:[
-      {t:"« Résume ce rapport. »",ok:false,why:"Claude ignore qui va lire et pourquoi : le résumé sera générique."},
-      {t:"« Résume ce rapport T3 pour notre bailleur de fonds, qui le lira en 5 minutes. »",ok:true,why:"Il précise qui va lire, en combien de temps et l’objet du document : Claude peut cibler l’essentiel."}]},
+    q3:{intrus:true,q:"Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ?",opts:[
+      {t:"Expliquer le contexte, comme à un nouveau collègue.",ok:false,why:"C’est une bonne pratique : Claude ne connaît ni votre projet ni votre lecteur. Plantez le décor."},
+      {t:"Préciser le format et le ton attendus.",ok:false,why:"C’est une bonne pratique : sans règles, Claude devine la longueur et le style."},
+      {t:"Viser le prompt parfait du premier coup.",ok:true,why:"Le premier prompt donne rarement un résultat parfait : on ajuste en relançant, c’est normal. Les trois autres conseils sont de bonnes pratiques : planter le décor, fixer les règles, montrer un exemple."},
+      {t:"Joindre un exemple du résultat souhaité.",ok:false,why:"C’est une bonne pratique : un exemple montre à Claude ce que vous attendez, mieux qu’une description."}]},
     q4:{q:"Il est 22 h. Chez vous, sur votre ordinateur de travail, vous devez relire un contrat de travail pour demain. Votre compte Claude personnel est déjà ouvert dans le navigateur. Que faites-vous ?",opts:[
       {t:"Je retire d’abord le nom de la personne, puis j’utilise mon compte personnel.",ok:false,why:"Même sans le nom, c’est un document de travail : il ne va pas dans un compte personnel."},
       {t:"Je passe au compte Claude de mon organisation avant d’ajouter le contrat.",ok:true,why:"Un document de travail va dans le compte de l’organisation : seul ce compte est couvert par le contrat et les règles de votre organisation. Par défaut, ses conversations ne servent pas à entraîner les modèles."},

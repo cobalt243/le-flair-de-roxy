@@ -1,5 +1,8 @@
 # Historique
 
+## 2.0.3 — 12 novembre 2026
+Question 3 de la bêta reportée : « Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ? » (l’intrus : « Viser le prompt parfait du premier coup. »).
+
 ## Bêta — 12 novembre 2026 (question 3)
 Question 3 remplacée, car trop facile : « Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ? » L’intrus : « Viser le prompt parfait du premier coup. » Pour cette question, le jeu affiche « L’intrus : » au lieu de « Bonne réponse : » (retour, rappel de l’écran de fin). Version officielle inchangée.
 
