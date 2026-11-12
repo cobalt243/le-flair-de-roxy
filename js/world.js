@@ -2,10 +2,10 @@
    Aucune construction sacrée, aucun personnage humain. */
 (function(RX){
   const W=64,H=28,D=64;
-  const B={AIR:0,SAND:1,GRASS:2,LATERITE:3,ROCK:4,DIG:5,BANCO:6,STRAW:7,BARK:8,LEAF:9,WATER:10,MUD:11};
+  const B={AIR:0,SAND:1,GRASS:2,LATERITE:3,ROCK:4,DIG:5,BANCO:6,STRAW:7,BARK:8,LEAF:9,WATER:10,MUD:11,ENDUIT:12,OMBRE:13};
   const PAL={
     1:["#D2AA72","#CAA16A","#D9B57F"],2:["#BBA45A","#AE9852","#C5AE66"],3:["#A86A42","#9C5F3A"],
-    5:["#EFD9A8","#F4E1B6"],6:["#A85E38","#B66B42"],7:["#C8A65E","#B8964F"],8:["#8B7A66","#7C6B58"],9:["#7F8A3E","#8E9A47","#6F7A35"],10:["#5E9BC0","#6AA6C8"],11:["#8A6A48","#7D5F40"]
+    5:["#EFD9A8","#F4E1B6"],6:["#A85E38","#B66B42"],7:["#C8A65E","#B8964F"],8:["#8B7A66","#7C6B58"],9:["#7F8A3E","#8E9A47","#6F7A35"],10:["#5E9BC0","#6AA6C8"],11:["#8A6A48","#7D5F40"],12:["#C99A66","#BF8F5C","#D1A571"],13:["#2E211B","#36271F"]
   };
   const STRATA=["#A9603C","#9A5434","#B87048","#8E4B30","#A35B39"];
   const lin=v=>Math.pow(v,2.2);
@@ -64,6 +64,21 @@
     // acacias parasols
     [[8,22],[24,58],[57,22],[54,57]].forEach(([ax,az])=>{const base=surface(ax,az);for(let y=0;y<4;y++)set(ax+(y>2?1:0),base+y,az,B.BARK);
       for(let a=-3;a<=3;a++)for(let b=-2;b<=2;b++)if(a*a/12+b*b/5<=1.05)set(ax+1+a,base+4,az+b,B.LEAF);});
+
+    // Paysage dogon — 1 : village niché sous un surplomb de la falaise
+    const village=(x0,x1,fy,houses)=>{let em=99;for(let x=x0;x<=x1;x++)em=Math.min(em,edge(x));
+      for(let x=x0;x<=x1;x++){const e=edge(x);const top=fy+5+((x===x0||x===x1)?-1:0);for(let y=fy;y<=top;y++)for(let z=em-4;z<e;z++)set(x,y,z,B.AIR);for(let z=em-4;z<e;z++)set(x,fy-1,z,B.ROCK);}
+      houses.forEach(([hx,w,h,k])=>{for(let x=hx;x<hx+w;x++)for(let y=fy;y<fy+h;y++)for(let z=em-4;z<em-1;z++)set(x,y,z,k==='g'?B.BANCO:B.ENDUIT);
+        if(k==='g'){for(let x=hx;x<hx+w;x++)for(let z=em-4;z<em-1;z++)set(x,fy+h,z,B.STRAW);set(hx,fy+h-2,em-2,B.OMBRE);}
+        else{const dx=hx+Math.floor(w/2);set(dx,fy,em-2,B.OMBRE);set(dx,fy+1,em-2,B.OMBRE);if(w>2)set(hx,fy+h-1,em-2,B.OMBRE);
+          for(let x=hx;x<hx+w;x+=2)set(x,fy+h,em-3,B.ENDUIT);}});};
+    village(3,15,11,[[3,3,3,'m'],[7,1,3,'g'],[9,3,2,'m'],[13,1,3,'g'],[14,2,2,'m']]);
+    village(50,61,10,[[50,2,3,'m'],[53,1,3,'g'],[55,3,3,'m'],[59,1,2,'g'],[60,2,2,'m']]);
+    // Paysage dogon — 2 : case à palabres (toguna) : piliers bas, toit très épais de tiges de mil
+    {const cx=17,cz=40;let top=0;for(let a=-4;a<=4;a++)for(let b=-3;b<=3;b++)top=Math.max(top,surface(cx+a,cz+b));
+      for(let a=-3;a<=3;a++)for(let b=-2;b<=2;b++)for(let y=surface(cx+a,cz+b);y<top;y++)set(cx+a,y,cz+b,B.SAND);
+      [[-3,-2],[0,-2],[3,-2],[-3,2],[0,2],[3,2],[-1,0],[1,0]].forEach(([a,b])=>{for(let y=top;y<top+2;y++)set(cx+a,y,cz+b,B.BARK);});
+      for(let l=0;l<4;l++){const ra=4,rb=3;for(let a=-ra-1;a<=ra+1;a++)for(let b=-rb-1;b<=rb+1;b++){const edgeA=Math.abs(a)>ra||Math.abs(b)>rb;if(edgeA&&(l!==1||RX.hash3(cx+a,l,cz+b)<.45))continue;if(l===3&&(Math.abs(a)===ra||Math.abs(b)===rb)&&RX.hash3(a,9,b)<.5)continue;set(cx+a,top+2+l,cz+b,l%2?B.MUD:B.STRAW);}}}
     // rochers épars
     [[18,40],[26,48],[40,30],[58,34],[6,36],[33,22]].forEach(([rx,rz])=>{const base=surface(rx,rz);set(rx,base,rz,B.ROCK);if(RX.hash3(rx,1,rz)>.4)set(rx+1,base,rz,B.ROCK);});
   }

@@ -1,5 +1,8 @@
 # Historique
 
+## 1.1 — 12 novembre 2026
+Paysage plus dogon, repris de la version B : petits villages nichés sous un surplomb de la falaise (maisons en banco, greniers), case à palabres (toguna) à piliers de bois et toit épais de tiges de mil. Univers toujours imaginaire, sans objet sacré.
+
 ## Version B (test) — 12 novembre 2026
 Dossier `b/` : copie de la 1.0.3 avec un paysage plus dogon (maisons nichées dans la falaise, case à palabres). Sauvegardes séparées (`flair-roxy-b-*`). La version principale n’est pas modifiée.
 
