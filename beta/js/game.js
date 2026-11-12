@@ -169,7 +169,7 @@
       const key=dq[0].q;if(S.ans[key]===undefined||(S.retry&&S.retry.includes(key))||(talker&&!S.met.includes(talker.id)&&!S.qDone?.[key]))S.ans[key]=o.ok;(S.qDone||(S.qDone={}))[key]=1;save();
       hud.dlg.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;b.classList.add(curQ.opts[k].ok?'right':k===i?'wrong':'dim');});
       const right=curQ.opts.find(x=>x.ok);lineAt=performance.now();
-      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">Bonne réponse :</span> ${right.t}${/[.!?…»]$/.test(right.t)?'':'.'} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
+      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">${curQ.intrus?'L’intrus :':'Bonne réponse :'}</span> ${right.t}${/[.!?…»]$/.test(right.t)?'':'.'} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
       if(o.ok){RX.audio.ok();sparkle(V3(P.x,P.y+1.2,P.z),['#F2B93B','#FFE08A'],12,2.5);}else RX.audio.no();
       $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});
       {const d=hud.dlg,fb=$('#fb');if(fb.offsetHeight+28<=d.clientHeight)d.scrollTop=d.scrollHeight;else fb.scrollIntoView({block:'start'});moreHint();}}
@@ -213,12 +213,12 @@
           emit({x:r.x,y:r.y,z:r.z,v:{x:q*Math.cos(th)*sp,y:u*sp,z:q*Math.sin(th)*sp},g:3.2,life:1.5+Math.random()*.9,age:0,c:k%3?r.c:r.c2,s:1.7});}}}}
     const FICHE_ON=false;
     function ficheText(){return 'Le Flair de Roxy — fiche aide-mémoire\n\n'+Object.keys(RX.QUESTIONS).map((k,i)=>{const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k));
-        return `${i+1}. ${a?a.theme+' — ':''}${(Q.lead?Q.lead+' ':'')+Q.q}\n→ ${r.t}\n${r.why}`;}).join('\n\n')+'\n\n'+GAME_URL;}
+        return `${i+1}. ${a?a.theme+' — ':''}${(Q.lead?Q.lead+' ':'')+Q.q}\n${Q.intrus?'L’intrus : ':'→ '}${r.t}\n${r.why}`;}).join('\n\n')+'\n\n'+GAME_URL;}
     function openFiche(ok){const gold=ok>=12,f=$('#fiche');f.classList.toggle('gold',gold);
       $('#ficheTitle').textContent=gold?'La fiche du baobab doré':'Votre fiche aide-mémoire';
       $('#ficheSub').textContent=gold?'Un sans-faute ! Gardez ces 12 réflexes sous la main.':'Les 12 bons réflexes à garder sous la main. Visez le 12/12 pour la version dorée !';
       $('#ficheList').innerHTML=Object.keys(RX.QUESTIONS).map((k,i)=>{const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k)),miss=S.ans[k]===false;
-        return `<li class="${miss?'miss':''}"><span class="fn">${i+1}</span><div><small>${a?a.name+' · '+a.theme:''}${miss?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">✓ ${r.t}</p><p class="fw">${r.why}</p></div></li>`;}).join('');
+        return `<li class="${miss?'miss':''}"><span class="fn">${i+1}</span><div><small>${a?a.name+' · '+a.theme:''}${miss?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">${Q.intrus?'L’intrus : ':'✓ '}${r.t}</p><p class="fw">${r.why}</p></div></li>`;}).join('');
       f.hidden=false;f.scrollTop=0;$('#ficheClose').focus({preventScroll:true});}
     $('#ficheClose').onclick=()=>{$('#fiche').hidden=true;};
     $('#ficheCopy').onclick=()=>{const t=ficheText(),done=()=>toast('Fiche copiée : collez-la dans vos notes');(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(done).catch(()=>{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();try{document.execCommand('copy');done();}catch(e){}x.remove();});};
@@ -232,7 +232,7 @@
       $('#endStats').innerHTML=`<li><div class="statline"><span><b id="scoreNum">0/12</b>bonnes réponses</span><span><b>${m} min ${String(s).padStart(2,'0')}</b>de jeu</span></div><div class="slots" role="group" aria-label="${bad.length?'Questions à revoir : '+bad.join(', '):'Les 12 questions sont réussies'}">${qs.map((v,i)=>`<button class="slot ${v?'ok':''}" data-k="q${i+1}" aria-label="Question ${i+1} : ${v?'réussie':'à revoir'}"><i></i></button>`).join('')}</div><p class="slothint">${bad.length?'Touchez un bloc gris pour voir la bonne réponse.':'Touchez un bloc pour revoir une question.'}</p><div id="slotInfo" hidden></div></li>`;
       $('#endStats').querySelectorAll('.slot').forEach(b=>b.onclick=()=>{const k=b.dataset.k,box=$('#slotInfo'),open=b.classList.contains('sel');$('#endStats').querySelectorAll('.slot').forEach(x=>x.classList.remove('sel'));if(open){box.hidden=true;return;}
         b.classList.add('sel');const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k));
-        box.innerHTML=`<small>Question ${k.slice(1)}${a?' · '+a.name+' · '+a.theme:''}${S.ans[k]===false?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">✓ ${r.t}</p><p class="fw">${r.why}</p>`;box.hidden=false;box.scrollIntoView({block:'nearest'});});}
+        box.innerHTML=`<small>Question ${k.slice(1)}${a?' · '+a.name+' · '+a.theme:''}${S.ans[k]===false?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">${Q.intrus?'L’intrus : ':'✓ '}${r.t}</p><p class="fw">${r.why}</p>`;box.hidden=false;box.scrollIntoView({block:'nearest'});});}
       let n=0;const tick=()=>{if(n>ok)return;$('#scoreNum').textContent=n+'/12';if(n>0)RX.audio.tick(n);n++;setTimeout(tick,reduced?0:110);};setTimeout(tick,reduced?0:500);
       $('#confetti').innerHTML=reduced?'':Array.from({length:[8,20,40,70][tier]},(_,i)=>`<i style="left:${Math.random()*100}%;background:${FW[i%FW.length]};animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(3+Math.random()*3).toFixed(2)}s"></i>`).join('');
       $('#endMemo').innerHTML=RX.MEMO.map(t=>`<li>${t}</li>`).join('');

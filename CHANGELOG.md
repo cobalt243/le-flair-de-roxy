@@ -1,5 +1,8 @@
 # Historique
 
+## Bêta — 12 novembre 2026 (question 3)
+Question 3 remplacée, car trop facile : « Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ? » L’intrus : « Viser le prompt parfait du premier coup. » Pour cette question, le jeu affiche « L’intrus : » au lieu de « Bonne réponse : » (retour, rappel de l’écran de fin). Version officielle inchangée.
+
 ## 2.0.2 et bêta — 12 novembre 2026
 Question 8 : l’explication de la bonne réponse nomme la colonne utile (« Pour compter, Claude n’a besoin que de la colonne « sexe » : retirez les noms et les téléphones avant de lui donner la liste. »).
 
