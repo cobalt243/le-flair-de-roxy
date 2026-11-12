@@ -1,5 +1,33 @@
 # Historique
 
+## Version B7 — 12 novembre 2026 (revue finale)
+Lot issu de la revue finale de la version B. La version principale n’est pas modifiée ; la musique garde sa qualité (pas d’allègement).
+
+Corrections
+- Numéro de version unique et à jour, visible aussi sur téléphone (« Version B7 » en bas de l’accueil).
+- Le son s’active aussi quand on entre par « Voir mon résultat ».
+- La pastille « Faites défiler pour voir la suite » ne recouvre plus le bouton « Question suivante ».
+- Après le grand final, Roxy se place en retrait, face au baobab (vue d’ensemble) ; à l’accueil d’une partie terminée, la caméra tourne autour du baobab.
+- Nouveau point de départ au sud : le premier animal (l’agame) est droit devant, la falaise au fond ; la flèche ne change pas de cible tant qu’aucun animal n’est rencontré.
+- Case à palabres : une marche permet d’y monter de tous les côtés ; les deux acacias plantés devant les villages de falaise sont déplacés.
+- Le jeu avance à la vitesse réelle même quand l’affichage est lent (jusqu’à 2 images par seconde).
+
+Améliorations
+- Apparition douce des panneaux (dialogue, pause, résultats), désactivée si le système demande moins d’animations.
+- Grand final : caméra plus proche sur téléphone, vieux baobab voisin déplacé, ciel de fête plus chaud selon le score, titre lisible sur le ciel doré.
+- Étoiles du haut de l’écran en pixels, allumées de gauche à droite ; flèche dorée plus petite quand on est tout près.
+- Un seul slogan : « Bien utiliser Claude, bloc par bloc ».
+- Aperçu du lien partagé (titre, description, image `apercu.jpg`) et icône du jeu (`icone.png`).
+- Paysage : la tortue s’installe à l’ombre de la case à palabres ; échelles en bois vers les villages de falaise (décor).
+- Écran de fin : toucher un bloc affiche la question et la bonne réponse ; lien « Aller plus loin » vers deux cours d’Anthropic.
+
+Questions
+- Question 9 remplacée (doublon de la question 1) : documents internes, pièce jointe ou outil connecté (« connecteur »).
+- L’agame (Connaître Claude) pose les questions 1 et 9 ; le vautour (Vérifier) pose les questions 2 et 10.
+- Question 4 : l’explication précise que, par défaut, les conversations du compte de l’organisation ne servent pas à entraîner les modèles.
+- Question 8 : la réponse ne change pas ; l’explication renvoie aussi à la règle de l’organisation pour les dossiers du personnel (à aligner sur la politique IA de l’organisation).
+- « À retenir » : quatrième point, « Pour le travail, toujours le compte Claude de l’organisation ».
+
 ## Version B — 12 novembre 2026 (écran de fin)
 Écran de fin sobre : étoiles en pixels (comme la médaille) et rangée de 12 blocs, un par question (vert = réussie, gris = à revoir), sous le score et le temps réunis sur une ligne. Le reste de l’écran ne change pas.
 

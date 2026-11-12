@@ -32,7 +32,7 @@
     const top=(x,z)=>world.groundY(x,z);
     const gEdge=world.edge(31),stepE=world.edge(45);
     const ANIMALS=[
-      {id:'agame',kind:'agama',make:RX.createAgama,name:'L’agame',theme:'Connaître Claude',q:['q1','q2'],pos:V3(26.5,top(26.5,48.5),48.5),
+      {id:'agame',kind:'agama',make:RX.createAgama,name:'L’agame',theme:'Connaître Claude',q:['q1','q9'],pos:V3(26.5,top(26.5,48.5),48.5),
         intro:'Salut Roxy ! Moi, je fais des pompes sur les rochers. Et toi, sais-tu ce que Claude sait faire… ou pas ?'},
       {id:'elephant',kind:'elephant',make:RX.createElephant,name:'L’éléphant',theme:'Le bon prompt',q:['q3','q11'],pos:V3(43.5,world.surface(43,41),41.5),
         intro:'Bonjour Roxy ! Demander de l’aide à Claude, c’est tout un art. Ta demande écrite s’appelle un « prompt ». Voyons ta façon de demander.'},
@@ -40,10 +40,10 @@
         intro:'Hé, Roxy ! Claude a plusieurs outils. Sauras-tu choisir le bon ?'},
       {id:'calao',kind:'hornbill',make:RX.createHornbill,name:'Le calao',theme:'Les données',q:['q7','q8'],pos:V3(31.5,world.surface(31,gEdge+11),gEdge+11.5),
         intro:'Roxy ! Avant de confier une information à Claude, on réfléchit. À toi de trier !'},
-      {id:'vautour',kind:'vulture',make:RX.createVulture,name:'Le vautour',theme:'Vérifier',q:['q9','q10'],pos:V3(40.5,top(40.5,30.5),30.5),
+      {id:'vautour',kind:'vulture',make:RX.createVulture,name:'Le vautour',theme:'Vérifier',q:['q2','q10'],pos:V3(40.5,top(40.5,30.5),30.5),
         intro:'Rien n’échappe à mon œil, Roxy. Et toi, sais-tu vérifier ce que Claude écrit ?'},
-      {id:'tortue',kind:'tortoise',make:RX.createTortoise,name:'La tortue sillonnée',theme:'Claude au travail',q:['q4','q12'],pos:V3(22.5,world.surface(22,world.CAVE_EZ+2),world.CAVE_EZ+2.5),
-        intro:'Doucement, Roxy… Au travail, on utilise Claude avec méthode. Voici mes deux questions.'}];
+      {id:'tortue',kind:'tortoise',make:RX.createTortoise,name:'La tortue sillonnée',theme:'Claude au travail',q:['q4','q12'],pos:V3(world.TOGUNA.x+3.5,world.TOGUNA.floor,world.TOGUNA.z+.5),
+        intro:'Doucement, Roxy… Ici, à l’ombre de la case à palabres, on prend le temps de bien faire. Au travail, on utilise Claude avec méthode.'}];
     const critMat=new THREE.MeshLambertMaterial({map:RX.edgeTexture(234,246,9)});
     ANIMALS.forEach((a,i)=>{a.model=a.make(critMat,quality);a.model.object.position.copy(a.pos);a.model.object.rotation.y=Math.PI;scene.add(a.model.object);a.phase=i*1.7;});
 
@@ -97,7 +97,7 @@
     const edgeEl=$('#edge'),edgeTxt=$('#edge span'),edgeSvg=$('#edge svg');
 
     /* ===== État et sauvegarde ===== */
-    const START=V3(30.5,world.surface(30,40),40.5);
+    const START=V3(29.5,world.surface(29,57),57.5);
     const P=START.clone();
     const fresh=()=>({met:[],ans:{},pos:null,time:0,tuto:0,cineDone:false,finished:false});
     let S=fresh();
@@ -107,7 +107,7 @@
     const save=()=>{S.pos=[+P.x.toFixed(2),+P.y.toFixed(2),+P.z.toFixed(2)];try{localStorage.setItem(SAVE_KEY,JSON.stringify(S));}catch(e){}};
 
     /* ===== Fête finale ===== */
-    function placeFete(instant){ANIMALS.forEach((a,i)=>{const ang=i/ANIMALS.length*Math.PI*2+.3,r=a.kind==='elephant'?6.2:5;
+    function placeFete(instant){ANIMALS.forEach((a,i)=>{const ang=i/ANIMALS.length*Math.PI*2+Math.PI,r=a.kind==='elephant'?6.2:5;
         const x=FETE.x+Math.cos(ang)*r,z=FETE.z+Math.sin(ang)*r;a.pos=V3(x,world.surface(Math.floor(x),Math.floor(z)),z);
         a.model.object.position.copy(a.pos);a.model.object.rotation.y=Math.atan2(FETE.x-x,FETE.z-z);});
       TREE.show(instant?1:0);if(instant){const okN=Object.values(S.ans).filter(Boolean).length;TREE.gold(okN>=12);}}
@@ -126,7 +126,7 @@
     const cv=renderer.domElement;
     cv.addEventListener('pointerdown',e=>{drag={id:e.pointerId,x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);});
     cv.addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;drag.x=e.clientX;drag.y=e.clientY;
-      yaw-=dx*.006;pitch=Math.max(.05,Math.min(1.25,pitch+dy*.004));lastCamInput=clock;});
+      yaw-=dx*.006;pitch=Math.max(.05,Math.min(1.25,pitch+dy*.004));lastCamInput=clock;if(tabK>0){tabGo=true;tabPitch=false;}});
     const endDrag=()=>drag=null;cv.addEventListener('pointerup',endDrag);cv.addEventListener('pointercancel',endDrag);
     cv.addEventListener('wheel',e=>{dist=Math.max(3.5,Math.min(12,dist+e.deltaY*.01));e.preventDefault();},{passive:false});
     if(touch){document.body.classList.add('touch');
@@ -141,7 +141,7 @@
     const hud={obj:$('#objective'),stars:$('#stars'),prompt:$('#prompt'),toast:$('#toast'),dlg:$('#dialog')};
     function toast(t,ms=2800){hud.toast.textContent=t;hud.toast.classList.add('show');clearTimeout(hud.toast._t);hud.toast._t=setTimeout(()=>hud.toast.classList.remove('show'),ms);}
     function refreshHUD(){const n=S.met.length;
-      hud.stars.innerHTML=ANIMALS.map(a=>`<span class="star ${S.met.includes(a.id)?'got':''}" title="${a.name}" aria-label="${a.name} : ${S.met.includes(a.id)?'rencontré':'à rencontrer'}"></span>`).join('');
+      hud.stars.innerHTML=ANIMALS.map((a,i)=>`<span class="star ${i<n?'got':''}"></span>`).join('');hud.stars.setAttribute('role','img');hud.stars.setAttribute('aria-label',`Étoiles gagnées : ${n} sur 6`);
       hud.obj.textContent=S.retry&&S.retry.length?`Revanche : ${S.retry.length} question${S.retry.length>1?'s':''} à rejouer`:S.finished?'Bravo ! Explorez librement.':n===0?'Allez à la rencontre des animaux.':n<6?`Animaux rencontrés : ${n} sur 6`:'Tous les animaux sont rencontrés !';}
     refreshHUD();
 
@@ -171,7 +171,8 @@
       const right=curQ.opts.find(x=>x.ok);lineAt=performance.now();
       $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">Bonne réponse :</span> ${right.t} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
       if(o.ok){RX.audio.ok();sparkle(V3(P.x,P.y+1.2,P.z),['#F2B93B','#FFE08A'],12,2.5);}else RX.audio.no();
-      $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});$('#fb').scrollIntoView({block:'nearest'});}
+      $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});
+      {const d=hud.dlg,fb=$('#fb');if(fb.offsetHeight+28<=d.clientHeight)d.scrollTop=d.scrollHeight;else fb.scrollIntoView({block:'start'});moreHint();}}
     function dialogAdvance(){if(curQ&&!qAnswered)return;if(performance.now()-lineAt<400)return;lineAt=performance.now();dq.shift();
       if(dq.length)showLine();else{dlgClosedAt=performance.now();hud.dlg.hidden=true;inDialog=false;document.body.classList.remove('indialog');curQ=null;const d=dqDone;dqDone=null;talker=null;d&&d();}}
 
@@ -192,16 +193,19 @@
 
     let feteT=0,growT=-1,rockets=[],fwT=0;const FETE_DUR=reduced?.6:11;const FW=['#F2B93B','#E2652C','#5B79C2','#FFE08A','#62C186','#D3372B','#F4F1EA'];
     let tier=3;const TIERS=[ // 0 : <7, 1 : 7-9, 2 : 10-11, 3 : 12
-      {h:'Bon début !',p:'Le baobab a poussé. Rejouez pour qu’il fleurisse d’or !',gap:[9,9],dbl:0,sky:0},
-      {h:'Bien joué !',p:'Le baobab du savoir a poussé',gap:[1.6,2.2],dbl:0,sky:.25},
-      {h:'Bravo !',p:'Le baobab du savoir a poussé',gap:[.65,.9],dbl:.2,sky:.55},
-      {h:'Parfait !',p:'Un sans-faute : le baobab se couvre d’or !',gap:[.32,.5],dbl:.55,sky:.8}];
+      {h:'Bon début !',p:'Le baobab a poussé. Rejouez pour qu’il fleurisse d’or !',gap:[9,9],dbl:0,sky:0,skyC:'#FFE3A8'},
+      {h:'Bien joué !',p:'Le baobab du savoir a poussé',gap:[1.6,2.2],dbl:0,sky:.75,skyC:'#FFE0B2'},
+      {h:'Bravo !',p:'Le baobab du savoir a poussé',gap:[.65,.9],dbl:.2,sky:.75,skyC:'#FFC766'},
+      {h:'Parfait !',p:'Un sans-faute : le baobab se couvre d’or !',gap:[.32,.5],dbl:.55,sky:.88,skyC:'#FFB84D'}];TIERS.forEach(T=>T.skyC=new THREE.Color(T.skyC));
     function startFete(){S.prevRecord=getRecord();const okN=Object.values(S.ans).filter(Boolean).length;tier=okN>=12?3:okN>=10?2:okN>=7?1:0;const T=TIERS[tier];
       setRecord(okN);S.recordSet=true;
       $('#finale h2').textContent=T.h;$('#finale p').textContent=T.p;document.body.dataset.tier=tier;S.finished=true;S.endTime=S.time;save();refreshHUD();placeFete(false);P.set(FETE.x+.4,FETE.y,FETE.z+4.2);heading=Math.PI;V.set(0,0,0);
       feteT=FETE_DUR;growT=0;fwT=1.2;yaw=1.75;document.body.classList.add('finale');RX.audio.musicHold();RX.audio.chime(tier);   /* version B : carillon court au lieu de la fanfare */
       const f=$('#finale');f.hidden=false;f.classList.remove('go');void f.offsetWidth;f.classList.add('go');
       $('#flash').classList.remove('go');void $('#flash').offsetWidth;$('#flash').classList.add('go');}
+    /* Après la fête : Roxy se place en retrait, face au baobab, pour une vue d'ensemble quand on continue à explorer. */
+    let tabK=0,tabGo=false,tabPitch=true;
+    function afterFete(){const z=Math.min(61.5,FETE.z+9);P.set(FETE.x,world.groundY(FETE.x,z),z);V.set(0,0,0);heading=Math.PI;yaw=0;pitch=.1;dist=10;camInit=false;tabK=1;tabGo=false;tabPitch=true;save();}
     function launch(){const a=Math.random()*Math.PI*2,r=4+Math.random()*7;rockets.push({x:FETE.x+Math.cos(a)*r,y:FETE.y+1,z:FETE.z+Math.sin(a)*r,vy:13+Math.random()*4,fuse:.75+Math.random()*.45,t:0,c:FW[Math.floor(Math.random()*FW.length)],c2:FW[Math.floor(Math.random()*FW.length)]});RX.audio.whoosh();}
     function updateFireworks(dt){if(feteT>0&&!reduced){fwT-=dt;if(fwT<=0&&feteT>1.4&&tier>0){const T=TIERS[tier];launch();if(Math.random()<T.dbl)launch();fwT=T.gap[0]+Math.random()*(T.gap[1]-T.gap[0]);}}
       for(let i=rockets.length-1;i>=0;i--){const r=rockets[i];r.t+=dt;r.y+=r.vy*dt;r.vy-=6*dt;emit({x:r.x,y:r.y,z:r.z,life:.45,age:0,c:'#FFE08A',s:.6});
@@ -225,7 +229,10 @@
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];
       const st=ok>=12?3:ok>=10?2:ok>=7?1:0;$('#endStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.9+i*.25}s">★</span>`).join('');
       {const qs=Array.from({length:12},(_,i)=>!!S.ans['q'+(i+1)]),bad=qs.map((v,i)=>v?0:i+1).filter(Boolean);
-      $('#endStats').innerHTML=`<li><div class="statline"><span><b id="scoreNum">0/12</b>bonnes réponses</span><span><b>${m} min ${String(s).padStart(2,'0')}</b>de jeu</span></div><div class="slots" role="img" aria-label="${bad.length?'Questions à revoir : '+bad.join(', '):'Les 12 questions sont réussies'}">${qs.map(v=>`<i class="${v?'ok':''}"></i>`).join('')}</div></li>`;}
+      $('#endStats').innerHTML=`<li><div class="statline"><span><b id="scoreNum">0/12</b>bonnes réponses</span><span><b>${m} min ${String(s).padStart(2,'0')}</b>de jeu</span></div><div class="slots" role="group" aria-label="${bad.length?'Questions à revoir : '+bad.join(', '):'Les 12 questions sont réussies'}">${qs.map((v,i)=>`<button class="slot ${v?'ok':''}" data-k="q${i+1}" aria-label="Question ${i+1} : ${v?'réussie':'à revoir'}"><i></i></button>`).join('')}</div><p class="slothint">${bad.length?'Touchez un bloc gris pour voir la bonne réponse.':'Touchez un bloc pour revoir une question.'}</p><div id="slotInfo" hidden></div></li>`;
+      $('#endStats').querySelectorAll('.slot').forEach(b=>b.onclick=()=>{const k=b.dataset.k,box=$('#slotInfo'),open=b.classList.contains('sel');$('#endStats').querySelectorAll('.slot').forEach(x=>x.classList.remove('sel'));if(open){box.hidden=true;return;}
+        b.classList.add('sel');const Q=RX.QUESTIONS[k],r=Q.opts.find(o=>o.ok),a=ANIMALS.find(x=>x.q.includes(k));
+        box.innerHTML=`<small>Question ${k.slice(1)}${a?' · '+a.name+' · '+a.theme:''}${S.ans[k]===false?' · à revoir':''}</small><p class="fq">${Q.lead?Q.lead+' ':''}${Q.q}</p><p class="fa">✓ ${r.t}</p><p class="fw">${r.why}</p>`;box.hidden=false;box.scrollIntoView({block:'nearest'});});}
       let n=0;const tick=()=>{if(n>ok)return;$('#scoreNum').textContent=n+'/12';if(n>0)RX.audio.tick(n);n++;setTimeout(tick,reduced?0:110);};setTimeout(tick,reduced?0:500);
       $('#confetti').innerHTML=reduced?'':Array.from({length:[8,20,40,70][tier]},(_,i)=>`<i style="left:${Math.random()*100}%;background:${FW[i%FW.length]};animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(3+Math.random()*3).toFixed(2)}s"></i>`).join('');
       $('#endMemo').innerHTML=RX.MEMO.map(t=>`<li>${t}</li>`).join('');
@@ -249,7 +256,7 @@
       $('#copyMsg').onclick=()=>{const done=()=>toast('Message copié : collez-le dans WhatsApp');(navigator.clipboard?navigator.clipboard.writeText(msg):Promise.reject()).then(done).catch(()=>{const t=document.createElement('textarea');t.value=msg;document.body.appendChild(t);t.select();try{document.execCommand('copy');done();}catch(e){}t.remove();});};$('#end').hidden=false;paused=true;$('#endContinue').focus({preventScroll:true});$('.endcard').scrollTop=0;}
     $('#endContinue').onclick=()=>{$('#end').hidden=true;$('#confetti').innerHTML='';paused=false;};
     $('#endRestart').onclick=()=>restart();
-    const openResult=()=>{$('#start').hidden=true;$('#pause').hidden=true;started=true;showEnd();};
+    const openResult=()=>{$('#start').hidden=true;$('#pause').hidden=true;started=true;soundOn();showEnd();};
     $('#seeResult').onclick=openResult;$('#pauseResult').onclick=openResult;
 
     /* ===== Action ===== */
@@ -264,7 +271,8 @@
     $('#shadows').onchange=e=>{renderer.shadowMap.enabled=e.target.checked;scene.traverse(o=>{if(o.material)o.material.needsUpdate=true;});};
     $('#restartAsk').onclick=()=>{$('#restartConfirm').hidden=false;};$('#restartNo').onclick=()=>{$('#restartConfirm').hidden=true;};$('#restartYes').onclick=restart;
     const soundBtn=$('#btnSound');soundBtn.onclick=()=>{const on=RX.audio.toggle();try{localStorage.setItem('flair-roxy-b-son',on?'oui':'non');}catch(e){}soundBtn.textContent=on?'Son : oui':'Son : non';soundBtn.setAttribute('aria-pressed',on);};
-    $('#play').onclick=()=>{started=true;paused=false;$('#start').hidden=true;let sOff=false;try{sOff=localStorage.getItem('flair-roxy-b-son')==='non';}catch(e){}if(!RX.audio.on&&!sOff){const on=RX.audio.toggle();soundBtn.textContent=on?'Son : oui':'Son : non';}
+    const soundOn=()=>{let sOff=false;try{sOff=localStorage.getItem('flair-roxy-b-son')==='non';}catch(e){}if(!RX.audio.on&&!sOff){const on=RX.audio.toggle();soundBtn.textContent=on?'Son : oui':'Son : non';soundBtn.setAttribute('aria-pressed',on);}};
+    $('#play').onclick=()=>{started=true;paused=false;$('#start').hidden=true;soundOn();
       if(!S.cineDone&&!S.met.length){cineT=CINE;S.cineDone=true;save();$('#cine').hidden=false;}};
     $('#cine').onclick=()=>{cineT=Math.min(cineT,.6);};
 
@@ -308,6 +316,7 @@
       if(touch){const lb=near?'Parler':'…';const el=$('#bAct b');if(el.textContent!==lb)el.textContent=lb;}}
     function objectiveTarget(){if(S.retry&&S.retry.length){const t=ANIMALS.filter(a=>retryOf(a).length);t.sort((a,b)=>Math.hypot(a.pos.x-P.x,a.pos.z-P.z)-Math.hypot(b.pos.x-P.x,b.pos.z-P.z));const a=t[0];return a?a.pos.clone().add(V3(0,a.kind==='elephant'?3.9:2.1,0)):null;}
       if(S.finished)return null;const todo=ANIMALS.filter(a=>!S.met.includes(a.id));if(!todo.length)return null;
+      if(!S.met.length)return ANIMALS[0].pos.clone().add(V3(0,2.1,0));   // premier objectif fixe (l'agame, droit devant) : la flèche ne change pas de cible au départ
       todo.sort((a,b)=>Math.hypot(a.pos.x-P.x,a.pos.z-P.z)-Math.hypot(b.pos.x-P.x,b.pos.z-P.z));const a=todo[0];return a.pos.clone().add(V3(0,a.kind==='elephant'?3.9:2.1,0));}
 
     /* Tutoriel en 3 bulles */
@@ -326,37 +335,39 @@
     const CYCLE=params.has('jour')?1e9:300;
     function lighting(t){const ph=(.1+t/CYCLE)%1,ang=ph*Math.PI*2,elev=Math.sin(ang),day=Math.max(0,Math.min(1,elev*2.2+.25));
       if(elev>.22)sky.copy(SKY.day);else if(elev>-.05)sky.copy(SKY.dusk).lerp(SKY.day,(elev+.05)/.27);else sky.copy(SKY.night).lerp(SKY.dusk,Math.max(0,1+(elev+.05)*5));
-      if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,e/2)*Math.min(1,feteT/1.5);sky.lerp(GOLD,k*TIERS[tier].sky);}
+      if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,e/2);sky.lerp(TIERS[tier].skyC,k*TIERS[tier].sky);}
       renderer.setClearColor(sky);scene.fog.color.copy(sky);sun.intensity=.15+1.0*day;hemi.intensity=.42+.38*day;amb.intensity=.12+.12*(1-day);sun.color.setHSL(.08,.6,.55+.25*day);
       const L=Math.max(.15,elev);sun.position.set(P.x+Math.cos(ang)*28,P.y+8+L*30,P.z+12);sun.target.position.copy(P);return day;}
 
     /* ===== Caméra ===== */
     const camT=V3(0,0,0);let camInit=false;
     function updateCamera(dt,moving){
-      if(!started){const t=performance.now()/1000,yw=Math.PI*.85+t*.08,port=camera.aspect<.8,R=port?7:5.2;
-        camera.position.set(P.x+Math.sin(yw)*R,P.y+(port?2.2:1.1),P.z+Math.cos(yw)*R);camera.lookAt(V3(P.x,P.y-(port?1.55:.9),P.z));camInit=false;return;}
+      if(!started){const t=performance.now()/1000,yw=Math.PI*.85+t*.08,port=camera.aspect<.8;
+        if(S.finished){const R=24,o=port?0:15;camera.position.set(FETE.x+Math.sin(yw)*R,FETE.y+12,FETE.z+Math.cos(yw)*R);camera.lookAt(V3(FETE.x+Math.cos(yw)*o,FETE.y+(port?-3.7:3),FETE.z-Math.sin(yw)*o));camInit=false;return;}
+        const R=port?7:5.2;camera.position.set(P.x+Math.sin(yw)*R,P.y+(port?2.2:1.1),P.z+Math.cos(yw)*R);camera.lookAt(V3(P.x,P.y-(port?1.55:.9),P.z));camInit=false;return;}
+      if(tabK>0){if(moving)tabGo=true;if(tabGo){const k=Math.min(1,dt*1.2);tabK-=tabK*k;dist+=(5.6-dist)*k;if(tabPitch)pitch+=(.32-pitch)*k;if(tabK<.02){tabK=0;dist=5.6;if(tabPitch)pitch=.32;}}}
       if(moving&&clock-lastCamInput>2.5&&!inDialog){let d=heading+Math.PI-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*.9);}
-      let target=V3(P.x,P.y+1.05,P.z),pt=pitch,dd=dist;
+      let target=V3(P.x,P.y+1.05+3*tabK,P.z),pt=pitch,dd=dist;
       if(inDialog&&talker&&!express){target=dlgTarget(talker);let d=dlgYaw-yaw;d=Math.atan2(Math.sin(d),Math.cos(d));yaw+=d*Math.min(1,dt*3);pt=.42;dd=talker.kind==='elephant'?8.5:6.5;}
       if(express){yaw+=dt*.12;const port=camera.aspect<.8?1.35:1;const t=V3(FETE.x,FETE.y+4,FETE.z),dir=V3(Math.sin(yaw)*Math.cos(.5),Math.sin(.5),Math.cos(yaw)*Math.cos(.5));camT.lerp(t,Math.min(1,dt*3));camera.position.copy(camT).addScaledVector(dir,24*port);camera.lookAt(camT);return;}
-      if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,Math.max(0,(e-1.2)/7)),ek=k*k*(3-2*k);const port=camera.aspect<.8?1.35:1;target=V3(FETE.x,FETE.y+1.6+ek*4.5,FETE.z);yaw+=dt*.3;pt=.42+ek*.08;dd=(16+ek*12)*port;
+      if(feteT>0){const e=FETE_DUR-feteT,k=Math.min(1,Math.max(0,(e-1.2)/7)),ek=k*k*(3-2*k);const port=camera.aspect<.8?.95:1;target=V3(FETE.x,FETE.y+1.6+ek*4.5,FETE.z);yaw+=dt*.3;pt=.42+ek*.08;dd=(16+ek*12)*port;
         camT.lerp(target,Math.min(1,dt*4));const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));camera.position.copy(camT).addScaledVector(dir,dd);camera.lookAt(camT);return;}
       if(!camInit){camT.copy(target);camInit=true;}camT.lerp(target,Math.min(1,dt*(inDialog||feteT>0?3:8)));
       const dir=V3(Math.sin(yaw)*Math.cos(pt),Math.sin(pt),Math.cos(yaw)*Math.cos(pt));
       let d2=dd;for(let s=.5;s<=dd;s+=.25){const q=camT.clone().addScaledVector(dir,s);if(blocked(q)){d2=Math.max(1.2,s-.35);break;}}
       camera.position.copy(camT).addScaledVector(dir,d2);
-      if(cineT>0){const k=1-cineT/CINE,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const S0=V3(P.x-26,30,P.z+30),L0=V3(32,14,10);
+      if(cineT>0){const k=1-cineT/CINE,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;const S0=V3(4.5,30,70.5),L0=V3(32,14,10);
         camera.position.lerpVectors(S0,camera.position.clone(),e);camera.lookAt(V3(0,0,0).lerpVectors(L0,camT,e));}else camera.lookAt(camT);}
     function resize(){const w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.fov=w/h<.8?68:55;camera.updateProjectionMatrix();}
     new ResizeObserver(resize).observe(host);resize();
 
     /* ===== Boucle ===== */
     let saveT=0,wind=1,last=performance.now(),perfLast=last,perfAcc=0,perfN=0,autoQ=false,fpsAcc=0,fpsN=0,fps=0;const fpsEl=params.has('fps')?$('#fps'):null;if(fpsEl)fpsEl.hidden=false;
-    function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;
+    function frame(now){const dt=Math.min(.5,(now-last)/1000),nSub=Math.max(1,Math.ceil(dt/.05));last=now;
       if(!paused){clock+=dt;if(!S.finished)S.time+=dt;}
       if(cineT>0&&!paused){cineT-=dt;if(cineT<=0){cineT=0;$('#cine').hidden=true;}}
-      if(feteT>0&&!paused){feteT-=dt;if(feteT<=0){feteT=0;showEnd();}}
-      const hs=paused||cineT>0?0:physics(dt);
+      if(feteT>0&&!paused){feteT-=dt;if(feteT<=0){feteT=0;afterFete();showEnd();}}
+      let hs=0;if(!paused&&cineT<=0)for(let i=0;i<nSub;i++)hs=physics(dt/nSub);   // la physique avance par petits pas pour rester fiable
       if(!paused)updateContext();
       if(hs>.4||inDialog)idleT=0;else idleT+=dt;
       const state=feteT>0?'happy':!grounded?'air':hs>4.6?'run':hs>.4?'walk':idleT>16?'lie':idleT>7?'sit':'idle';
@@ -378,7 +389,7 @@
       updateParticles(dt,clock);updateCamera(dt,hs>.4);updateTuto(dt,hs);
       {const tg=objectiveTarget();const showG=!!tg&&!inDialog&&started&&cineT<=0&&!paused;marker.visible=showG;guide.visible=false;edgeEl.hidden=true;
         if(tg){marker.position.copy(tg);marker.position.y+=reduced?0:Math.sin(clock*3)*.18;marker.rotation.y=clock*1.2;
-        const d=Math.hypot(tg.x-P.x,tg.z-P.z);marker.scale.setScalar(Math.min(2.6,1.3+d/14));
+        const d=Math.hypot(tg.x-P.x,tg.z-P.z);marker.scale.setScalar(Math.min(2.6,1.3+d/14)*(d<6?Math.max(.5,d/6):1));
         if(showG&&d>2.5){const ux=(tg.x-P.x)/d,uz=(tg.z-P.z)/d,pulse=reduced?0:Math.sin(clock*5)*.12;
           guide.visible=true;guide.position.set(P.x+ux*(1.5+pulse),P.y+.06,P.z+uz*(1.5+pulse));guide.rotation.y=Math.atan2(-ux,-uz);guide.scale.setScalar(.85);
           const v=tg.clone().project(camera),behind=v.z>1;let sx=behind?-v.x:v.x,sy=behind?-v.y:v.y;
@@ -391,6 +402,8 @@
       if(!started||paused){perfAcc=0;perfN=0;}
       if(fpsEl){fpsAcc+=dt;fpsN++;if(fpsAcc>1){fps=Math.round(fpsN/fpsAcc);fpsAcc=0;fpsN=0;fpsEl.textContent=fps+' img/s';}}
       requestAnimationFrame(frame);}
+    if(collides(P.x,P.y+.02,P.z))P.copy(START);
+    if(!S.pos){const a=ANIMALS[0].pos;yaw=Math.atan2(P.x-a.x,P.z-a.z);heading=Math.atan2(a.x-P.x,a.z-P.z);}
     requestAnimationFrame(frame);
     $('#loading').hidden=true;$('#play').disabled=false;$('#play').textContent=S.met.length?'Reprendre':'Jouer';
     {const r=getRecord();if(r){$('#record').hidden=false;$('#record').textContent=`Votre record : ${r.ok>=12?'🥇 Flair d’or':r.ok>=10?'🥈 Flair d’argent':r.ok>=7?'🥉 Flair de bronze':'Chiot curieux'} (${r.ok}/12)`;}}

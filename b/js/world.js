@@ -25,7 +25,7 @@
   const CAVE_EZ=edgeRaw(22);
   const edge=x=>(x>=CAVE.x0-1&&x<=CAVE.x1+1)?CAVE_EZ:edgeRaw(x);
   const LEDGE={x0:40,x1:48};
-  const heights=new Int16Array(W*D);
+  const heights=new Int16Array(W*D);let TOGUNA=null;
   const surface=(x,z)=>heights[x+W*z];
 
   function generate(){
@@ -60,12 +60,12 @@
       for(let y=0;y<9;y++)for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++){if(y>6&&Math.abs(a)+Math.abs(b)>1)continue;set(bx+a,base+y,bz+b,B.BARK);}
       [[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]].forEach(([dx,dz],k)=>{for(let i=1;i<=3;i++){set(bx+dx*i,base+8+(i>1?1:0),bz+dz*i,B.BARK);}
         for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)if(RX.hash3(bx+a,k,bz+b)>.35)set(bx+dx*4+a,base+10,bz+dz*4+b,B.LEAF);});};
-    baobab(14,30);baobab(38,55);
+    baobab(14,30);baobab(46,58);
     // acacias parasols
-    [[8,22],[24,58],[57,22],[54,57]].forEach(([ax,az])=>{const base=surface(ax,az);for(let y=0;y<4;y++)set(ax+(y>2?1:0),base+y,az,B.BARK);
+    [[3,33],[24,58],[44,26],[54,57]].forEach(([ax,az])=>{const base=surface(ax,az);for(let y=0;y<4;y++)set(ax+(y>2?1:0),base+y,az,B.BARK);
       for(let a=-3;a<=3;a++)for(let b=-2;b<=2;b++)if(a*a/12+b*b/5<=1.05)set(ax+1+a,base+4,az+b,B.LEAF);});
 
-    // VERSION B — 1 : village niché sous un surplomb de la falaise
+    // Paysage dogon — 1 : village niché sous un surplomb de la falaise
     const village=(x0,x1,fy,houses)=>{let em=99;for(let x=x0;x<=x1;x++)em=Math.min(em,edge(x));
       for(let x=x0;x<=x1;x++){const e=edge(x);const top=fy+5+((x===x0||x===x1)?-1:0);for(let y=fy;y<=top;y++)for(let z=em-4;z<e;z++)set(x,y,z,B.AIR);for(let z=em-4;z<e;z++)set(x,fy-1,z,B.ROCK);}
       houses.forEach(([hx,w,h,k])=>{for(let x=hx;x<hx+w;x++)for(let y=fy;y<fy+h;y++)for(let z=em-4;z<em-1;z++)set(x,y,z,k==='g'?B.BANCO:B.ENDUIT);
@@ -74,9 +74,15 @@
           for(let x=hx;x<hx+w;x+=2)set(x,fy+h,em-3,B.ENDUIT);}});};
     village(3,15,11,[[3,3,3,'m'],[7,1,3,'g'],[9,3,2,'m'],[13,1,3,'g'],[14,2,2,'m']]);
     village(50,61,10,[[50,2,3,'m'],[53,1,3,'g'],[55,3,3,'m'],[59,1,2,'g'],[60,2,2,'m']]);
-    // VERSION B — 2 : case à palabres (toguna) : piliers bas, toit très épais de tiges de mil
+    // échelles : un tronc à encoches, raide (2 blocs de haut par marche : décor, Roxy n'y monte pas), du sol jusqu'au seuil du village
+    const echelle=(lx,fy)=>{const e=edge(lx),g=surface(lx,e+2),rise=fy-g;if(rise<2)return;
+      for(let i=0;i<rise;i++)set(lx,g+i,e+Math.floor((rise-1-i)/2),B.MUD);set(lx,fy,e,B.MUD);};   // teinte bois brun
+    echelle(8,11);echelle(12,11);echelle(54,10);
+    // Paysage dogon — 2 : case à palabres (toguna) : piliers bas, toit très épais de tiges de mil
     {const cx=17,cz=40;let top=0;for(let a=-4;a<=4;a++)for(let b=-3;b<=3;b++)top=Math.max(top,surface(cx+a,cz+b));
       for(let a=-3;a<=3;a++)for(let b=-2;b<=2;b++)for(let y=surface(cx+a,cz+b);y<top;y++)set(cx+a,y,cz+b,B.SAND);
+      for(let a=-4;a<=4;a++)for(let b=-3;b<=3;b++){if(Math.abs(a)<4&&Math.abs(b)<3)continue;for(let y=surface(cx+a,cz+b);y<top-1;y++)set(cx+a,y,cz+b,B.SAND);}
+      TOGUNA={x:cx,z:cz,floor:top};
       [[-3,-2],[0,-2],[3,-2],[-3,2],[0,2],[3,2],[-1,0],[1,0]].forEach(([a,b])=>{for(let y=top;y<top+2;y++)set(cx+a,y,cz+b,B.BARK);});
       for(let l=0;l<4;l++){const ra=4,rb=3;for(let a=-ra-1;a<=ra+1;a++)for(let b=-rb-1;b<=rb+1;b++){const edgeA=Math.abs(a)>ra||Math.abs(b)>rb;if(edgeA&&(l!==1||RX.hash3(cx+a,l,cz+b)<.45))continue;if(l===3&&(Math.abs(a)===ra||Math.abs(b)===rb)&&RX.hash3(a,9,b)<.5)continue;set(cx+a,top+2+l,cz+b,l%2?B.MUD:B.STRAW);}}}
     // rochers épars
@@ -130,7 +136,7 @@
       o.position.set(p[0],p[1],p[2]);o.rotation.set(sway,0,sway*.6);o.scale.set(1,.8+p[3]*.6,1);o.updateMatrix();tm.setMatrixAt(i*2,o.matrix);
       o.position.set(p[0]+.12,p[1],p[2]-.08);o.rotation.set(sway*.8,0,-sway*.5);o.scale.set(1,.6+p[3]*.5,1);o.updateMatrix();tm.setMatrixAt(i*2+1,o.matrix);});tm.instanceMatrix.needsUpdate=true;}
     return {
-      W,H,D,B,get,surface,edge,CAVE,CAVE_EZ,LEDGE,
+      W,H,D,B,get,surface,edge,CAVE,CAVE_EZ,LEDGE,TOGUNA,
       solid:(x,y,z)=>opaque(get(Math.floor(x),Math.floor(y),Math.floor(z))),
       water:(x,y,z)=>get(Math.floor(x),Math.floor(y),Math.floor(z))===B.WATER,
       isDig:(x,y,z)=>get(x,y,z)===B.DIG,
