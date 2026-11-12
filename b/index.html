@@ -225,6 +225,17 @@ body.touch #toast{top:34%;bottom:auto}
 body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 @media (max-width:560px){#hudL h1{font-size:16px}#objective{font-size:12.5px}.chip{padding:8px 11px;font-size:12px}}
 @media (prefers-reduced-motion:reduce){#toast{transition:none}#flash.go,body.cantalk #bAct,#tip{animation:none}}
+/* Écran de fin sobre (version B) : étoiles en pixels et rangée de 12 blocs, un par question */
+#endStars{gap:10px}
+#endStars span{font-size:0;width:34px;height:34px;text-shadow:none;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath fill='%23B9A98A' d='M4 0h1v2h-1zM3 2h3v1h-3zM0 3h9v1h-9zM1 4h7v1h-7zM2 5h5v1h-5zM2 6h2v1h-2zM5 6h2v1h-2zM1 7h2v1h-2zM6 7h2v1h-2z'/%3E%3C/svg%3E") center/contain no-repeat;image-rendering:pixelated}
+#endStars span.on{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath fill='%23F2B93B' d='M4 0h1v2h-1zM3 2h3v1h-3zM0 3h9v1h-9zM1 4h7v1h-7zM2 5h5v1h-5zM2 6h2v1h-2zM5 6h2v1h-2zM1 7h2v1h-2zM6 7h2v1h-2z'/%3E%3Cpath fill='%23FFE08A' d='M4 2h1v1h-1zM3 3h2v1h-2z'/%3E%3C/svg%3E");text-shadow:none;filter:drop-shadow(2px 2px 0 #8A5A12)}
+#endStats{grid-template-columns:1fr}
+.statline{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.statline span{font-size:13px;white-space:nowrap}
+#endStats .statline b{display:inline;font-size:21px;margin-right:4px}
+.slots{display:grid;grid-template-columns:repeat(12,1fr);gap:4px;margin-top:10px}
+.slots i{display:block;aspect-ratio:1;border-radius:3px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%23A39B8E'/%3E%3Cpath fill='%23C4BDB1' d='M0 0h8v1h-8zM0 1h1v7h-1z'/%3E%3Cpath fill='%237A7368' d='M7 1h1v7h-1zM1 7h6v1h-6z'/%3E%3Cpath fill='%235E574D' d='M2 2h1v1h-1zM5 2h1v1h-1zM3 3h2v2h-2zM2 5h1v1h-1zM5 5h1v1h-1z'/%3E%3C/svg%3E") center/contain no-repeat;image-rendering:pixelated}
+.slots i.ok{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%234F9A4B'/%3E%3Cpath fill='%2378C46E' d='M0 0h8v1h-8zM0 1h1v7h-1z'/%3E%3Cpath fill='%23367233' d='M7 1h1v7h-1zM1 7h6v1h-6z'/%3E%3Cpath fill='%23fff' d='M6 2h1v1h-1zM5 3h1v1h-1zM4 4h1v1h-1zM3 5h1v1h-1zM2 4h1v1h-1zM1 3h1v1h-1z'/%3E%3C/svg%3E")}
 </style>
 </head>
 <body>
@@ -304,13 +315,13 @@ body.touch #dialog{bottom:calc(10px + env(safe-area-inset-bottom,0px))}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>if(!window.THREE){document.write('<script src="vendor/three.min.js"><\/script>');}</script>
-<script src="js/voxel-sdf.js?v=b5"></script>
-<script src="js/roxy.js?v=b5"></script>
-<script src="js/animals.js?v=b5"></script>
-<script src="js/world.js?v=b5"></script>
-<script src="js/audio.js?v=b5"></script>
-<script src="js/questions.js?v=b5"></script>
-<script src="js/game.js?v=b5"></script>
+<script src="js/voxel-sdf.js?v=b6"></script>
+<script src="js/roxy.js?v=b6"></script>
+<script src="js/animals.js?v=b6"></script>
+<script src="js/world.js?v=b6"></script>
+<script src="js/audio.js?v=b6"></script>
+<script src="js/questions.js?v=b6"></script>
+<script src="js/game.js?v=b6"></script>
 <script>
   if(window.THREE)setTimeout(()=>RX.start(),30);
   else document.getElementById('loading').textContent='La bibliothèque 3D n’a pas pu se charger. Vérifiez la connexion internet.';

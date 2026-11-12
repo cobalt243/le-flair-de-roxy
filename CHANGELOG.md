@@ -1,5 +1,8 @@
 # Historique
 
+## Version B — 12 novembre 2026 (écran de fin)
+Écran de fin sobre : étoiles en pixels (comme la médaille) et rangée de 12 blocs, un par question (vert = réussie, gris = à revoir), sous le score et le temps réunis sur une ligne. Le reste de l’écran ne change pas.
+
 ## Version B — 12 novembre 2026 (qualité sonore)
 Après revue de la qualité sonore : piano plus riche et plus clair, tambour et accords remontés pour les haut-parleurs de téléphone, balafon et cloche renforcés, réverbération plus courte ; trois variantes du morceau (une par passage, 0,8 Mo chacune) ; musique environ 9 dB plus forte et premier accord audible à la reprise ; effets « parler », « erreur », « creuser », « pas » plus audibles ; note « bonne réponse » accordée sur la musique ; reprise du son après une interruption sur iPhone.
 

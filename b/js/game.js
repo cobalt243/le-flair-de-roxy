@@ -224,7 +224,8 @@
       const ok=Object.values(S.ans).filter(Boolean).length;const sec=Math.round(S.endTime||S.time),m=Math.floor(sec/60),s=sec%60;
       const rk=RANKS.find(r=>ok>=r[0]);$('#rankName').textContent=rk[1];$('#rankLine').textContent=rk[2];$('.medal').dataset.m=rk[3];
       const st=ok>=12?3:ok>=10?2:ok>=7?1:0;$('#endStars').innerHTML=[0,1,2].map(i=>`<span class="${i<st?'on':''}" style="animation-delay:${.9+i*.25}s">★</span>`).join('');
-      $('#endStats').innerHTML=`<li><b id="scoreNum">0/12</b> bonnes réponses</li><li><b>${m} min ${String(s).padStart(2,'0')}</b> de jeu</li>`;
+      {const qs=Array.from({length:12},(_,i)=>!!S.ans['q'+(i+1)]),bad=qs.map((v,i)=>v?0:i+1).filter(Boolean);
+      $('#endStats').innerHTML=`<li><div class="statline"><span><b id="scoreNum">0/12</b>bonnes réponses</span><span><b>${m} min ${String(s).padStart(2,'0')}</b>de jeu</span></div><div class="slots" role="img" aria-label="${bad.length?'Questions à revoir : '+bad.join(', '):'Les 12 questions sont réussies'}">${qs.map(v=>`<i class="${v?'ok':''}"></i>`).join('')}</div></li>`;}
       let n=0;const tick=()=>{if(n>ok)return;$('#scoreNum').textContent=n+'/12';if(n>0)RX.audio.tick(n);n++;setTimeout(tick,reduced?0:110);};setTimeout(tick,reduced?0:500);
       $('#confetti').innerHTML=reduced?'':Array.from({length:[8,20,40,70][tier]},(_,i)=>`<i style="left:${Math.random()*100}%;background:${FW[i%FW.length]};animation-delay:${(Math.random()*3).toFixed(2)}s;animation-duration:${(3+Math.random()*3).toFixed(2)}s"></i>`).join('');
       $('#endMemo').innerHTML=RX.MEMO.map(t=>`<li>${t}</li>`).join('');
