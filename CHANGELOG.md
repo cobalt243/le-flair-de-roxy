@@ -1,5 +1,8 @@
 # Historique
 
+## 2.0.5 — 12 novembre 2026
+Ligne « À revoir » de la bêta reportée : sous les 12 blocs de l’écran de fin, les thèmes où le joueur s’est trompé (en indigo, avec l’animal), suivis de la consigne « Touchez un bloc gris… ». Rien de plus à 12/12.
+
 ## Bêta — 12 novembre 2026 (thèmes à revoir, retouches)
 La ligne « À revoir » et la consigne « Touchez un bloc gris… » ne font plus qu’un seul paragraphe ; les thèmes sont en indigo au lieu du rouge.
 
