@@ -169,7 +169,7 @@
       const key=dq[0].q;if(S.ans[key]===undefined||(S.retry&&S.retry.includes(key))||(talker&&!S.met.includes(talker.id)&&!S.qDone?.[key]))S.ans[key]=o.ok;(S.qDone||(S.qDone={}))[key]=1;save();
       hud.dlg.querySelectorAll('.opt').forEach((b,k)=>{b.disabled=true;b.classList.add(curQ.opts[k].ok?'right':k===i?'wrong':'dim');});
       const right=curQ.opts.find(x=>x.ok);lineAt=performance.now();
-      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">Bonne réponse :</span> ${right.t} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
+      $('#fb').innerHTML=`<p><b class="${o.ok?'g':'r'}">${o.ok?'Bien flairé !':'Pas tout à fait.'}</b> ${o.ok?o.why:o.why+(o.why!==right.why?` <br><span class="g">Bonne réponse :</span> ${right.t}${/[.!?…»]$/.test(right.t)?'':'.'} ${right.why}`:'')}</p><button class="next" id="dnext">${dq.length>1?'Question suivante':'Terminer'} <kbd>E</kbd></button>`;
       if(o.ok){RX.audio.ok();sparkle(V3(P.x,P.y+1.2,P.z),['#F2B93B','#FFE08A'],12,2.5);}else RX.audio.no();
       $('#dnext').onclick=dialogAdvance;$('#dnext').focus({preventScroll:true});
       {const d=hud.dlg,fb=$('#fb');if(fb.offsetHeight+28<=d.clientHeight)d.scrollTop=d.scrollHeight;else fb.scrollIntoView({block:'start'});moreHint();}}

@@ -1,5 +1,8 @@
 # Historique
 
+## 2.0.1 — 12 novembre 2026
+Correction de la bêta reportée : point ajouté après la bonne réponse dans le retour (question 8).
+
 ## Bêta — 12 novembre 2026 (ponctuation)
 Dans le retour après une mauvaise réponse, un point s’ajoute après la bonne réponse quand elle n’en a pas (« On l’anonymise d’abord. Pour compter… »). En pratique, seule la question 8 était concernée. Version officielle 2.0 inchangée.
 
