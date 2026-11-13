@@ -1,0 +1,480 @@
+<title>Roxy · Dossier de conception</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout : dossier de conception en une colonne de lecture, avec un visualiseur 3D de Roxy en tête et des tableaux de décision. */
+:root{
+  --bg:#F2F3EC; --surface:#FBFBF7; --ink:#1D2420; --muted:#5C665F; --line:#D5D9CC;
+  --acacia:#2E6B4F; --gold:#C98F22; --fawn:#C79A63; --muzzle:#3B3533; --ok:#2F7D4A; --warn:#B7791F; --risk:#B0412D;
+  --ok-bg:#E3F0E6; --warn-bg:#F7EDD9; --risk-bg:#F6E3DE;
+  --f-display:"Bricolage Grotesque",system-ui,sans-serif; --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#131714; --surface:#1B201C; --ink:#E6EAE3; --muted:#9AA69D; --line:#2E3630;
+  --acacia:#6CC39A; --gold:#E6B04E; --fawn:#D9AE78; --muzzle:#8F8784; --ok:#6CC38A; --warn:#E6B04E; --risk:#E5806A;
+  --ok-bg:#1B3024; --warn-bg:#352B17; --risk-bg:#3A201A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131714; --surface:#1B201C; --ink:#E6EAE3; --muted:#9AA69D; --line:#2E3630;
+  --acacia:#6CC39A; --gold:#E6B04E; --fawn:#D9AE78; --muzzle:#8F8784; --ok:#6CC38A; --warn:#E6B04E; --risk:#E5806A;
+  --ok-bg:#1B3024; --warn-bg:#352B17; --risk-bg:#3A201A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:44px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance}
+h1{font-size:clamp(38px,6.5vw,68px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(25px,3.4vw,34px);font-weight:700}
+h3{font-size:19px;font-weight:700}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lede{font-size:18.5px;max-width:64ch}
+.prose{max-width:68ch;display:flex;flex-direction:column;gap:10px}
+.sechead{display:flex;flex-direction:column;gap:8px;border-top:2px solid var(--ink);padding-top:14px}
+.num{font-family:var(--f-mono);font-size:13px;color:var(--acacia)}
+ul.clean{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:560px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:color-mix(in srgb,var(--surface) 70%,var(--bg))}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.p-done{background:var(--ok-bg);color:var(--ok)} .p-plan{background:var(--warn-bg);color:var(--warn)} .p-risk{background:var(--risk-bg);color:var(--risk)} .p-test{background:var(--ok);color:var(--surface)}
+.notice{border-left:4px solid var(--gold);background:var(--warn-bg);padding:12px 16px;border-radius:0 8px 8px 0;font-size:15px}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h3{font-size:17px}
+.card p,.card li{font-size:14.5px}
+
+/* Visualiseur */
+.viewer{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:stretch}
+@media (max-width:820px){.viewer{grid-template-columns:1fr}}
+.stage{position:relative;border-radius:14px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(180deg,#8EC3DE 0%,#F1D7A6 100%);min-height:380px;aspect-ratio:4/3;max-width:100%}
+.stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;touch-action:none;cursor:grab}
+.stage .tag{position:absolute;left:12px;top:12px;font-family:var(--f-mono);font-size:11px;background:rgba(20,24,20,.72);color:#F2F3EC;padding:4px 9px;border-radius:6px}
+.stage .err{position:absolute;inset:0;display:grid;place-items:center;padding:20px;text-align:center;color:#1D2420;font-size:14px}
+.controls{display:flex;flex-direction:column;gap:14px}
+.btnrow{display:flex;flex-wrap:wrap;gap:6px}
+.btnrow button{font:inherit;font-size:13.5px;padding:7px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btnrow button[aria-pressed="true"]{background:var(--acacia);border-color:var(--acacia);color:var(--surface)}
+.btnrow button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.sw{display:flex;gap:8px;align-items:center;font-size:12.5px}
+.sw i{width:22px;height:22px;border-radius:4px;flex:none;border:1px solid rgba(0,0,0,.15)}
+.sw code{font-family:var(--f-mono);font-size:11px;color:var(--muted);display:block}
+.photo{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:start}
+.photo .ph{width:120px;height:150px;border-radius:10px;background:var(--fawn);display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;color:#1D2420;text-align:center;padding:8px}
+svg.map{width:100%;height:auto;display:block}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto}
+.mapbox svg{min-width:560px}
+.small{font-size:13px;color:var(--muted)}
+.qlist{counter-reset:q;list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.qlist li{counter-increment:q;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:15px}
+.qlist li::before{content:counter(q);font-family:var(--f-display);font-weight:800;font-size:22px;color:var(--gold);line-height:1}
+.qlist b{display:block}
+</style>
+
+<div class="wrap">
+
+<header style="display:flex;flex-direction:column;gap:14px">
+  <span class="eyebrow">Mandat « Roxy et les aventures du monde en blocs » · Phases 1 et 2 · 11 novembre 2026</span>
+  <h1>Roxy au Pays dogon</h1>
+  <p class="lede">Ce dossier contient le diagnostic du projet existant, le modèle voxel de Roxy, l’univers inspiré du Mali et la sélection de 12 questions de formation. Il attend votre validation : aucune refonte n’a commencé et la version 0.3 n’a pas été modifiée.</p>
+  <p class="notice"><b>Ce dossier n’est pas un prototype jouable.</b> Le modèle 3D ci-dessous est un concept visuel : on peut le tourner et prévisualiser des animations, mais on ne peut pas encore jouer.</p>
+</header>
+
+<!-- ================= ROXY ================= -->
+<section>
+  <div class="sechead"><span class="num">Concept 01 · Roxy en voxels</span><h2>Reconnaît-on Roxy ?</h2></div>
+  <div class="viewer">
+    <div class="stage" id="stage"><span class="tag">Concept visuel · Roxy v0.2 · décor Pays dogon</span></div>
+    <div class="controls">
+      <div><p class="eyebrow" style="margin-bottom:6px">Vues demandées</p>
+        <div class="btnrow" id="views"><button data-v="face">Face</button><button data-v="profil">Profil</button><button data-v="arriere">Arrière</button><button data-v="persp" aria-pressed="true">Perspective</button></div></div>
+      <div><p class="eyebrow" style="margin-bottom:6px">Aperçu d’animations</p>
+        <div class="btnrow" id="anims"><button data-a="repos" aria-pressed="true">Repos</button><button data-a="marche">Marche</button><button data-a="course">Course</button><button data-a="assise">Assise</button><button data-a="renifle">Reniflement</button><button data-a="saut">Saut</button></div></div>
+      <p class="small">Glissez sur la scène pour tourner autour de Roxy. Le modèle compte environ 1 100 cubes, regroupés en 7 parties animables : corps, tête, queue et 4 pattes.</p>
+      <div><p class="eyebrow" style="margin-bottom:6px">Palette tirée de la photo</p>
+        <div class="swatches" id="sw"></div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h3>Visible sur la photo, donc reproduit</h3>
+      <ul class="clean">
+        <li>Pelage fauve, beige à brun clair, plus clair sur l’intérieur des cuisses et les pattes.</li>
+        <li>Museau très large et arrondi, gris anthracite presque noir, avec des babines tombantes. C’est l’élément le plus reconnaissable : il occupe environ 70 % de la largeur de la tête.</li>
+        <li>Plis profonds sur le front, au-dessus des yeux (yeux « encapuchonnés ») et autour du cou.</li>
+        <li>Petites oreilles triangulaires repliées vers l’avant, plus foncées.</li>
+        <li>Yeux foncés, petits et enfoncés dans un masque sombre.</li>
+        <li>Corps trapu, poitrail large, pattes droites et solides.</li>
+        <li>Queue fine, enroulée et portée haut (visible derrière à gauche).</li>
+      </ul></div>
+    <div class="card"><h3>Non visible, donc supposé ou à fournir</h3>
+      <ul class="clean">
+        <li><b>Dos et arrière-train :</b> la couleur fauve uniforme est une hypothèse.</li>
+        <li><b>Forme exacte de la queue enroulée</b> vue de dos.</li>
+        <li><b>Profil du museau :</b> sa longueur réelle est estimée.</li>
+        <li><b>Taille et poids :</b> ils servent à calibrer la vitesse de marche et la hauteur de saut.</li>
+        <li><b>Démarche, couchage préféré, gestes typiques</b> de Roxy, pour des animations fidèles.</li>
+      </ul>
+      <p class="small">Merci de fournir trois photos : profil gauche, vue de dos, et Roxy debout en marche. Une courte vidéo de marche serait idéale.</p></div>
+  </div>
+</section>
+
+<!-- ================= DIAGNOSTIC ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 1 · Diagnostic</span><h2>Ce que le projet contient déjà</h2></div>
+  <p class="prose"><b>Décisions déjà prises :</b> univers inspiré du Mali (Pays dogon) et formation conservée mais réduite à 12 questions.</p>
+  <p class="prose">J’ai examiné les trois réalisations de cette conversation et le prototype Claude Quest que vous m’avez transmis (versions 0.1 et 0.2, plus la 0.3 que j’ai produite). Constat clé : le projet n’a <b>déjà aucun personnage humain</b>. Ses personnages sont des animaux (éléphant, girafe, zèbre, lion), ce qui rend la transition vers Roxy naturelle.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Élément</th><th>Contenu actuel</th><th>Décision proposée</th></tr></thead>
+    <tbody>
+      <tr><td>Objectif pédagogique</td><td>Former les employés débutants et intermédiaires à Claude : 41 questions validées (capacités et limites, prompts, outils, données sensibles, vérification, dossier complet)</td><td><span class="pill p-done">Préserver</span> Les intégrer comme défis dans l’aventure de Roxy (voir la question 1 en fin de dossier)</td></tr>
+      <tr><td>Histoire</td><td>Premier jour au bureau ; six collègues animaux confient six missions</td><td><span class="pill p-plan">Adapter</span> Le bureau devient la savane, les collègues deviennent des animaux rencontrés en chemin</td></tr>
+      <tr><td>Mécanismes</td><td>Missions, XP, séries, étoiles, déblocage progressif, talents des animaux, insignes, attestation, sauvegarde locale</td><td><span class="pill p-done">Préserver</span> Les talents deviennent les capacités de Roxy et de ses alliés</td></tr>
+      <tr><td>Interactions</td><td>Glisser vrai/faux, construction de prompt, ceinture d’outils, tri en bacs, surlignage</td><td><span class="pill p-done">Réutiliser</span> Les mêmes composants s’affichent quand Roxy rencontre un animal</td></tr>
+      <tr><td>Technologie</td><td>Web, JavaScript sans compilation, Three.js inclus (licence MIT), scène 3D, mode léger 2,5D de secours, son synthétisé (Web Audio)</td><td><span class="pill p-done">Conserver</span> pour le prototype (voir la recommandation technique)</td></tr>
+      <tr><td>Direction artistique</td><td>Bureau isométrique en couleurs douces ; animaux géométriques arrondis</td><td><span class="pill p-risk">Remplacer</span> par l’esthétique voxel, comme le demande le mandat</td></tr>
+      <tr><td>Accessibilité</td><td>Clavier, mouvement réduit, mise en page mobile</td><td><span class="pill p-done">Préserver</span> et étendre aux commandes du jeu</td></tr>
+      <tr><td>Nom</td><td>« Claude Quest », marqué « nom provisoire » dans le README</td><td><span class="pill p-risk">À revoir</span> « Claude » est une marque d’Anthropic (voir les risques)</td></tr>
+    </tbody></table></div>
+  <div class="grid2">
+    <div class="card"><h3>Sauvegarde effectuée</h3><p>Une copie indépendante a été créée : <code>roxy-refonte/claude-quest-0.3-reference/</code>. La photo de Roxy est rangée dans <code>roxy-refonte/references/</code>. Les versions 0.1, 0.2 et 0.3 restent intactes.</p></div>
+    <div class="card"><h3>Accès manquants</h3><p>Le dépôt GitHub <code>cobalt243/claude-quest</code> mentionné dans votre README n’est pas accessible depuis cette session, et je ne connais pas les décisions qui ne figurent pas dans les fichiers. Je créerai la branche <code>refonte-roxy</code> dès que l’accès sera ouvert.</p></div>
+  </div>
+</section>
+
+<!-- ================= UNIVERS ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 2 · Univers</span><h2>Un monde inspiré du Mali, en commençant par le Pays dogon</h2></div>
+  <p class="prose">Toutes les régions s’inspirent désormais du Mali. Chacune a sa référence géographique précise, pour ne pas mélanger les cultures. Le jeu commence au pied de la falaise de Bandiagara, dans le Pays dogon (site du patrimoine mondial de l’UNESCO, à la fois naturel et culturel).</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Région du jeu</th><th>Inspiration</th><th>Paysage et blocs</th><th>Constructions (sans humains)</th></tr></thead>
+    <tbody>
+      <tr><td><b>1. La Falaise aux greniers</b> · prototype</td><td>Falaise de Bandiagara et plaine du Séno, Pays dogon</td><td>Grès rouge en strates, éboulis, sable ocre, baobabs, mares temporaires, champs de mil</td><td>Greniers carrés en banco à toit conique de paille</td></tr>
+      <tr><td>2. Les Abris de la falaise</td><td>Habitats anciens attribués aux Tellem, creusés dans la falaise</td><td>Grottes, corniches, passages souterrains</td><td>Abris et greniers anciens, déjà inhabités dans la réalité, ce qui convient au jeu sans humains</td></tr>
+      <tr><td>3. Le Plateau de grès</td><td>Plateau de Bandiagara</td><td>Roches sculptées par l’érosion, petites gorges, cascades de saison des pluies</td><td>Murets de pierre sèche, petits barrages</td></tr>
+      <tr><td>4. Les Mares du Gourma</td><td>Gourma malien, territoire des éléphants du désert</td><td>Mares, dunes fixées, acacias, couloir de migration</td><td>Aucune</td></tr>
+      <tr><td>5. Le Delta intérieur</td><td>Delta intérieur du Niger</td><td>Fleuve, plaines inondables, bourgoutières, îles</td><td>Pirogues abandonnées, cases sur buttes</td></tr>
+      <tr><td>6. La Cité de banco</td><td>Architecture soudano-sahélienne (région de Djenné)</td><td>Ruelles, terrasses, pilastres en terre crue</td><td>Maisons à façades de banco, sans reproduction d’édifice religieux</td></tr>
+    </tbody></table></div>
+  <div class="grid2">
+    <div class="card"><h3>Ce que l’on représente</h3><ul class="clean"><li>La falaise, la plaine et la flore : baobab, karité, rônier, mil.</li><li>Les greniers et les abris anciens de la falaise.</li><li>Des animaux de la région : éléphant du Gourma, singe patas, agame (lézard des rochers), calao, vautour.</li></ul></div>
+    <div class="card"><h3>Ce que l’on évite</h3><ul class="clean"><li>Les masques, sanctuaires, autels et toute pratique rituelle dogon : ce sont des éléments sacrés et vivants.</li><li>Montrer des villages actuels comme « abandonnés ». Le Centre du Mali traverse un conflit qui a déplacé des populations, et cette image serait blessante.</li><li>Toute allusion à ce conflit.</li></ul></div>
+  </div>
+  <p class="small">Une relecture par des personnes du Pays dogon ou des spécialistes du patrimoine malien est recommandée avant de concevoir les constructions. Le suricate n’existe pas au Mali : je propose de le remplacer par un animal local, comme l’agame ou un écureuil fouisseur.</p>
+
+<h3 style="margin-top:8px">Zone 1 du prototype : la Falaise aux greniers (64 × 64 blocs)</h3>
+  <div class="mapbox"><svg class="map" viewBox="0 0 640 380" role="img" aria-label="Plan schématique de la zone 1">
+    <rect x="10" y="10" width="620" height="360" rx="10" fill="#EBD3A2" stroke="#C49A5E"/><path d="M10 10 H630 V70 Q560 92 480 74 T320 80 T160 72 T10 84Z" fill="#A9603C" opacity=".85"/>
+    <path d="M10 250 Q120 230 200 280 T380 300 Q470 310 540 360 L540 370 L10 370Z" fill="#D9C27E" opacity=".7"/>
+    <path d="M60 330 C150 300 210 330 300 310 S470 260 560 290" fill="none" stroke="#B48A4A" stroke-width="10" stroke-dasharray="2 6" stroke-linecap="round"/>
+    <text x="300" y="340" font-family="JetBrains Mono, monospace" font-size="11" fill="#6B5226">Dune de sable · à creuser</text>
+    <ellipse cx="520" cy="110" rx="60" ry="38" fill="#7DB7D6" stroke="#4E8AAE"/>
+    <text x="520" y="114" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#173A4E">Mare</text>
+    <g fill="#B87048" stroke="#7E4528"><rect x="280" y="70" width="70" height="60" rx="6"/><rect x="300" y="52" width="40" height="24" rx="5"/><rect x="360" y="96" width="34" height="34" rx="5"/></g>
+    <text x="320" y="150" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3B3D36">Éboulis · abri caché</text>
+    <circle cx="150" cy="120" r="22" fill="#6F8F3E"/><rect x="144" y="120" width="12" height="26" fill="#8A6A44"/>
+    <text x="150" y="165" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3B3D36">Baobab</text>
+    <g fill="#A85E38"><rect x="440" y="186" width="14" height="16"/><rect x="460" y="190" width="14" height="16"/><rect x="220" y="205" width="14" height="16"/></g><g fill="#C8A65E"><path d="M436 188l11-12 11 12z"/><path d="M456 192l11-12 11 12z"/><path d="M216 207l11-12 11 12z"/></g>
+    <text x="457" y="222" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#3B3D36">Greniers</text>
+    <g fill="#B5764A"><rect x="400" y="280" width="10" height="18"/><rect x="200" y="60" width="10" height="18"/></g>
+    <text x="214" y="56" font-family="JetBrains Mono, monospace" font-size="11" fill="#FBFBF7">Falaise de grès</text>
+    <path d="M70 290 C110 250 140 210 190 200 S260 170 290 140" fill="none" stroke="#C98F22" stroke-width="3" stroke-dasharray="6 6"/>
+    <path d="M350 130 C420 160 470 150 500 140" fill="none" stroke="#C98F22" stroke-width="3" stroke-dasharray="6 6"/>
+    <text x="96" y="268" font-family="JetBrains Mono, monospace" font-size="11" fill="#7A5513">Piste olfactive</text>
+    <g font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="13" fill="#FBFBF7">
+      <circle cx="70" cy="300" r="14" fill="#2E6B4F"/><text x="70" y="305" text-anchor="middle">R</text>
+      <circle cx="190" cy="200" r="12" fill="#C98F22"/><text x="190" y="205" text-anchor="middle">1</text>
+      <circle cx="405" cy="270" r="12" fill="#C98F22"/><text x="405" y="275" text-anchor="middle">2</text>
+      <circle cx="320" cy="98" r="12" fill="#C98F22"/><text x="320" y="103" text-anchor="middle">3</text>
+      <circle cx="560" cy="150" r="14" fill="#5B5F9C"/><text x="560" y="155" text-anchor="middle">É</text>
+    </g>
+    <g font-family="JetBrains Mono, monospace" font-size="11" fill="#1D2420">
+      <rect x="20" y="20" width="250" height="78" rx="6" fill="#FBFBF7" opacity=".92"/>
+      <text x="30" y="38">R  départ de Roxy</text><text x="30" y="56">1-3  objets à découvrir au flair</text><text x="30" y="74">É  éléphant du Gourma (optionnel)</text><text x="30" y="91">- -  piste révélée par le reniflement</text>
+    </g>
+  </svg></div>
+</section>
+
+<!-- ================= FORMATION ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 2 · Formation</span><h2>12 questions au lieu de 41</h2></div>
+  <p class="prose">Je propose de garder deux questions essentielles par thème, soit environ 10 minutes de formation intégrées à l’aventure. Chaque animal allié en pose deux quand Roxy le rencontre. Les 29 autres questions restent en réserve pour un « mode entraînement » facultatif.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>#</th><th>Thème · animal</th><th>Question</th><th>Bonne réponse</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td rowspan="2">Connaître Claude · agame</td><td>Claude peut-il affirmer une chose fausse avec assurance ?</td><td>Vrai : il faut vérifier chiffres, citations et références</td></tr>
+      <tr><td>2</td><td>Sans recherche web, Claude connaît-il forcément l’actualité récente ?</td><td>Faux : il faut activer la recherche web et demander les sources</td></tr>
+      <tr><td>3</td><td rowspan="2">Le bon prompt · éléphant</td><td>Quel contexte donner pour un résumé destiné à un bailleur ?</td><td>Le lecteur, son temps disponible et l’objet du document</td></tr>
+      <tr><td>4</td><td>Quel garde-fou ajouter ?</td><td>« N’inventez aucun chiffre ; signalez les données manquantes »</td></tr>
+      <tr><td>5</td><td rowspan="2">Les outils · singe patas</td><td>Même dossier chaque semaine, avec les mêmes documents ?</td><td>Un Projet</td></tr>
+      <tr><td>6</td><td>Le contenu d’un décret publié le mois dernier ?</td><td>La recherche web, puis la source officielle</td></tr>
+      <tr><td>7</td><td rowspan="2">Les données · calao</td><td>Une liste de bénéficiaires avec noms et téléphones ?</td><td>Ne pas saisir sans autorisation</td></tr>
+      <tr><td>8</td><td>L’évaluation d’un employé nommé ?</td><td>Anonymiser d’abord</td></tr>
+      <tr><td>9</td><td rowspan="2">Vérifier · vautour</td><td>Dans une note de Claude, quelles phrases vérifier ?</td><td>Celles qui contiennent un chiffre précis, un article de loi ou une citation exacte</td></tr>
+      <tr><td>10</td><td>Comment vérifier un chiffre ?</td><td>Ouvrir la source originale ; « Êtes-vous sûr ? » ne suffit pas</td></tr>
+      <tr><td>11</td><td rowspan="2">Le dossier complet · éléphant</td><td>Le premier jet est trop long et trop général : que faire ?</td><td>Donner un retour précis (longueur, structure, contenu attendu)</td></tr>
+      <tr><td>12</td><td>Avant d’envoyer la note à la direction ?</td><td>Demander à Claude ses points faibles, puis vérifier soi-même</td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ================= GAMEPLAY ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 2 · Mécanismes</span><h2>Ce qu’un chien peut faire avec des blocs</h2></div>
+  <p class="prose">Roxy ne casse pas et ne fabrique pas de blocs à la main, ce qui ne serait pas crédible pour un chien. Ses capacités remplacent celles d’un personnage humain et rendent le jeu distinct des jeux de construction classiques.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Capacité de Roxy</th><th>Effet dans le monde de blocs</th><th>Équivalent pédagogique possible</th><th>Prototype</th></tr></thead>
+    <tbody>
+      <tr><td><b>Flair</b> (renifler)</td><td>Révèle une piste lumineuse vers un objet ou un passage</td><td>« Remonter à la source » : la vérification</td><td><span class="pill p-done">Oui</span></td></tr>
+      <tr><td><b>Creuser</b></td><td>Retire uniquement les blocs meubles (sable, terre, feuilles) ; ouvre des passages</td><td>Chercher l’information au bon endroit</td><td><span class="pill p-done">Oui</span></td></tr>
+      <tr><td><b>Rapporter</b></td><td>Porte un bloc léger (branche, pierre plate) dans la gueule et le dépose : passerelles, marches</td><td>Assembler les blocs d’un prompt</td><td><span class="pill p-plan">Version 2</span></td></tr>
+      <tr><td><b>Pousser</b></td><td>Déplace une caisse ou un rocher d’un bloc pour activer un mécanisme</td><td>Choisir le bon outil</td><td><span class="pill p-plan">Version 2</span></td></tr>
+      <tr><td><b>Aboyer</b></td><td>Fait réagir les animaux et s’envoler les oiseaux, ce qui révèle un lieu</td><td>Demander de l’aide, poser des questions</td><td><span class="pill p-plan">Version 2</span></td></tr>
+      <tr><td><b>Alliés animaux</b></td><td>L’éléphant soulève, le suricate trouve les passages, le singe atteint les hauteurs, la girafe observe</td><td>Les six missions existantes, confiées par ces animaux</td><td><span class="pill p-plan">Plus tard</span></td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ================= TECHNIQUE ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 2 · Technique</span><h2>Recommandation : rester sur le web pour le prototype</h2></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Critère</th><th>Three.js (actuel)</th><th>Godot 4</th><th>Unity</th></tr></thead>
+    <tbody>
+      <tr><td>Compatibilité avec l’existant</td><td>Totale : code, missions et tests réutilisés</td><td>À réécrire en GDScript</td><td>À réécrire en C#</td></tr>
+      <tr><td>Diffusion</td><td>Un lien, aucune installation ; poids visé sous 3 Mo</td><td>Export web lourd (dizaines de Mo) ; excellent en natif</td><td>Export web lourd ; excellent en natif</td></tr>
+      <tr><td>Rendu voxel et performances</td><td>Bon pour une zone de 64 × 64 avec une fusion des faces ; à surveiller sur les téléphones modestes</td><td>Très bon, avec des extensions voxel libres</td><td>Très bon</td></tr>
+      <tr><td>Animation</td><td>Par code (pivots), suffisant pour un style cubique</td><td>Éditeur d’animation complet</td><td>Éditeur d’animation complet</td></tr>
+      <tr><td>Coûts</td><td>Gratuit (MIT)</td><td>Gratuit (MIT)</td><td>Licence selon les revenus, conditions changeantes</td></tr>
+      <tr><td>Monde agrandi progressivement</td><td>Possible, mais demande plus de travail sur mesure</td><td>Le plus adapté à long terme</td><td>Adapté</td></tr>
+    </tbody></table></div>
+  <div class="grid2">
+    <div class="card"><h3>Recommandation</h3><p>Prototype en <b>Three.js</b>, avec la même approche que la version 0.3 : ES modules, sans compilation, mode léger de secours. C’est le plus rapide pour valider la direction artistique et Roxy, et le plus facile à partager avec des équipes sur le terrain. On réévalue Godot à la fin de la phase 4 si vous visez un grand monde ou des applications mobiles natives.</p></div>
+    <div class="card"><h3>Architecture modulaire</h3><p style="font-family:var(--f-mono);font-size:12.5px;line-height:1.7">world/ blocs, tronçons, génération à graine<br>entities/ roxy, animaux, pivots d’animation<br>systems/ contrôles, caméra, collisions, flair, quêtes, sauvegarde<br>ui/ interface, dialogues, réutilisation des missions<br>content/ régions, missions (data.js actuel)<br>tests/ scénarios Playwright + tests unitaires</p></div>
+  </div>
+</section>
+
+<!-- ================= PROTOTYPE ================= -->
+<section>
+  <div class="sechead"><span class="num">Phase 3 · Proposition</span><h2>Le prototype minimal</h2></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Exigence du mandat</th><th>Proposition concrète</th><th>Critère de réussite</th></tr></thead>
+    <tbody>
+      <tr><td>Savane en blocs, arbres, reliefs</td><td>Zone de 64 × 64 blocs : kopjes, 2 baobabs, 8 acacias, termitières, lit de rivière à sec, point d’eau</td><td>Exploration complète en 5 à 8 minutes</td></tr>
+      <tr><td>Roxy contrôlable, troisième personne</td><td>Modèle voxel ci-dessus ; caméra qui suit Roxy et tourne à la souris ou au glisser</td><td>Roxy reconnue par 4 testeurs sur 5 sans indice</td></tr>
+      <tr><td>Déplacements et sauts</td><td>Clavier (ZQSD ou flèches, Maj pour courir, Espace pour sauter). Mobile : joystick virtuel et deux boutons</td><td>Saut d’un bloc de haut ; aucune chute à travers le terrain</td></tr>
+      <tr><td>Animation de marche</td><td>Marche, course, saut et reniflement par pivots</td><td>Fluide à 60 images/s sur ordinateur, 30 sur téléphone moyen</td></tr>
+      <tr><td>Éléments interactifs et objectif</td><td>« Retrouver les trois objets perdus » grâce au flair ; le troisième est derrière un passage de sable à creuser</td><td>Objectif compris sans texte long</td></tr>
+      <tr><td>Interface minimale</td><td>Compteur d’objets, invite contextuelle (« E : renifler »), menu pause</td><td>Lisible sur un écran de 390 px de large</td></tr>
+      <tr><td>Ambiance</td><td>Cycle jour-nuit accéléré, ombres, herbe animée, sons synthétisés (oiseaux, vent)</td><td>Pas de baisse de fluidité notable</td></tr>
+      <tr><td>Animal secondaire</td><td>Éléphant au point d’eau, uniquement pour tester l’interaction de fin</td><td>À retirer si cela n’apporte rien</td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ================= CALENDRIER ================= -->
+<section>
+  <div class="sechead"><span class="num">Feuille de route</span><h2>Calendrier et estimation</h2></div>
+  <p class="prose">Estimations en jours-personne pour un développeur expérimenté, avec une incertitude de ±30 %. Une partie du travail peut être accélérée avec moi, mais les tests sur de vrais appareils et vos validations restent des étapes humaines.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Étape</th><th>Contenu</th><th>Effort</th><th>Statut</th></tr></thead>
+    <tbody>
+      <tr><td>Phase 1 · Diagnostic</td><td>Bilan, sauvegarde, analyse de la photo</td><td>1 j</td><td><span class="pill p-test">Réalisé</span></td></tr>
+      <tr><td>Phase 2 · Conception</td><td>Ce dossier et le concept voxel de Roxy</td><td>2 j</td><td><span class="pill p-done">Réalisé, à valider</span></td></tr>
+      <tr><td>Phase 3 · Prototype</td><td>Terrain voxel, collisions, Roxy jouable, caméra, flair, objectif, interface</td><td>10 à 15 j</td><td><span class="pill p-plan">Prévu</span></td></tr>
+      <tr><td>Phase 4 · Tests</td><td>5 testeurs, ordinateur et 2 téléphones, rapport</td><td>3 à 5 j</td><td><span class="pill p-plan">Prévu</span></td></tr>
+      <tr><td>Phase 5a · Tranche verticale</td><td>Zone 1 complète, une première mission pédagogique intégrée, sauvegarde, sons</td><td>20 à 30 j</td><td><span class="pill p-plan">Prévu</span></td></tr>
+      <tr><td>Phase 5b · Régions 2 à 6</td><td>Une région, ses blocs, un animal allié, une mission</td><td>15 à 25 j chacune</td><td><span class="pill p-plan">Prévu</span></td></tr>
+    </tbody></table></div>
+</section>
+
+<!-- ================= RISQUES ================= -->
+<section>
+  <div class="sechead"><span class="num">Risques</span><h2>Risques techniques et juridiques</h2></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Risque</th><th>Niveau</th><th>Mesure</th></tr></thead>
+    <tbody>
+      <tr><td>Ressemblance avec Minecraft : le style voxel et l’exploration ne sont pas protégés en tant qu’idées, mais copier textures, interface, sons, créatures ou logo le serait</td><td><span class="pill p-plan">Moyen</span></td><td>Tout créer de zéro (textures générées par code), interface distincte, aucune créature reprise. Ne jamais utiliser le nom « Minecraft » dans la promotion (c’est une marque de Microsoft)</td></tr>
+      <tr><td>Nom actuel « Claude Quest » : « Claude » est une marque d’Anthropic</td><td><span class="pill p-risk">Élevé si publication</span></td><td>Choisir un nom propre (exemple de piste : « Roxy et le monde en blocs »), puis le vérifier avant toute diffusion publique</td></tr>
+      <tr><td>Représentation culturelle : clichés ou mélanges entre régions</td><td><span class="pill p-plan">Moyen</span></td><td>Une région par source documentée, relecture par des personnes des régions concernées</td></tr>
+      <tr><td>Performances sur des téléphones modestes</td><td><span class="pill p-plan">Moyen</span></td><td>Fusion des faces, ombres désactivables, mode léger de secours</td></tr>
+      <tr><td>Commandes tactiles en 3D</td><td><span class="pill p-plan">Moyen</span></td><td>Joystick virtuel testé sur de vrais appareils en phase 4</td></tr>
+      <tr><td>Dispersion du projet (trop de fonctions)</td><td><span class="pill p-plan">Moyen</span></td><td>Livrer une zone à la fois ; chaque fonction se rattache à une capacité de Roxy</td></tr>
+      <tr><td>Photo et image de Roxy</td><td><span class="pill p-done">Faible</span></td><td>Il s’agit de votre propre chien et de votre propre photo</td></tr>
+    </tbody></table></div>
+  <p class="small">Ces points sont un repérage, pas un avis juridique. Un avis d’un juriste en propriété intellectuelle (Canada et Québec) est recommandé avant toute diffusion publique, surtout pour le nom du jeu.</p>
+</section>
+
+<!-- ================= DÉCISIONS ================= -->
+<section>
+  <div class="sechead"><span class="num">Validation</span><h2>Ce qui reste à valider avant la phase 3</h2></div>
+  <ol class="qlist">
+    <li><div><b>Les 12 questions.</b> La sélection ci-dessus vous convient-elle ? Voulez-vous en remplacer certaines ?</div></li>
+    <li><div><b>Modèle de Roxy.</b> Le style v0.2 est-il validé ? J’ai toujours besoin de photos de profil, de dos et en marche.</div></li>
+    <li><div><b>Relecture culturelle.</b> Connaissez-vous quelqu’un du Pays dogon ou du patrimoine malien qui pourrait relire les constructions ?</div></li>
+    <li><div><b>Technologie.</b> Acceptez-vous Three.js pour le prototype, avec une réévaluation de Godot après les tests ?</div></li>
+    <li><div><b>Nom du jeu.</b> Peut-on retirer « Claude » du titre ?</div></li>
+    <li><div><b>Dépôt.</b> Pouvez-vous ouvrir l’accès à <code>cobalt243/claude-quest</code> pour créer la branche <code>refonte-roxy</code> ?</div></li>
+  </ol>
+</section>
+
+<footer class="small" style="border-top:1px solid var(--line);padding-top:14px">Concept et création : Jean-Marc Pagé. Projet éducatif indépendant, non affilié à Anthropic ni à Mojang ou Microsoft. Toutes les ressources visuelles de ce dossier sont générées par code.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const PAL={F:["Pelage fauve","#C9975C"],L:["Crêtes des plis","#DDB077"],S:["Creux des plis","#9C6B3E"],C:["Poitrail clair","#E0BE8C"],D:["Museau","#3A302D"],N:["Truffe","#1E1918"],M:["Masque","#6B4A33"],R:["Oreilles","#8D5A33"],T:["Orteils","#4A2E1C"],E:["Yeux","#120D0B"]};
+document.getElementById("sw").innerHTML=Object.values(PAL).map(([n,c])=>`<div class="sw"><i style="background:${c}"></i><span>${n}<code>${c}</code></span></div>`).join("");
+const stage=document.getElementById("stage");
+if(!window.THREE){stage.insertAdjacentHTML("beforeend",'<div class="err">La bibliothèque 3D n’a pas pu se charger.</div>');return;}
+let renderer;try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch(e){stage.insertAdjacentHTML("beforeend",'<div class="err">WebGL est indisponible sur cet appareil : le concept 3D ne peut pas s’afficher ici.</div>');return;}
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;stage.prepend(renderer.domElement);
+const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(30,1,.1,100);
+scene.add(new THREE.HemisphereLight(0xfff1d6,0x5b4a2c,.75));scene.add(new THREE.AmbientLight(0xffffff,.12));
+const sun=new THREE.DirectionalLight(0xffe0b0,1.25);sun.position.set(-3,6,4.5);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.bias=-.0005;
+Object.assign(sun.shadow.camera,{left:-3,right:3,top:3,bottom:-3});scene.add(sun);
+
+/* Texture originale : bord de cube légèrement assombri, intérieur bruité */
+function edgeTex(){const c=document.createElement("canvas");c.width=c.height=8;const g=c.getContext("2d");let s=7;
+  for(let y=0;y<8;y++)for(let x=0;x<8;x++){s=(s*9301+49297)%233280;const edge=x===0||y===0||x===7||y===7;const v=edge?226:Math.round(238+(s/233280)*17);g.fillStyle=`rgb(${v},${v},${v})`;g.fillRect(x,y,1,1);}
+  const t=new THREE.CanvasTexture(c);t.magFilter=t.minFilter=THREE.NearestFilter;t.encoding=THREE.sRGBEncoding;return t;}
+const TEX=edgeTex();const MAT=new THREE.MeshLambertMaterial({map:TEX});
+
+/* ===== Roxy : volumes implicites échantillonnés en cubes ===== */
+const ell=(p,c,r)=>{const x=(p[0]-c[0])/r[0],y=(p[1]-c[1])/r[1],z=(p[2]-c[2])/r[2];const k0=Math.hypot(x,y,z),k1=Math.hypot(x/r[0],y/r[1],z/r[2]);return k0*(k0-1)/(k1||1e-6);};
+const cap=(p,a,b,r)=>{const pa=[p[0]-a[0],p[1]-a[1],p[2]-a[2]],ba=[b[0]-a[0],b[1]-a[1],b[2]-a[2]];const h=Math.max(0,Math.min(1,(pa[0]*ba[0]+pa[1]*ba[1]+pa[2]*ba[2])/(ba[0]*ba[0]+ba[1]*ba[1]+ba[2]*ba[2])));return Math.hypot(pa[0]-ba[0]*h,pa[1]-ba[1]*h,pa[2]-ba[2]*h)-r;};
+const rbox=(p,c,h,r)=>{const q=[Math.abs(p[0]-c[0])-h[0],Math.abs(p[1]-c[1])-h[1],Math.abs(p[2]-c[2])-h[2]];return Math.hypot(Math.max(q[0],0),Math.max(q[1],0),Math.max(q[2],0))+Math.min(Math.max(q[0],q[1],q[2]),0)-r;};
+const smin=(a,b,k)=>{const h=Math.max(k-Math.abs(a-b),0)/k;return Math.min(a,b)-h*h*k*.25;};
+const P=[]; const add=(part,reg,fold,f)=>P.push({part,reg,fold,f});
+// corps
+add("body","fur","torso",p=>ell(p,[0,1.0,-.15],[.42,.36,.74]));
+add("body","chest","torso",p=>ell(p,[0,.93,.42],[.4,.42,.38]));
+add("body","fur","neck",p=>ell(p,[0,1.3,.62],[.39,.4,.32]));
+add("body","chest","neck",p=>ell(p,[0,1.08,.74],[.3,.28,.24]));
+// tête
+add("head","fur","head",p=>ell(p,[0,1.72,.82],[.43,.38,.38]));
+add("head","fur","brow",p=>ell(p,[-.17,1.88,1.06],[.15,.07,.1]));
+add("head","fur","brow",p=>ell(p,[.17,1.88,1.06],[.15,.07,.1]));
+add("head","fur","cheek",p=>ell(p,[-.28,1.5,.98],[.2,.29,.24]));
+add("head","fur","cheek",p=>ell(p,[.28,1.5,.98],[.2,.29,.24]));
+add("head","muzzle","none",p=>ell(p,[0,1.47,1.22],[.27,.22,.26]));
+add("head","muzzle","none",p=>ell(p,[0,1.32,1.14],[.28,.13,.22]));
+add("head","nose","none",p=>rbox(p,[0,1.57,1.45],[.1,.05,.04],.03));
+add("head","ear","none",p=>ell(p,[-.3,2.03,.76],[.11,.065,.09]));add("head","ear","none",p=>ell(p,[-.34,1.97,.87],[.1,.045,.09]));
+add("head","ear","none",p=>ell(p,[.3,2.03,.76],[.11,.065,.09]));add("head","ear","none",p=>ell(p,[.34,1.97,.87],[.1,.045,.09]));
+// pattes avant
+[-1,1].forEach(sx=>{const k=sx<0?"legFL":"legFR";add(k,"fur","leg",p=>cap(p,[.24*sx,.95,.42],[.24*sx,.12,.5],.125));add(k,"paw","none",p=>ell(p,[.24*sx,.07,.57],[.15,.075,.19]));});
+// pattes arrière
+[-1,1].forEach(sx=>{const k=sx<0?"legBL":"legBR";add(k,"fur","thigh",p=>ell(p,[.27*sx,.78,-.66],[.18,.33,.29]));add(k,"fur","leg",p=>cap(p,[.27*sx,.55,-.8],[.27*sx,.12,-.72],.105));add(k,"paw","none",p=>ell(p,[.27*sx,.07,-.64],[.14,.07,.18]));});
+// queue enroulée
+(()=>{let prev=null;for(let i=0;i<=10;i++){const t=i/10,a=-2.1+t*4.6,R=.24-.08*t;const pt=[.05*t,1.42+Math.sin(a)*R+.12*(1-t),-.86+Math.cos(a)*R*.9];if(prev){const A=prev,B=pt,r=.095-.035*t;add("tail","fur","tail",p=>cap(p,A,B,r));}prev=pt;}})();
+
+const PIV={body:[0,0,0],head:[0,1.4,.6],tail:[0,1.22,-.86],legFL:[-.24,.95,.45],legFR:[.24,.95,.45],legBL:[-.27,1.0,-.66],legBR:[.27,1.0,-.66]};
+function sample(p){let d=1e9,best=null,bd=1e9;
+  for(const q of P){const v=q.f(p);if(v<bd){bd=v;best=q;}d=(q.reg==="nose"||q.reg==="ear")?Math.min(d,v):smin(d,v,.07);}
+  let s=0,amp=0;const y=p[1],z=p[2],x=p[0];
+  switch(best.fold){
+    case"torso":s=Math.sin(z*17+y*2.5);amp=.03*Math.max(0,Math.min(1,(y-.62)/.3));break;
+    case"neck":s=Math.sin((y*.85+z*.55)*25);amp=.034;break;
+    case"head":if(z>.66&&y>1.68){s=Math.sin(y*42-Math.abs(x)*5);amp=.022;}else{s=Math.sin(z*22+y*6);amp=.014;}break;
+    case"brow":s=Math.sin(y*60);amp=.012;break;
+    case"cheek":s=Math.sin(x*26+y*11);amp=.026;break;
+    case"thigh":s=Math.sin(y*24+z*8);amp=.016;break;
+    case"leg":s=Math.sin(y*30);amp=y>.5?.012:.006;break;
+    case"tail":s=Math.sin(z*40);amp=.008;break;
+  }
+  return {d:d-amp*s,s:amp?s:0,q:best};}
+const VS=.034, X0=-.62,X1=.62,Y0=0,Y1=2.3,Z0=-1.24,Z1=1.56;
+const NX=Math.ceil((X1-X0)/VS),NY=Math.ceil((Y1-Y0)/VS),NZ=Math.ceil((Z1-Z0)/VS);
+const solid=new Uint8Array(NX*NY*NZ),info=new Array(NX*NY*NZ);const id=(i,j,k)=>i+NX*(j+NY*k);
+for(let k=0;k<NZ;k++)for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){const p=[X0+(i+.5)*VS,Y0+(j+.5)*VS,Z0+(k+.5)*VS];const r=sample(p);if(r.d<0){solid[id(i,j,k)]=1;info[id(i,j,k)]=r;}}
+const sol=(i,j,k)=>i>=0&&j>=0&&k>=0&&i<NX&&j<NY&&k<NZ&&solid[id(i,j,k)];
+const hash=(i,j,k)=>{let h=(i*374761393+j*668265263+k*2147483647)|0;h=(h^(h>>>13))*1274126177;return ((h^(h>>>16))>>>0)/4294967295;};
+const mix=(a,b,t)=>a.map((v,n)=>v+(b[n]-v)*t);const hex=h=>[1,3,5].map(n=>parseInt(h.slice(n,n+2),16)/255);
+const C={F:hex("#C9975C"),L:hex("#DDB077"),S:hex("#9C6B3E"),Cr:hex("#E0BE8C"),D:hex("#3A302D"),D2:hex("#4A3E3A"),N:hex("#1E1918"),M:hex("#6B4A33"),R:hex("#8D5A33"),R2:hex("#6E4426"),T:hex("#4A2E1C"),E:hex("#120D0B"),W:hex("#F4F1EA")};
+const EYES=[[-.17,1.79,1.14],[.17,1.79,1.14]];
+const groups={};let count=0;
+for(let k=0;k<NZ;k++)for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){if(!solid[id(i,j,k)])continue;
+  if(sol(i+1,j,k)&&sol(i-1,j,k)&&sol(i,j+1,k)&&sol(i,j-1,k)&&sol(i,j,k+1)&&sol(i,j,k-1))continue;
+  const r=info[id(i,j,k)],p=[X0+(i+.5)*VS,Y0+(j+.5)*VS,Z0+(k+.5)*VS],n=hash(i,j,k);let col;
+  const reg=r.q.reg;
+  if(reg==="muzzle")col=mix(C.D,C.D2,n*.8);
+  else if(reg==="nose")col=mix(C.N,C.D,p[1]>1.63?.35:n*.15);
+  else if(reg==="ear")col=mix(C.R,C.R2,n*.5+(p[2]>.86?.3:0));
+  else{col=reg==="chest"?mix(C.F,C.Cr,.45):C.F;
+    if(r.s>0)col=mix(col,C.L,r.s*.55);else if(r.s<0)col=mix(col,C.S,-r.s*.75);
+    col=mix(col,n>.5?C.L:C.S,Math.abs(n-.5)*.35);
+    if(r.q.part==="head"){const dm=Math.hypot(p[0],(p[1]-1.5)*1.2,(p[2]-1.18)*1.1);if(dm<.42&&p[2]>.98)col=mix(col,C.M,Math.min(1,(.42-dm)/.16)*.85);
+      EYES.forEach(e=>{const de=Math.hypot(p[0]-e[0],p[1]-e[1],p[2]-e[2]);if(de<.12)col=mix(col,C.M,(.12-de)/.12*.9);});}
+    if(reg==="paw"&&p[2]>.0){const toe=Math.sin(p[0]*62);const front=r.q.part.startsWith("legF")?p[2]>.62:p[2]>-.56;if(front&&toe>.55&&p[1]<.12)col=C.T;}
+    if(reg==="paw")col=mix(col,C.L,.12);}
+  EYES.forEach(e=>{const de=Math.hypot(p[0]-e[0],p[1]-e[1],(p[2]-e[2])*.8);if(de<.05)col=C.E;});
+  EYES.forEach(e=>{if(Math.hypot(p[0]-(e[0]+.018),p[1]-(e[1]+.02),p[2]-(e[2]+.02))<.02)col=C.W;});
+  let occ=0;for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)for(let c=-1;c<=1;c++)if((a||b||c)&&sol(i+a,j+b,k+c))occ++;
+  const ao=1-Math.max(0,occ-9)/17*.55;col=col.map(v=>v*ao);
+  const part=r.q.part;(groups[part]||(groups[part]=[])).push([p,col]);count++;}
+
+const root=new THREE.Group();scene.add(root);
+const hips=new THREE.Group();hips.position.set(0,1.0,-.66);root.add(hips);const mover=new THREE.Group();mover.position.set(0,-1.0,.66);hips.add(mover);
+const parts={};const geo=new THREE.BoxGeometry(VS,VS,VS);const tmp=new THREE.Object3D(),cc=new THREE.Color();
+Object.keys(PIV).forEach(k=>{const g=new THREE.Group();const pv=PIV[k];g.position.set(...pv);parts[k]=g;(k==="legBL"||k==="legBR"?root:mover).add(g);
+  const list=groups[k]||[];if(!list.length)return;const m=new THREE.InstancedMesh(geo,MAT,list.length);m.castShadow=true;m.receiveShadow=true;
+  list.forEach(([p,col],i)=>{tmp.position.set(p[0]-pv[0],p[1]-pv[1],p[2]-pv[2]);tmp.updateMatrix();m.setMatrixAt(i,tmp.matrix);cc.setRGB(col[0],col[1],col[2]).convertSRGBToLinear();m.setColorAt(i,cc);});
+  g.add(m);});
+document.querySelector(".controls .small").textContent=`Glissez sur la scène pour tourner autour de Roxy. Le modèle compte ${count.toLocaleString("fr-CA")} cubes visibles, en 7 parties animables : corps, tête, queue et 4 pattes.`;
+
+/* ===== Décor : falaise de Bandiagara, greniers, baobab (blocs de 10 cm) ===== */
+const B=.1;function blocks(list){const m=new THREE.InstancedMesh(new THREE.BoxGeometry(B,B,B),MAT,list.length);m.receiveShadow=true;m.castShadow=true;
+  list.forEach(([x,y,z,h],i)=>{tmp.position.set(x,y,z);tmp.updateMatrix();m.setMatrixAt(i,tmp.matrix);cc.set(h).convertSRGBToLinear();m.setColorAt(i,cc);});scene.add(m);}
+const G=[],sand=["#E2C28C","#D9B57F","#D0AA74","#E6CB98","#CBA06A"];
+for(let x=-18;x<=18;x++)for(let z=-18;z<=18;z++){if(x*x+z*z>330)continue;const n=hash(x+50,3,z+50);G.push([x*B,-B/2,z*B,sand[Math.floor(n*5)]]);G.push([x*B,-B*1.5,z*B,"#A86A42"]);
+  if(n>.97&&x*x+z*z>40)G.push([x*B,B/2,z*B,"#A89A55"]);}
+// falaise de grès en strates, avec un abri creusé
+const strata=["#A9603C","#9A5434","#B87048","#8E4B30","#A35B39"];
+for(let x=-17;x<=17;x++){const top=18+Math.round(3*Math.sin(x*.55)+2*Math.sin(x*1.7));for(let y=0;y<top;y++)for(let z=-17;z<=-14;z++){
+  if(z===-14&&y>top-6&&hash(x,y,z)>.5)continue;const cave=(x>=3&&x<=6&&y>=10&&y<=12&&z>=-15);if(cave&&z===-14)continue;
+  G.push([x*B,B/2+y*B,z*B,cave?"#3E2418":strata[(y>>1)%5]]);}}
+// greniers en banco à toit conique de paille
+function grenier(cx,cz,h){for(let y=0;y<h;y++)for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++)G.push([cx+x*B,B/2+y*B,cz+z*B,(y===2&&x===0&&z===1)?"#5A3420":(hash(x+cx*10,y,z)>.5?"#A85E38":"#B66B42")]);
+  [[2,0],[1,1],[0,2]].forEach(([r,dy])=>{for(let x=-r;x<=r;x++)for(let z=-r;z<=r;z++)G.push([cx+x*B,B/2+(h+dy)*B,cz+z*B,hash(x,dy,z)>.5?"#C8A65E":"#B8964F"]);});}
+grenier(-1.25,-.95,4);grenier(-.8,-1.3,5);grenier(1.55,.2,4);
+// baobab
+for(let y=0;y<10;y++)for(let x=-1;x<=1;x++)for(let z=-1;z<=1;z++){if(y>6&&Math.abs(x)+Math.abs(z)>1)continue;G.push([1.2+x*B,B/2+y*B,-.85+z*B,hash(x,y,z)>.5?"#8B7A66":"#7C6B58"]);}
+[[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1]].forEach(([dx,dz],k)=>{for(let i=1;i<=4;i++){G.push([1.2+dx*i*B,B/2+(9+Math.floor(i/2))*B,-.85+dz*i*B,"#7C6B58"]);if(i>2)G.push([1.2+dx*i*B,B/2+(10+Math.floor(i/2))*B,-.85+dz*i*B,k%2?"#7F8A3E":"#8E9A47"]);}});
+blocks(G);
+
+/* Caméra : vues et orbite */
+const center=new THREE.Vector3(0,1.15,0);let yaw=-.55,pitch=.22,dist=6,tYaw=yaw,tPitch=pitch;
+const VIEWS={face:[0,.1],profil:[Math.PI/2,.08],arriere:[Math.PI,.18],persp:[-.55,.22]};
+document.getElementById("views").onclick=e=>{const b=e.target.closest("button");if(!b)return;[tYaw,tPitch]=VIEWS[b.dataset.v];
+  document.querySelectorAll("#views button").forEach(x=>x.setAttribute("aria-pressed",x===b));};
+let anim="repos",t0=0;document.getElementById("anims").onclick=e=>{const b=e.target.closest("button");if(!b)return;anim=b.dataset.a;t0=performance.now()/1000;
+  document.querySelectorAll("#anims button").forEach(x=>x.setAttribute("aria-pressed",x===b));};
+let drag=null;const cv=renderer.domElement;
+cv.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,yaw:tYaw,pitch:tPitch};cv.setPointerCapture(e.pointerId);});
+cv.addEventListener("pointermove",e=>{if(!drag)return;tYaw=drag.yaw-(e.clientX-drag.x)*.01;tPitch=Math.max(-.1,Math.min(1.1,drag.pitch+(e.clientY-drag.y)*.006));
+  document.querySelectorAll("#views button").forEach(x=>x.setAttribute("aria-pressed","false"));});
+cv.addEventListener("pointerup",()=>drag=null);cv.addEventListener("pointercancel",()=>drag=null);
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();dist=w/h<1?7.6:6;}
+new ResizeObserver(resize).observe(stage);resize();
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;const L=(a,b,k)=>a+(b-a)*k;
+function frame(now){const t=now/1000,at=t-t0;yaw=L(yaw,tYaw,.08);pitch=L(pitch,tPitch,.08);
+  cam.position.set(center.x+Math.sin(yaw)*Math.cos(pitch)*dist,center.y+Math.sin(pitch)*dist,center.z+Math.cos(yaw)*Math.cos(pitch)*dist);cam.lookAt(center);
+  const Pp=parts,sp=reduce?0:1;let hipRot=0,rootY=0,headX=0,headY=0,tailZ=Math.sin(t*6)*.2,fl=0,fr=0,bl=0,br=0;
+  if(anim==="repos"){rootY=Math.sin(t*2)*.004*sp;headY=Math.sin(t*.6)*.22*sp;}
+  if(anim==="marche"){const w=Math.sin(t*6)*.42*sp;fl=w;br=w;fr=-w;bl=-w;rootY=Math.abs(Math.sin(t*6))*.015*sp;headX=Math.sin(t*12)*.03*sp;tailZ=Math.sin(t*6)*.3;}
+  if(anim==="course"){const w=Math.sin(t*11)*.75*sp;fl=w;fr=w*.8;bl=-w;br=-w*.8;rootY=Math.abs(Math.sin(t*11))*.06*sp;hipRot=Math.sin(t*11)*.05*sp;headX=-.06;}
+  if(anim==="assise"){hipRot=-.4;fl=.4;fr=.4;bl=-1.05;br=-1.05;rootY=-.32;headX=.12;headY=Math.sin(t*.5)*.12*sp;}
+  if(anim==="renifle"){headX=.42+Math.sin(t*14)*.035*sp;headY=Math.sin(t*1.3)*.42*sp;tailZ=Math.sin(t*9)*.3;}
+  if(anim==="saut"){const ph=(at%1.4)/1.4;const up=ph<.6?Math.sin(ph/.6*Math.PI):0;rootY=up*.45*sp;fl=fr=-up*.7;bl=br=up*.6;hipRot=(ph<.3?-.12:ph<.6?.1:0)*up;}
+  root.position.y=L(root.position.y,rootY,.25);hips.rotation.x=L(hips.rotation.x,hipRot,.12);
+  Pp.head.rotation.x=L(Pp.head.rotation.x,headX,.12);Pp.head.rotation.y=L(Pp.head.rotation.y,headY,.12);Pp.tail.rotation.z=tailZ*sp;
+  Pp.legFL.rotation.x=L(Pp.legFL.rotation.x,fl,.3);Pp.legFR.rotation.x=L(Pp.legFR.rotation.x,fr,.3);Pp.legBL.rotation.x=L(Pp.legBL.rotation.x,bl,.3);Pp.legBR.rotation.x=L(Pp.legBR.rotation.x,br,.3);
+  renderer.render(scene,cam);requestAnimationFrame(frame);}
+requestAnimationFrame(frame);
+})();
+</script>

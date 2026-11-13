@@ -1,0 +1,350 @@
+{
+ "Q": {
+  "q1": {
+   "q": "« Claude peut affirmer une chose fausse avec beaucoup d’assurance. »",
+   "opts": [
+    {
+     "t": "Vrai",
+     "ok": true,
+     "why": "C’est ce qu’on appelle une hallucination. Le ton ne prouve rien : vérifiez toujours les chiffres, les citations et les références."
+    },
+    {
+     "t": "Faux",
+     "ok": false,
+     "why": "C’est ce qu’on appelle une hallucination. Le ton ne prouve rien : vérifiez toujours les chiffres, les citations et les références."
+    }
+   ],
+   "two": true
+  },
+  "q2": {
+   "q": "Un nouveau décret sur les ONG est paru hier. Que faites-vous pour que Claude vous en parle correctement ?",
+   "opts": [
+    {
+     "t": "Je demande à Claude ce que dit le décret.",
+     "ok": false,
+     "why": "Sans recherche web, le décret est peut-être plus récent que ses connaissances : il risque de deviner."
+    },
+    {
+     "t": "J’active la recherche web et je demande la source officielle.",
+     "ok": true,
+     "why": "La recherche web donne accès aux textes récents. Ouvrez ensuite la source officielle pour confirmer."
+    },
+    {
+     "t": "Je donne le titre du décret et je demande un résumé.",
+     "ok": false,
+     "why": "Avec le titre seul, Claude n’a pas le texte : il risque d’inventer ou de rester vague."
+    }
+   ]
+  },
+  "q3": {
+   "intrus": true,
+   "q": "Trois de ces conseils sont de bonnes pratiques pour écrire un prompt. Lequel est l’intrus ?",
+   "opts": [
+    {
+     "t": "Expliquer le contexte, comme à un nouveau collègue.",
+     "ok": false,
+     "why": "C’est une bonne pratique : Claude ne connaît ni votre projet ni votre lecteur. Plantez le décor."
+    },
+    {
+     "t": "Préciser le format et le ton attendus.",
+     "ok": false,
+     "why": "C’est une bonne pratique : sans règles, Claude devine la longueur et le style."
+    },
+    {
+     "t": "Viser le prompt parfait du premier coup.",
+     "ok": true,
+     "why": "Le premier prompt donne rarement un résultat parfait : on ajuste en relançant, c’est normal. Les trois autres conseils sont de bonnes pratiques : planter le décor, fixer les règles, montrer un exemple."
+    },
+    {
+     "t": "Joindre un exemple du résultat souhaité.",
+     "ok": false,
+     "why": "C’est une bonne pratique : un exemple montre à Claude ce que vous attendez, mieux qu’une description."
+    }
+   ]
+  },
+  "q4": {
+   "q": "Il est 22 h. Chez vous, sur votre ordinateur de travail, vous devez relire un contrat de travail pour demain. Votre compte Claude personnel est déjà ouvert dans le navigateur. Que faites-vous ?",
+   "opts": [
+    {
+     "t": "Je retire d’abord le nom de la personne, puis j’utilise mon compte personnel.",
+     "ok": false,
+     "why": "Même sans le nom, c’est un document de travail : il ne va pas dans un compte personnel."
+    },
+    {
+     "t": "Je passe au compte Claude de mon organisation avant d’ajouter le contrat.",
+     "ok": true,
+     "why": "Un document de travail va dans le compte de l’organisation : seul ce compte est couvert par le contrat et les règles de votre organisation. Par défaut, ses conversations ne servent pas à entraîner les modèles."
+    },
+    {
+     "t": "J’utilise mon compte personnel, puis je supprime la conversation juste après.",
+     "ok": false,
+     "why": "Supprimer ensuite ne change rien : le document est déjà sorti du cadre de votre organisation."
+    },
+    {
+     "t": "J’active le mode incognito de mon compte personnel avant d’ajouter le contrat.",
+     "ok": false,
+     "why": "Le mode incognito reste un compte personnel : il n’est pas couvert par les règles de votre organisation."
+    }
+   ]
+  },
+  "q5": {
+   "q": "Chaque semaine, vous travaillez sur le même dossier, avec les mêmes documents et les mêmes consignes. Que choisissez-vous ?",
+   "opts": [
+    {
+     "t": "Un Projet, qui garde vos documents et vos consignes.",
+     "ok": true,
+     "why": "Un Projet regroupe les documents de référence et des instructions permanentes : plus besoin de tout réexpliquer."
+    },
+    {
+     "t": "Une nouvelle conversation, en recollant tout à chaque fois.",
+     "ok": false,
+     "why": "Possible, mais vous perdez du temps à tout recharger chaque semaine."
+    },
+    {
+     "t": "La recherche web, pour retrouver vos documents.",
+     "ok": false,
+     "why": "Vos documents internes ne sont pas sur le web."
+    }
+   ]
+  },
+  "q6": {
+   "q": "Vous rédigez souvent le même type de document, selon une procédure maison. Que choisissez-vous ?",
+   "opts": [
+    {
+     "t": "Une Skill, une méthode enregistrée que Claude réapplique.",
+     "ok": true,
+     "why": "Une Skill garde votre méthode et vos modèles : Claude peut la réappliquer chaque fois que la tâche revient."
+    },
+    {
+     "t": "La recherche web, pour trouver un modèle en ligne.",
+     "ok": false,
+     "why": "Votre procédure est interne : elle n’est pas sur le web."
+    },
+    {
+     "t": "Une nouvelle conversation, en réexpliquant tout.",
+     "ok": false,
+     "why": "Vous refaites le même travail d’explication à chaque fois."
+    }
+   ]
+  },
+  "q7": {
+   "q": "L’itinéraire heure par heure d’une équipe qui part dans une zone dangereuse, pour que Claude l’aide à organiser le trajet.",
+   "opts": [
+    {
+     "t": "On peut l’utiliser avec Claude",
+     "ok": false,
+     "why": "C’est une information de sécurité : si elle circulait, l’équipe pourrait être mise en danger. Ne la saisissez pas sans autorisation. Pour vous faire aider, restez général (« une région, 5 jours, 3 personnes »). Anonymiser ne suffit pas : c’est l’itinéraire lui-même qui est sensible."
+    },
+    {
+     "t": "On l’anonymise d’abord",
+     "ok": false,
+     "why": "C’est une information de sécurité : si elle circulait, l’équipe pourrait être mise en danger. Ne la saisissez pas sans autorisation. Pour vous faire aider, restez général (« une région, 5 jours, 3 personnes »). Anonymiser ne suffit pas : c’est l’itinéraire lui-même qui est sensible."
+    },
+    {
+     "t": "On ne la saisit pas sans autorisation",
+     "ok": true,
+     "why": "C’est une information de sécurité : si elle circulait, l’équipe pourrait être mise en danger. Ne la saisissez pas sans autorisation. Pour vous faire aider, restez général (« une région, 5 jours, 3 personnes »). Anonymiser ne suffit pas : c’est l’itinéraire lui-même qui est sensible."
+    }
+   ],
+   "lead": "Que faites-vous de cette information ?"
+  },
+  "q8": {
+   "q": "La liste des participants à une formation (noms, téléphones, sexe), pour compter les femmes et les hommes.",
+   "opts": [
+    {
+     "t": "On peut l’utiliser avec Claude",
+     "ok": false,
+     "why": "Les noms et les téléphones ne servent pas à compter : vous partageriez des données personnelles sans nécessité."
+    },
+    {
+     "t": "On l’anonymise d’abord",
+     "ok": true,
+     "why": "Pour compter, Claude n’a besoin que de la colonne « sexe » : retirez les noms et les téléphones avant de lui donner la liste."
+    },
+    {
+     "t": "On ne la saisit pas sans autorisation",
+     "ok": false,
+     "why": "Prudent, mais inutile ici : sans les noms ni les téléphones, plus rien ne permet de reconnaître quelqu’un."
+    }
+   ],
+   "lead": "Que faites-vous de cette information ?"
+  },
+  "q9": {
+   "q": "Vous voulez que Claude s’appuie sur la dernière procédure interne de votre organisation. Que faites-vous ?",
+   "opts": [
+    {
+     "t": "Je pose ma question : avec le compte de l’organisation, Claude connaît nos documents.",
+     "ok": false,
+     "why": "Le compte de l’organisation protège vos données, mais il ne donne pas accès à vos documents : Claude ne les lit que si vous les joignez ou si un connecteur est activé."
+    },
+    {
+     "t": "Je joins le document, ou je passe par un outil connecté à Claude.",
+     "ok": true,
+     "why": "Claude ne lit que ce qu’on lui donne : un fichier joint, ou un outil que votre organisation a connecté (un « connecteur »). Il n’y voit que ce à quoi vous avez déjà accès."
+    },
+    {
+     "t": "Je décris la procédure de mémoire et Claude complète le reste.",
+     "ok": false,
+     "why": "Claude compléterait avec des suppositions, pas avec votre vraie procédure."
+    }
+   ]
+  },
+  "q10": {
+   "q": "Claude a rédigé votre note pour la direction. Elle contient : « 74 % des projets ont atteint leurs cibles (rapport annuel) ». Vous devez l’envoyer dans 10 minutes et n’avez pas le rapport sous la main. Que faites-vous ?",
+   "opts": [
+    {
+     "t": "J’envoie la note : Claude a cité le rapport, le chiffre est donc sourcé.",
+     "ok": false,
+     "why": "Une source citée n’est pas une source vérifiée : Claude peut se tromper même en citant un rapport."
+    },
+    {
+     "t": "Je demande à Claude « Es-tu sûr ? » et j’envoie s’il confirme.",
+     "ok": false,
+     "why": "Claude peut confirmer sa propre erreur : ce n’est pas une vérification."
+    },
+    {
+     "t": "J’écris « environ les trois quarts » pour rester prudent.",
+     "ok": false,
+     "why": "Arrondir ne corrige rien : si le chiffre est faux, « trois quarts » l’est aussi."
+    },
+    {
+     "t": "Je retire le chiffre ou j’indique « à vérifier » avant d’envoyer.",
+     "ok": true,
+     "why": "Un chiffre non vérifié ne part pas. Vous le remettrez quand vous aurez ouvert le rapport original."
+    }
+   ]
+  },
+  "q11": {
+   "q": "Vous avez demandé une note de 2 pages pour comparer 3 fournisseurs. Claude rend 6 pages très générales. Quelle relance est la plus efficace ?",
+   "opts": [
+    {
+     "t": "« Fais beaucoup plus court et garde seulement l’essentiel. »",
+     "ok": false,
+     "why": "Claude choisira seul ce qui est « essentiel » : le résultat restera flou."
+    },
+    {
+     "t": "« 2 pages : un tableau des 3 fournisseurs (coût, délai, risque), puis ta recommandation. »",
+     "ok": true,
+     "why": "Longueur, structure et contenu attendus : Claude sait exactement quoi corriger."
+    },
+    {
+     "t": "« 2 pages : compare les 3 fournisseurs, puis annonce la décision finale de la direction. »",
+     "ok": false,
+     "why": "Claude ne doit pas décider à la place de la direction : il recommande, vous décidez."
+    },
+    {
+     "t": "« Propose-moi 3 versions différentes de la note, je choisirai la meilleure. »",
+     "ok": false,
+     "why": "Trois fois plus à relire, sans avoir dit ce qui n’allait pas."
+    }
+   ]
+  },
+  "q12": {
+   "q": "L’équipe de suivi-évaluation veut présenter 5 indicateurs en réunion, avec la cible et le résultat atteint. Quelle fonction de Claude utilisez-vous ?",
+   "opts": [
+    {
+     "t": "Un artefact : une page que Claude crée (tableau de bord, graphiques) et que vous partagez.",
+     "ok": true,
+     "why": "Un artefact est une page, un outil ou un document que Claude crée et que vous ouvrez et partagez. Les chiffres, c’est vous qui les fournissez."
+    },
+    {
+     "t": "Un Projet, qui garde vos documents et vos consignes.",
+     "ok": false,
+     "why": "Un Projet organise votre travail, mais il ne produit pas la page à présenter."
+    },
+    {
+     "t": "La recherche web, pour trouver des chiffres en ligne.",
+     "ok": false,
+     "why": "Vos indicateurs sont internes : ils ne sont pas sur le web."
+    }
+   ]
+  }
+ },
+ "MEMO": [
+  "Claude peut se tromper avec assurance : vérifiez à la source.",
+  "Une demande précise (public, format, limites) donne une meilleure réponse.",
+  "Pas de données personnelles ou sensibles sans autorisation.",
+  "Pour le travail, toujours le compte Claude de l’organisation."
+ ],
+ "A": [
+  {
+   "id": "agame",
+   "name": "L’agame",
+   "theme": "Connaître Claude",
+   "q": [
+    "q1",
+    "q9"
+   ],
+   "intro": "Salut Roxy ! Moi, je fais des pompes sur les rochers. Et toi, sais-tu ce que Claude sait faire… ou pas ?"
+  },
+  {
+   "id": "elephant",
+   "name": "L’éléphant",
+   "theme": "Le bon prompt",
+   "q": [
+    "q3",
+    "q11"
+   ],
+   "intro": "Bonjour Roxy ! Demander de l’aide à Claude, c’est tout un art. Ta demande écrite s’appelle un « prompt ». Voyons ta façon de demander."
+  },
+  {
+   "id": "patas",
+   "name": "Le singe patas",
+   "theme": "Les outils",
+   "q": [
+    "q5",
+    "q6"
+   ],
+   "intro": "Hé, Roxy ! Claude a plusieurs outils. Sauras-tu choisir le bon ?"
+  },
+  {
+   "id": "calao",
+   "name": "Le calao",
+   "theme": "Les données",
+   "q": [
+    "q7",
+    "q8"
+   ],
+   "intro": "Roxy ! Avant de confier une information à Claude, on réfléchit. À toi de trier !"
+  },
+  {
+   "id": "vautour",
+   "name": "Le vautour",
+   "theme": "Vérifier",
+   "q": [
+    "q2",
+    "q10"
+   ],
+   "intro": "Rien n’échappe à mon œil, Roxy. Et toi, sais-tu vérifier ce que Claude écrit ?"
+  },
+  {
+   "id": "tortue",
+   "name": "La tortue sillonnée",
+   "theme": "Claude au travail",
+   "q": [
+    "q4",
+    "q12"
+   ],
+   "intro": "Doucement, Roxy… Ici, à l’ombre de la case à palabres, on prend le temps de bien faire. Au travail, on utilise Claude avec méthode."
+  }
+ ],
+ "ranks": "[[12,'Flair d’or','Un sans-faute ! Tous vos réflexes sont\\u00A0les\\u00A0bons.','or'],[10,'Flair d’argent','Excellent ! Vous maîtrisez l’essentiel.','argent'],[7,'Flair de bronze','Bien joué ! Quelques réflexes à affiner.','bronze'],[0,'Chiot curieux','Bon début ! Rejouez pour gagner une médaille.','chiot']]",
+ "tiers": [
+  [
+   "Bon début !",
+   "Le baobab a poussé. Rejouez pour qu’il fleurisse d’or !"
+  ],
+  [
+   "Bien joué !",
+   "Le baobab du savoir a poussé"
+  ],
+  [
+   "Bravo !",
+   "Le baobab du savoir a poussé"
+  ],
+  [
+   "Parfait !",
+   "Un sans-faute : le baobab se couvre d’or !"
+  ]
+ ]
+}

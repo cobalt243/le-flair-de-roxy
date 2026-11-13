@@ -1,0 +1,462 @@
+<title>Dossier du jeu Roxy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap">
+<style>
+/* Layout : une colonne de lecture (dossier de référence), reprenant l'identité du jeu : indigo de la nuit, ocre du banco, crème des panneaux. */
+:root{
+  --bg:#F6EEDF; --surface:#FFF8EC; --ink:#2B1D14; --muted:#6E5A48; --line:#E2D2B6;
+  --indigo:#2E3A6B; --ochre:#9E6118; --gold:#E2A72E; --good:#2F7A4B; --bad:#A8432D;
+  --good-bg:#E4F1E6; --bad-bg:#F7E4DD; --chip:#EADCC2;
+  --f-display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#171C30; --surface:#20263D; --ink:#F2E9DA; --muted:#B9AC98; --line:#343C58;
+  --indigo:#A9B6EC; --ochre:#E6A85B; --gold:#F2C35E; --good:#7CCB97; --bad:#EE9A85;
+  --good-bg:#1D3328; --bad-bg:#3A2420; --chip:#2B3250; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#171C30; --surface:#20263D; --ink:#F2E9DA; --muted:#B9AC98; --line:#343C58;
+  --indigo:#A9B6EC; --ochre:#E6A85B; --gold:#F2C35E; --good:#7CCB97; --bad:#EE9A85;
+  --good-bg:#1D3328; --bad-bg:#3A2420; --chip:#2B3250; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:940px;margin:0 auto;display:flex;flex-direction:column;gap:48px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.1;text-wrap:balance;color:var(--indigo)}
+h1{font-size:clamp(40px,7vw,68px);font-weight:700;letter-spacing:-.01em}
+h1 span{color:var(--ochre)}
+h2{font-size:clamp(26px,3.6vw,34px);font-weight:700}
+h3{font-size:22px;font-weight:600}
+p{margin:0}
+a{color:var(--indigo);font-weight:700}
+a:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}
+.eyebrow{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+.lede{font-size:18.5px;max-width:62ch}
+.prose{max-width:66ch;display:flex;flex-direction:column;gap:10px}
+.small{font-size:13.5px;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px;min-width:0}
+.sechead{display:flex;flex-direction:column;gap:6px;border-top:3px solid var(--indigo);padding-top:14px}
+img{display:block;max-width:100%;height:auto;border-radius:12px}
+
+/* En-tête */
+header.top{display:flex;flex-direction:column;gap:14px}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:14.5px;padding:8px 14px;border-radius:999px;background:var(--chip);color:var(--ink)}
+.links a.main{background:var(--indigo);color:var(--surface)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0}
+@media (max-width:620px){.facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.facts div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.facts dt{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.facts dd{margin:2px 0 0;font-family:var(--f-display);font-size:18px;font-weight:600;color:var(--indigo);line-height:1.25}
+
+/* Roxy */
+.roxy{display:grid;grid-template-columns:120px minmax(0,1fr);gap:18px;align-items:start}
+.roxy img{width:120px;border-radius:14px;image-rendering:pixelated}
+@media (max-width:520px){.roxy{grid-template-columns:1fr}.roxy img{width:96px}}
+ul.clean{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+
+/* Déroulement */
+ol.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+ol.steps li{counter-increment:s;display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px}
+ol.steps li::before{content:counter(s);font-family:var(--f-display);font-weight:700;font-size:24px;color:var(--ochre);line-height:1.1}
+ol.steps b{color:var(--indigo)}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.shots figcaption{font-size:13px;color:var(--muted);text-align:center}
+@media (max-width:620px){.shots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Tableaux */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:800}
+
+/* Questions */
+.animal{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:18px;padding-top:18px;border-top:1px solid var(--line)}
+@media (max-width:760px){.animal{grid-template-columns:1fr}}
+.ahead{display:flex;flex-direction:column;gap:8px}
+.ahead blockquote{margin:0;font-size:14.5px;color:var(--muted);font-style:italic}
+.qs{display:flex;flex-direction:column;gap:14px;min-width:0}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.q header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.qn{font-family:var(--f-display);font-weight:700;font-size:15px;color:var(--ochre)}
+.kind{font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.lead{font-size:13.5px;font-weight:800;color:var(--muted)}
+.qt{font-weight:700;font-size:16.5px;line-height:1.45}
+ol.opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+ol.opts li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;padding:8px 10px;border-radius:10px;border:1.5px solid var(--line)}
+ol.opts li.ok{border-color:var(--good);background:var(--good-bg)}
+ol.opts .n{font-family:var(--f-display);font-weight:700;color:var(--ochre)}
+ol.opts .t{font-weight:600;font-size:15px}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:1px 8px;border-radius:999px;background:var(--good);color:var(--surface);vertical-align:2px;margin-left:4px}
+.why{font-size:13.5px;color:var(--muted);margin-top:2px}
+.why.shared{border-left:3px solid var(--good);padding-left:10px}
+
+/* À retenir */
+ul.memo{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+ul.memo li{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-weight:700;min-width:0}
+
+/* Univers */
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.gallery figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.gallery figcaption{font-size:14px}
+.gallery figcaption b{color:var(--indigo)}
+@media (max-width:620px){.gallery{grid-template-columns:1fr}}
+
+.beta{display:grid;grid-template-columns:minmax(0,220px) minmax(0,1fr);gap:18px;align-items:start;background:var(--surface);border:1px dashed var(--ochre);border-radius:14px;padding:16px}
+@media (max-width:620px){.beta{grid-template-columns:1fr}.beta img{max-width:220px}}
+.status{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:2px 10px;border-radius:999px;background:var(--chip);color:var(--ochre)}
+footer{border-top:1px solid var(--line);padding-top:14px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,[role=button]:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+/* Barre de navigation */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);margin-block:-18px -26px;padding-block:8px;border-bottom:1px solid var(--line)}
+nav.toc ul{list-style:none;margin:0;padding:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.toc ul::-webkit-scrollbar{display:none}
+nav.toc a{display:block;white-space:nowrap;text-decoration:none;font-size:13.5px;font-weight:800;padding:6px 12px;border-radius:999px;color:var(--muted)}
+nav.toc a[aria-current="true"]{background:var(--indigo);color:var(--surface)}
+section{scroll-margin-top:calc(64px + env(safe-area-inset-top,0px))}
+/* En-tête avec Roxy en 3D */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:24px;align-items:center}
+@media (max-width:820px){.hero{grid-template-columns:1fr}}
+.hero .txt{display:flex;flex-direction:column;gap:14px;min-width:0}
+.viewer{display:flex;flex-direction:column;gap:10px;min-width:0}
+.stage{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:18px;overflow:hidden;border:3px solid var(--indigo);background:#9fd0ea url("img/roxy-jeu.jpg") center 30%/cover}
+.stage canvas{position:absolute;inset:0;width:100%!important;height:100%!important;touch-action:pan-y;cursor:grab;display:block}
+.stage canvas:active{cursor:grabbing}
+.stage .hint{position:absolute;left:10px;bottom:10px;font-size:12px;font-weight:800;background:rgba(31,42,72,.78);color:#FFF6E6;padding:4px 10px;border-radius:999px;pointer-events:none}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pills button{font-size:13.5px;font-weight:800;padding:8px 13px;border-radius:999px;background:var(--chip);color:var(--ink);min-height:38px}
+.pills button[aria-pressed="true"]{background:var(--ochre);color:var(--surface)}
+/* Parcours illustré */
+.tour{display:grid;grid-template-columns:minmax(0,270px) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:700px){.tour{grid-template-columns:1fr}.tour .phone{max-width:230px;margin-inline:auto}}
+.phone{position:relative;border-radius:26px;border:6px solid #1F2A48;background:#1F2A48;overflow:hidden;aspect-ratio:480/817;max-width:100%}
+.phone img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:0;opacity:0;transition:opacity .35s ease}
+.phone img.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.phone img{transition:none}}
+.tourlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:s}
+.tourlist button{counter-increment:s;display:grid;grid-template-columns:34px minmax(0,1fr);gap:10px;width:100%;text-align:left;padding:10px 12px;border-radius:12px;border:1.5px solid transparent}
+.tourlist button::before{content:counter(s);font-family:var(--f-display);font-weight:700;font-size:22px;line-height:1.1;color:var(--ochre)}
+.tourlist button b{display:block;color:var(--indigo);font-family:var(--f-display);font-weight:600;font-size:17px}
+.tourlist button span{font-size:14.5px;display:none}
+.tourlist button[aria-current="true"]{background:var(--surface);border-color:var(--line)}
+.tourlist button[aria-current="true"] span{display:block}
+.tournav{display:flex;gap:8px;align-items:center;justify-content:center;margin-top:10px}
+.tournav button{width:42px;height:42px;border-radius:50%;background:var(--chip);font-size:18px;font-weight:800}
+.tournav output{font-size:13px;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;min-width:44px;text-align:center}
+/* Animaux */
+.aportrait{width:132px;height:132px;border-radius:16px;border:3px solid var(--line);image-rendering:auto}
+@media (max-width:760px){.ahead{display:grid;grid-template-columns:96px minmax(0,1fr);gap:4px 14px;align-items:center}.ahead .aportrait{width:96px;height:96px;grid-row:span 2}.ahead blockquote{grid-column:1/-1}}
+/* Mode « me tester » */
+.quizbar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.quizbar button{font-family:var(--f-display);font-weight:600;font-size:16px;padding:10px 18px;border-radius:12px;background:var(--indigo);color:var(--surface);min-height:44px}
+.quizbar p{font-size:14.5px;min-width:0;flex:1 1 220px}
+.quizbar output{font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--ochre);font-variant-numeric:tabular-nums}
+.quiz .q:not(.done) .tag,.quiz .q:not(.done) .why{display:none}
+.quiz .q:not(.done) ol.opts li{border-color:var(--line);background:none;cursor:pointer}
+@media (hover:hover){.quiz .q:not(.done) ol.opts li:hover{border-color:var(--ochre)}}
+.quiz .q.done ol.opts li.picked:not(.ok){border-color:var(--bad);background:var(--bad-bg)}
+.verdict{font-family:var(--f-display);font-weight:600;font-size:15px}
+.verdict.good{color:var(--good)}.verdict.miss{color:var(--bad)}
+/* Médailles */
+.medals{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.medals{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.medals div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0}
+.medals svg{width:96px;height:96px}
+.medals .sc{font-size:12.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-variant-numeric:tabular-nums}
+.medals h3{font-size:19px}
+.medals p{font-size:13.5px}
+.medals .fin{color:var(--muted);font-size:12.5px}
+/* Les origines */
+.genese{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:start}
+.genese figure{margin:0;display:flex;flex-direction:column;gap:8px;min-width:0}
+.genese img{aspect-ratio:4/5;object-fit:cover;width:100%;max-width:100%}
+.genese figcaption{font-size:14px}
+.genese figcaption b{display:block;color:var(--indigo);font-family:var(--f-display);font-size:16px;font-weight:600}
+.genese .step{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ochre)}
+.genese .d{display:block}
+.genese-notes{display:none}
+@media (max-width:620px){.genese{gap:8px}.genese img{border-radius:10px}.genese figure{gap:5px}.genese .d{display:none}
+  .genese .step{font-size:10.5px;letter-spacing:.03em;line-height:1.25}.genese figcaption b{font-size:13.5px;line-height:1.2}
+  .genese-notes{display:flex;flex-direction:column;gap:5px;margin:0;padding:0;list-style:none;font-size:14px}
+  .genese-notes b{color:var(--indigo)}}
+/* Inspirations */
+.insp{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.insp{grid-template-columns:1fr}}
+.insp div{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.insp h3{font-size:19px}
+.insp p{font-size:14.5px}
+/* Musique */
+.instr{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
+.instr figure{flex:1 1 160px;max-width:290px;margin:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.instr img{width:100%;aspect-ratio:520/440;object-fit:contain;border-radius:0}
+.instr h3{font-size:19px}
+.instr p{font-size:14px}
+.instr .role{font-weight:700}
+.instr .src{color:var(--muted);font-size:13px}
+.score{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.score .row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:10px;align-items:center}
+.score .lab{font-size:13.5px;font-weight:800}
+.score .track{position:relative;height:18px;border-radius:6px;background:var(--chip)}
+.score .track i{position:absolute;top:0;bottom:0;border-radius:6px;min-width:6px}
+.score .axis{position:relative;height:16px;font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums}
+.score .axis span{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.score .axis span:first-child{transform:none}
+.c-piano{background:var(--indigo)}.c-tambour{background:var(--ochre)}.c-balafon{background:var(--gold)}.c-flute{background:var(--good)}.c-cloche{background:var(--bad)}
+@media (max-width:520px){.score .row{grid-template-columns:76px minmax(0,1fr)}.score .lab{font-size:12.5px}}
+/* Personnages : un animal en 3D à la fois, choisi dans la rangée de portraits */
+.castview{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:20px;align-items:center}
+@media (max-width:700px){.castview{grid-template-columns:1fr}.castview .stage{max-width:340px;width:100%;margin-inline:auto}}
+.stage .bubble{position:absolute;left:10px;right:10px;top:10px;margin:0;background:var(--surface);color:var(--ink);border:2px solid var(--indigo);border-radius:14px;padding:9px 12px;font-size:14px;font-weight:700;line-height:1.4;pointer-events:none;box-shadow:0 4px 0 rgba(31,42,72,.25)}
+.stage .bubble::after{content:"";position:absolute;left:50%;bottom:-9px;width:14px;height:14px;margin-left:-7px;background:var(--surface);border-right:2px solid var(--indigo);border-bottom:2px solid var(--indigo);transform:rotate(45deg)}
+.cinfo{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cinfo blockquote{margin:0;font-style:italic;color:var(--muted);font-size:15px}
+.cinfo .acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cinfo .acts button{font-size:14px;font-weight:800;padding:9px 15px;border-radius:999px;background:var(--chip);color:var(--ink);min-height:40px}
+.cinfo .acts button[aria-pressed="true"]{background:var(--ochre);color:var(--surface)}
+.cinfo .acts a{text-decoration:none;font-size:14px;padding:9px 15px;border-radius:999px;background:var(--indigo);color:var(--surface)}
+.castpick{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;order:1}
+.castview{order:2}
+@media (max-width:620px){.castpick{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.castpick button{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;padding:8px 6px 9px;border-radius:14px;background:var(--surface);border:2px solid var(--line);min-width:0}
+.castpick button[aria-pressed="true"]{border-color:var(--ochre)}
+.castpick img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:9px}
+.castpick b{font-family:var(--f-display);font-weight:600;font-size:15px;color:var(--indigo);line-height:1.15}
+.castpick span{font-size:11.5px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--ochre);line-height:1.2}
+.players{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (max-width:620px){.players{grid-template-columns:1fr}}
+.players figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.players figcaption{font-size:14px}
+.players figcaption b{color:var(--indigo)}
+.players audio{width:100%;max-width:100%}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+
+<header class="hero">
+  <div class="txt">
+    <p class="eyebrow">Dossier du jeu · version officielle 2.0.5 · 13 novembre 2026</p>
+    <h1>Le Flair de <span>Roxy</span></h1>
+    <p class="lede">Un petit jeu en blocs pour apprendre les bons réflexes avec Claude au travail, pensé pour les équipes d’ONG. Ce dossier présente le jeu tel qu’il est aujourd’hui : ses origines, son déroulement, ses 12 questions et son univers.</p>
+    <div class="links">
+      <a class="main" href="https://cobalt243.github.io/le-flair-de-roxy/" target="_blank" rel="noopener">Jouer à la version officielle</a>
+      <a href="https://cobalt243.github.io/le-flair-de-roxy/beta/" target="_blank" rel="noopener">Version bêta (tests)</a>
+      <a href="https://cobalt243.github.io/le-flair-de-roxy/v1/" target="_blank" rel="noopener">Archive 1.1</a>
+    </div>
+  </div>
+  <div class="viewer">
+    <div class="stage" id="stage" role="img" aria-label="Roxy en 3D, le modèle du jeu"><span class="hint" id="stageHint">Glissez pour faire tourner Roxy</span></div>
+    <div class="pills" id="anims" aria-label="Animations de Roxy">
+      <button data-a="idle" aria-pressed="true">Repos</button><button data-a="walk">Marche</button><button data-a="run">Course</button><button data-a="sniff">Renifle</button><button data-a="sit">Assise</button><button data-a="lie">Couchée</button><button data-a="happy">Fête</button>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Sections du dossier"><ul>
+  <li><a href="#s-bref">En bref</a></li><li><a href="#s-genese">Origines</a></li><li><a href="#s-persos">Personnages</a></li><li><a href="#s-partie">Une partie</a></li><li><a href="#s-questions">12 questions</a></li><li><a href="#s-titres">Médailles</a></li><li><a href="#s-univers">Inspirations</a></li><li><a href="#s-musique">Musique</a></li><li><a href="#s-beta">Bêta</a></li><li><a href="#s-versions">Versions</a></li>
+</ul></nav>
+
+<section id="s-bref" aria-labelledby="bref">
+  <div class="sechead"><p class="eyebrow">Le jeu en bref</p><h2 id="bref">Ce qu’il faut savoir</h2></div>
+  <dl class="facts">
+    <div><dt>Public</dt><dd>Débutants et intermédiaires, en ONG</dd></div>
+    <div><dt>Durée</dt><dd>8 minutes maximum</dd></div>
+    <div><dt>Contenu</dt><dd>6 animaux, 12 questions</dd></div>
+    <div><dt>Outil enseigné</dt><dd>Claude, avec le compte de l’organisation</dd></div>
+    <div><dt>Support</dt><dd>Téléphone d’abord, aussi sur ordinateur</dd></div>
+    <div><dt>Coût et accès</dt><dd>Un lien, rien à installer</dd></div>
+  </dl>
+  <p class="small">Huit questions enseignent des principes valables avec n’importe quel outil d’IA (vérifier, bien demander, protéger les données). Quatre portent sur des fonctions propres à Claude : Projet, Skill, artefact et connecteurs.</p>
+</section>
+
+<section id="s-genese" aria-labelledby="genese">
+  <div class="sechead"><p class="eyebrow">Les origines</p><h2 id="genese">De la photo au jeu</h2></div>
+  <p class="prose">Roxy est une chienne Shar-Peï. Tout est parti d’une photo d’elle, d’abord transformée en illustration en blocs, qui a fixé l’idée. Le modèle du jeu a ensuite été construit cube par cube à partir de la photo, avec ses vraies couleurs et ses plis. C’est lui qui tourne en haut de cette page.</p>
+  <div class="genese">
+    <figure><img src="img/roxy-photo.jpg" width="700" height="929" alt="Photo de Roxy, une Shar-Peï fauve au museau sombre, assise sur un coussin gris"><figcaption><span class="step">1 · La photo</span><b>Roxy, la vraie</b><span class="d">Pelage fauve, museau large et sombre, plis du front et du cou, petites oreilles repliées.</span></figcaption></figure>
+    <figure><img src="img/roxy-illustration.jpg" width="700" height="700" alt="Illustration de Roxy en gros blocs, assise dans un paysage de blocs verts"><figcaption><span class="step">2 · Le dessin</span><b>L’idée de départ</b><span class="d">Une première image de Roxy dans le style des jeux en blocs, qui a lancé le projet.</span></figcaption></figure>
+    <figure><img src="img/roxy-jeu.jpg" width="700" height="880" alt="Roxy en petits cubes dans le jeu, devant la falaise rouge"><figcaption><span class="step">3 · Le jeu</span><b>Le modèle final</b><span class="d">Environ 3 500 petits cubes, animés : marche, course, saut, assise, couchée, fête.</span></figcaption></figure>
+  </div>
+  <ul class="genese-notes">
+    <li><b>1.</b> Pelage fauve, museau large et sombre, plis du front, petites oreilles repliées.</li>
+    <li><b>2.</b> Une première image dans le style des jeux en blocs, qui a lancé le projet.</li>
+    <li><b>3.</b> Environ 3 500 petits cubes, animés : marche, course, saut, assise, fête.</li>
+  </ul>
+</section>
+
+<section id="s-persos" aria-labelledby="persos">
+  <div class="sechead"><p class="eyebrow">Personnages</p><h2 id="persos">Les six animaux</h2></div>
+  <p class="prose">Chaque animal pose 2 questions sur un thème. Choisissez-en un pour le voir en 3D, tel qu’il est dans le jeu. Roxy, elle, tourne en haut de la page.</p>
+  {{CAST}}
+</section>
+
+<section id="s-partie" aria-labelledby="partie">
+  <div class="sechead"><p class="eyebrow">Déroulement</p><h2 id="partie">Une partie, étape par étape</h2></div>
+  <div class="tour" id="tour">
+    <div>
+      <div class="phone" aria-live="polite">
+        <img class="on" src="img/etape-1.jpg" width="480" height="817" alt="Écran d’accueil du jeu avec le bouton Jouer">
+        <img src="img/etape-2.jpg" width="480" height="817" loading="lazy" alt="Vue aérienne du monde pendant l’introduction">
+        <img src="img/etape-3.jpg" width="480" height="817" loading="lazy" alt="Roxy au départ, la flèche dorée pointe vers l’agame">
+        <img src="img/etape-4.jpg" width="480" height="817" loading="lazy" alt="L’éléphant pose une question avec quatre réponses">
+        <img src="img/etape-5.jpg" width="480" height="817" loading="lazy" alt="Le baobab doré du grand final sous une pluie de confettis">
+        <img src="img/etape-6.jpg" width="480" height="817" loading="lazy" alt="Écran de fin avec le score, les 12 blocs et la ligne À revoir">
+        <img src="img/etape-7.jpg" width="480" height="817" loading="lazy" alt="Roxy devant le grand baobab après la partie">
+      </div>
+      <div class="tournav"><button id="tprev" aria-label="Étape précédente">‹</button><output id="tpos">1 / 7</output><button id="tnext" aria-label="Étape suivante">›</button></div>
+    </div>
+    <ol class="tourlist">
+      <li><button aria-current="true"><div><b>Accueil</b><span>Le titre, une phrase d’invitation, trois rappels (marcher, suivre la flèche, parler) et le bouton « Jouer ».</span></div></button></li>
+      <li><button><div><b>Introduction</b><span>Une courte vue aérienne du monde, qu’on peut passer d’un toucher.</span></div></button></li>
+      <li><button><div><b>Exploration</b><span>Le joueur promène Roxy. Une flèche dorée le mène à l’animal le plus proche, en commençant par l’agame, droit devant. Trois astuces s’affichent au début.</span></div></button></li>
+      <li><button><div><b>Rencontres</b><span>Chaque animal pose 2 questions. Après chaque réponse, une explication apparaît, avec la bonne réponse en cas d’erreur. L’animal donne ensuite une étoile.</span></div></button></li>
+      <li><button><div><b>Grand final</b><span>Après le 6<sup>e</sup> animal, le baobab du savoir sort de terre, entouré des animaux. La fête est plus riche selon le score, et le baobab se couvre d’or à 12/12.</span></div></button></li>
+      <li><button><div><b>Écran de fin</b><span>Médaille et titre, étoiles, score et temps, 12 blocs à toucher pour revoir chaque question, ligne « À revoir » qui nomme les thèmes ratés, 4 points « À retenir », puis « Rejouer mes erreurs » et « Défier mes collègues ».</span></div></button></li>
+      <li><button><div><b>Après la partie</b><span>Le joueur peut continuer à explorer, rejouer ses erreurs en revanche express ou tout recommencer. Son record reste enregistré sur son téléphone.</span></div></button></li>
+    </ol>
+  </div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Action</th><th>Téléphone</th><th>Clavier</th></tr></thead>
+    <tbody>
+      <tr><td>Se déplacer</td><td>Joystick à gauche (pousser au bout pour courir)</td><td>ZQSD, WASD ou flèches ; Maj pour courir</td></tr>
+      <tr><td>Sauter</td><td>Automatique devant une marche</td><td>Espace</td></tr>
+      <tr><td>Parler à un animal</td><td>Gros bouton doré</td><td>E</td></tr>
+      <tr><td>Répondre</td><td>Toucher une réponse</td><td>Touches 1 à 4</td></tr>
+      <tr><td>Caméra</td><td>Glisser l’écran</td><td>Glisser la souris, molette</td></tr>
+      <tr><td>Pause</td><td>Bouton Pause</td><td>Échap ou P</td></tr>
+    </tbody></table></div>
+</section>
+
+<section id="s-questions" aria-labelledby="questions">
+  <div class="sechead"><p class="eyebrow">Formation</p><h2 id="questions">Les 12 questions</h2></div>
+  <p class="prose">Voici les questions exactes de la version 2.0.5, dans l’ordre des animaux, avec toutes les réponses et l’explication affichée au joueur. Ordre des numéros par animal : {{ORDER}}.</p>
+  <div class="quizbar">
+    <button id="quizBtn" aria-pressed="false">Me tester : cacher les réponses</button>
+    <p id="quizMsg">Les bonnes réponses sont affichées. Cachez-les pour répondre vous-même aux 12 questions.</p>
+    <output id="quizScore" hidden></output>
+  </div>
+  <div id="qwrap">
+  {{ANIMALS}}
+  </div>
+</section>
+
+<section id="s-titres" aria-labelledby="titres">
+  <div class="sechead"><p class="eyebrow">Score</p><h2 id="titres">Quatre titres, quatre médailles</h2></div>
+  <div class="medals">{{MEDALS}}</div>
+  <p class="small">Le visage sur la médaille est celui de Roxy, en pixels. Le record du joueur est conservé sur son appareil.</p>
+</section>
+
+<section id="s-retenir" aria-labelledby="retenir">
+  <div class="sechead"><p class="eyebrow">Écran de fin</p><h2 id="retenir">À retenir</h2></div>
+  <ul class="memo">{{MEMO}}</ul>
+  <p class="small">Ces quatre points s’affichent à chaque fin de partie. Deux cours gratuits d’Anthropic, en anglais, sont proposés pour aller plus loin : Claude 101 et AI Fluency for nonprofits.</p>
+</section>
+
+<section id="s-univers" aria-labelledby="univers">
+  <div class="sechead"><p class="eyebrow">Inspirations</p><h2 id="univers">D’où vient le style du jeu</h2></div>
+  <div class="insp">
+    <div><h3>Les jeux en blocs</h3><p>Le concept s’inspire de l’esprit Minecraft : un monde fait de cubes, qu’on explore librement, et une musique douce qui laisse de la place au silence. L’inspiration s’arrête là. Tout a été créé de zéro : textures générées par le code, personnages, interface et sons originaux, sans nom, logo ni créature repris.</p></div>
+    <div><h3>Le Sahel et le pays dogon</h3><p>Le paysage s’inspire de l’architecture dogon : la falaise, les villages accrochés à la paroi, les greniers à toit de paille et la case à palabres. Les animaux sont ceux du Sahel. Le monde reste imaginaire : aucun lieu réel n’est nommé et aucun objet sacré n’est représenté.</p></div>
+    <div><h3>La musique</h3><p>Une composition originale d’inspiration sahélienne : un piano doux dans l’esprit des jeux en blocs, avec balafon, tambour d’eau, flûte et cloche en fer. <a href="#s-musique">Voir la section Musique</a></p></div>
+  </div>
+  <div class="gallery">
+    <figure><img src="img/dogon-falaise.jpg" width="900" height="560" alt="Vue d’ensemble : la falaise rouge, les baobabs et la plaine"><figcaption><b>La grande falaise.</b> Une paroi de grès rouge qui domine la plaine.</figcaption></figure>
+    <figure><img src="img/dogon-village.jpg" width="900" height="560" alt="Maisons en banco nichées sous un surplomb de la falaise, avec une échelle en tronc"><figcaption><b>Les villages accrochés à la falaise.</b> Maisons en banco et petits greniers sous un surplomb, avec une échelle en tronc à encoches.</figcaption></figure>
+    <figure><img src="img/dogon-greniers.jpg" width="900" height="560" alt="Greniers en terre au toit de paille"><figcaption><b>Les greniers à toit de paille.</b> Pour conserver les récoltes.</figcaption></figure>
+    <figure><img src="img/dogon-toguna.jpg" width="900" height="560" alt="Case à palabres au toit épais posé sur des piliers"><figcaption><b>La case à palabres (toguna).</b> Le lieu où l’on se réunit pour discuter. La tortue s’y installe.</figcaption></figure>
+  </div>
+</section>
+
+<section id="s-musique" aria-labelledby="musique">
+  <div class="sechead"><p class="eyebrow">Musique</p><h2 id="musique">Une musique d’inspiration sahélienne</h2></div>
+  <div class="prose">
+    <p>La musique réunit deux inspirations. Des jeux en blocs, elle garde le piano doux et lent, les notes qui résonnent et les silences : elle vient, puis repart, et laisse entendre le monde. Du Sahel, elle prend ses couleurs : des instruments d’Afrique de l’Ouest posés sur ce piano.</p>
+    <p>C’est une composition originale. Elle ne reprend aucune mélodie traditionnelle ni aucun enregistrement : tous les sons sont fabriqués par le code du jeu, qui imite le timbre de chaque instrument.</p>
+  </div>
+  <div class="instr">
+    <figure><img src="img/instr-piano.png" width="520" height="440" loading="lazy" alt="Un piano droit dessiné en blocs">
+      <h3>Piano doux</h3><p class="role">Des accords lents et un motif de cinq notes qui revient.</p><p class="src">L’esprit contemplatif des jeux en blocs.</p></figure>
+    <figure><img src="img/instr-balafon.png" width="520" height="440" loading="lazy" alt="Un balafon en blocs : des lames de bois sur un cadre, avec des calebasses dessous et deux mailloches">
+      <h3>Balafon</h3><p class="role">De petites phrases vives, à partir du milieu du morceau.</p><p class="src">Un xylophone à lames de bois, dont des calebasses amplifient le son. Très répandu en Afrique de l’Ouest, notamment dans les traditions mandingues.</p></figure>
+    <figure><img src="img/instr-tambour.png" width="520" height="440" loading="lazy" alt="Un tambour d’eau en blocs : une calebasse retournée qui flotte dans une bassine d’eau, avec une mailloche">
+      <h3>Tambour d’eau</h3><p class="role">Une pulsation légère, qui s’étoffe peu à peu.</p><p class="src">Une demi-calebasse retournée sur l’eau, que l’on frappe. Joué dans plusieurs régions du Sahel.</p></figure>
+    <figure><img src="img/instr-flute.png" width="520" height="440" loading="lazy" alt="Une flûte en bois dessinée en blocs">
+      <h3>Flûte en bois</h3><p class="role">Deux phrases soufflées, rares, comme une respiration.</p><p class="src">Les flûtes sont présentes dans de nombreuses musiques de la région, dont celles du pays dogon.</p></figure>
+    <figure><img src="img/instr-cloche.png" width="520" height="440" loading="lazy" alt="Une cloche en fer en blocs, avec sa tige pour la frapper">
+      <h3>Cloche en fer</h3><p class="role">Un son clair qui ouvre chaque partie du morceau et le conclut.</p><p class="src">Les cloches en fer frappées rythment de nombreuses musiques d’Afrique de l’Ouest.</p></figure>
+  </div>
+  <p class="small">Ces images sont des illustrations en blocs créées pour ce dossier, pas des photos d’instruments. Les repères d’origine sont généraux : l’avis d’une personne qui connaît les musiques du Mali reste souhaitable.</p>
+
+  <h3>Comment le morceau se construit</h3>
+  <p class="small">Variante 1, environ 64 secondes. Les instruments entrent l’un après l’autre.</p>
+  <div class="score" role="img" aria-label="Le piano joue du début à la fin. Le tambour d’eau entre vers 15 secondes. Le balafon entre vers 29 secondes. La flûte joue deux phrases, vers 15 et 37 secondes. La cloche sonne au début de chaque partie et à la fin.">
+    <div class="row"><span class="lab">Piano</span><div class="track"><i class="c-piano" style="left:.5%;width:99.5%"></i></div></div>
+    <div class="row"><span class="lab">Tambour d’eau</span><div class="track"><i class="c-tambour" style="left:23.1%;width:68.3%"></i></div></div>
+    <div class="row"><span class="lab">Balafon</span><div class="track"><i class="c-balafon" style="left:45.9%;width:45.5%"></i></div></div>
+    <div class="row"><span class="lab">Flûte</span><div class="track"><i class="c-flute" style="left:23.9%;width:10.8%"></i><i class="c-flute" style="left:57.3%;width:10.2%"></i></div></div>
+    <div class="row"><span class="lab">Cloche</span><div class="track"><i class="c-cloche" style="left:.5%;width:1.4%"></i><i class="c-cloche" style="left:23.1%;width:1.4%"></i><i class="c-cloche" style="left:45.9%;width:1.4%"></i><i class="c-cloche" style="left:68.6%;width:1.4%"></i><i class="c-cloche" style="left:91.4%;width:1.4%"></i></div></div>
+    <div class="row"><span></span><div class="axis"><span style="left:0">0 s</span><span style="left:23.4%">15 s</span><span style="left:46.9%">30 s</span><span style="left:70.3%">45 s</span><span style="left:93.8%">60 s</span></div></div>
+  </div>
+
+  <h3>Dans le jeu</h3>
+  <ul class="clean">
+    <li>Trois variantes du morceau existent : accords, motif, flûte et tempo changent de l’une à l’autre.</li>
+    <li>Après chaque passage, une pause de 45 à 75 secondes laisse entendre le vent et les oiseaux. La musique revient ainsi 3 à 4 fois par partie.</li>
+    <li>Au grand final, la musique s’efface et un carillon court joue seul, dans la même tonalité. Il s’enrichit avec le score. Le morceau reprend ensuite sur l’écran des résultats.</li>
+  </ul>
+
+  <h3>Écouter</h3>
+  <div class="players">
+    <figure><figcaption><b>Variante 1</b> · environ 1 min 04</figcaption><audio id="m1" controls preload="none" src="audio/musique-1.mp3"></audio></figure>
+    <figure><figcaption><b>Variante 2</b> · environ 1 min 08</figcaption><audio id="m2" controls preload="none" src="audio/musique-2.mp3"></audio></figure>
+    <figure><figcaption><b>Variante 3</b> · environ 1 min 02</figcaption><audio id="m3" controls preload="none" src="audio/musique-3.mp3"></audio></figure>
+    <figure><figcaption><b>Carillon du grand final</b> · les 4 niveaux à la suite, du plus petit score au 12/12</figcaption><audio id="m4" controls preload="none" src="audio/carillon.mp3"></audio></figure>
+  </div>
+</section>
+
+<section id="s-beta" aria-labelledby="beta">
+  <div class="sechead"><p class="eyebrow">En test</p><h2 id="beta">Dans la version bêta : la quête du baobab</h2></div>
+  <div class="beta">
+    <img src="img/beta-pousse.jpg" width="560" height="953" alt="Une jeune pousse de baobab grandit après la 3e graine de savoir">
+    <div class="prose">
+      <p><span class="status">Bêta seulement</span></p>
+      <p>Suite à l’avis d’un joueur qui souhaitait une quête, la bêta raconte une histoire : <i>« Le baobab du savoir ne pousse plus ! Six animaux gardent chacun une graine de savoir. »</i></p>
+      <ul class="clean">
+        <li>Une jeune pousse est visible dès le départ, à l’emplacement du baobab.</li>
+        <li>Après chaque animal, une scène de 3 secondes la montre qui grandit d’un cran.</li>
+        <li>L’objectif affiche « Graines de savoir : 3 sur 6 ».</li>
+        <li>Les questions, les commandes et l’écran de fin ne changent pas.</li>
+      </ul>
+      <p class="small">À faire tester par quelques collègues avant de décider de la reporter dans la version officielle.</p>
+    </div>
+  </div>
+</section>
+
+<section id="s-versions" aria-labelledby="versions">
+  <div class="sechead"><p class="eyebrow">Historique</p><h2 id="versions">Versions</h2></div>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Version</th><th>Contenu</th></tr></thead>
+    <tbody>
+      <tr><td class="num">Origine</td><td>Une photo de Roxy, une illustration en blocs, puis un dossier de conception et un premier prototype (versions 0.x).</td></tr>
+      <tr><td class="num">1.1</td><td>Ancienne version officielle, conservée telle quelle dans l’archive (anciennes questions 3, 8, 9 et 11).</td></tr>
+      <tr><td class="num">2.0</td><td>Nouvelle version officielle : paysage enrichi, musique en trois variantes, carillon de fin, écran de fin avec 12 blocs, nouveau départ, nouvelle question 9 sur les documents internes et les connecteurs, aperçu du lien partagé.</td></tr>
+      <tr><td class="num">2.0.1–2.0.2</td><td>Question 8 : nouvelle situation (liste de participants à anonymiser) et explication plus précise.</td></tr>
+      <tr><td class="num">2.0.3</td><td>Question 3 remplacée : « Trouvez l’intrus » parmi quatre conseils pour écrire un prompt.</td></tr>
+      <tr><td class="num">2.0.4</td><td>Question 11 ajustée : trois fournisseurs à comparer, réponses de longueur égale.</td></tr>
+      <tr><td class="num">2.0.5</td><td>Écran de fin : ligne « À revoir » qui nomme les thèmes ratés.</td></tr>
+    </tbody></table></div>
+  <p class="small">Chaque version a ses propres fichiers et ses propres sauvegardes : jouer à la bêta ou à l’archive n’efface rien dans la version officielle.</p>
+</section>
+
+<footer class="small">
+  <p>Concept et création : Jean-Marc Pagé. Projet éducatif indépendant, non affilié à Anthropic. Les questions et explications de ce dossier sont reprises directement des fichiers du jeu officiel ; les images sont des captures du jeu.</p>
+</footer>
+</div>
+{{SCRIPTS}}
